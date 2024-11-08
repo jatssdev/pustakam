@@ -17,6 +17,36 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
         integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        /* Hide sidebar by default on smaller screens */
+        @media (max-width: 991px) {
+            .sidebar {
+                display: none;
+                position: fixed;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                z-index: 1040;
+                height: 100%;
+                background-color: #fff;
+                transition: transform 0.3s ease;
+            }
+
+            /* Toggle sidebar visibility */
+            .sidebar.show {
+                display: block;
+                transform: translateX(0);
+            }
+
+            .main-panel {
+                padding-left: 0;
+            }
+
+            .navbar-toggler {
+                display: inline-block;
+            }
+        }
+    </style>
 </head>
 
 <body class="">
@@ -59,24 +89,27 @@
             <!-- Navbar -->
             <nav class="navbar navbar-expand-lg navbar-absolute fixed-top navbar-transparent">
                 <div class="container-fluid">
+                    <!-- Language Dropdown on the Left -->
+                    <select id="language-dropdown" class="form-control"
+                        style="width: auto; display: inline-block; margin-right: 15px;">
+                        <option value="en" data-translate="optionenglish">English</option>
+                        <option value="hi" data-translate="optionhindi">Hindi</option>
+                    </select>
+
                     <div class="navbar-wrapper">
                         <a class="navbar-brand" href="javascript:;" data-translate="dashboard">Dashboard</a>
                     </div>
-                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation"
-                        aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-bar navbar-kebab"></span>
-                        <span class="navbar-toggler-bar navbar-kebab"></span>
-                        <span class="navbar-toggler-bar navbar-kebab"></span>
-                    </button>
-                    <div class="collapse navbar-collapse justify-content-end" id="navigation">
-                        <select id="language-dropdown" class="form-control"
-                            style="width: auto; display: inline-block; margin-right: 15px;">
-                            <option value="en" data-translate="optionenglish">English</option>
-                            <option value="hi" data-translate="optionhindi">Hindi</option>
-                        </select>
+
+                    <div class="navbar-toggle">
+                        <button class="navbar-toggler" type="button" onclick="toggleSidebar()">
+                            <span class="navbar-toggler-bar bar1"></span>
+                            <span class="navbar-toggler-bar bar2"></span>
+                            <span class="navbar-toggler-bar bar3"></span>
+                        </button>
                     </div>
                 </div>
             </nav>
+
 
             <!-- End Navbar -->
             <div class="content" style="min-height: 75vh;">
@@ -205,6 +238,23 @@
             document.getElementById('language-dropdown').value = language;
             loadLanguage(language);
         });
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('show');
+        }
+
+        // Close the sidebar when clicking outside of it (for mobile screens)
+        document.addEventListener('click', function (e) {
+            const sidebar = document.querySelector('.sidebar');
+            const target = e.target;
+            const isSidebarClicked = sidebar.contains(target);
+            const isNavbarTogglerClicked = target.closest('.navbar-toggler');
+
+            if (!isSidebarClicked && !isNavbarTogglerClicked && window.innerWidth <= 991) {
+                sidebar.classList.remove('show');
+            }
+        });
+
     </script>
 </body>
 
