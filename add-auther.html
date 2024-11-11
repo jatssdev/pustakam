@@ -10,7 +10,9 @@
     <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no'
         name='viewport' />
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,200" rel="stylesheet" />
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="./assets/css/bootstrap.min.css" rel="stylesheet" />
     <link href="./assets/css/paper-dashboard.css?v=2.0.1" rel="stylesheet" />
     <link href="./assets/demo/demo.css" rel="stylesheet" />
@@ -70,7 +72,7 @@
                     <li><a href="./add-category.html"><i class="nc-icon nc-simple-add"></i>
                             <p>Add Category</p>
                         </a></li>
-                    <li class="active"><a href="./add-author.html"><i class="nc-icon nc-simple-add"></i>
+                    <li class="active"><a href="./add-auther.html"><i class="nc-icon nc-simple-add"></i>
                             <p>Add Author</p>
                         </a></li>
                 </ul>
@@ -250,6 +252,59 @@
                 }, 3000);
             }
         });
+
+
+
+        async function translateToHindi(text) {
+            const apiKey = 'AIzaSyBlk5ZotGsdHMkbjPNarkmr9b3FV5n8vDo';
+
+            const url = `https://translation.googleapis.com/language/translate/v2?key=${apiKey}`;
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    q: text,
+                    source: 'en',
+                    target: 'hi',
+                    format: 'text'
+                })
+            });
+
+            const result = await response.json();
+            if (result.data && result.data.translations) {
+                return result.data.translations[0].translatedText;
+            } else {
+                console.error('Translation failed:', result);
+                return '';
+            }
+        }
+
+        // Debounce function to limit translation API calls
+        function debounce(func, delay) {
+            let debounceTimer;
+            return function (...args) {
+                const context = this;
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => func.apply(context, args), delay);
+            };
+        }
+
+        // Auto-translate Author Name from English to Hindi with debounce
+        document.getElementById('authorEnglish').addEventListener('input', debounce(async function () {
+            const englishText = this.value;
+
+            // Clear Hindi field if English input is empty
+            if (englishText.trim() === '') {
+                document.getElementById('authorHindi').value = '';
+                return;
+            }
+
+            // Translate if there is text in the English field
+            const translatedText = await translateToHindi(englishText);
+            document.getElementById('authorHindi').value = translatedText;
+
+        }, 500)); // Debounce delay of 500ms
 
     </script>
 </body>

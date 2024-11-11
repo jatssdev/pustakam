@@ -10,7 +10,9 @@
     <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no'
         name='viewport' />
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,200" rel="stylesheet" />
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="./assets/css/bootstrap.min.css" rel="stylesheet" />
     <link href="./assets/css/paper-dashboard.css?v=2.0.1" rel="stylesheet" />
     <link href="./assets/demo/demo.css" rel="stylesheet" />
@@ -61,7 +63,8 @@
                     <li><a href="/"><i class="nc-icon nc-bank"></i>
                             <p data-translate="dashboard">Dashboard</p>
                         </a></li>
-                    <li><a href="./authers.html"><i class="fa-solid fa-users"></i>
+                    <li> <a href="./authers.html">
+                            <i class="fa-solid fa-users"></i>
                             <p data-translate="authors">Authors</p>
                         </a></li>
                     <li><a href="./categories.html"><i class="fa fa-folder"></i>
@@ -71,7 +74,7 @@
                     <li class="active"><a href="./add-category.html"><i class="nc-icon nc-simple-add"></i>
                             <p>Add Category</p>
                         </a></li>
-                    <li><a href="./add-author.html"><i class="nc-icon nc-simple-add"></i>
+                    <li><a href="./add-auther.html"><i class="nc-icon nc-simple-add"></i>
                             <p>Add Author</p>
                         </a></li>
                 </ul>
@@ -186,6 +189,56 @@
             }
         });
 
+
+        // Real translation function for English-to-Hindi using Google Translate API
+        async function translateToHindi(text) {
+            const apiKey = 'AIzaSyBlk5ZotGsdHMkbjPNarkmr9b3FV5n8vDo';
+            const url = `https://translation.googleapis.com/language/translate/v2?key=${apiKey}`;
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    q: text,
+                    source: 'en',
+                    target: 'hi',
+                    format: 'text'
+                })
+            });
+
+            const result = await response.json();
+            if (result.data && result.data.translations) {
+                return result.data.translations[0].translatedText;
+            } else {
+                console.error('Translation failed:', result);
+                return '';
+            }
+        }
+        function debounce(func, delay) {
+            let debounceTimer;
+            return function (...args) {
+                const context = this;
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => func.apply(context, args), delay);
+            };
+        }
+
+        // Auto-translate English to Hindi with debounce to reduce API calls
+        document.getElementById('categoryEnglish').addEventListener('input', debounce(async function () {
+            const englishText = this.value;
+
+            // Clear Hindi field if English input is empty
+            if (englishText.trim() === '') {
+                document.getElementById('categoryHindi').value = '';
+                return;
+            }
+
+            // Translate if there is text in the English field
+            const translatedText = await translateToHindi(englishText);
+            document.getElementById('categoryHindi').value = translatedText;
+
+        }, 500)); // Debounce delay of 500ms
+
         // Form submission for adding a category
         document.getElementById('categoryForm').addEventListener('submit', async function (event) {
             event.preventDefault();
@@ -212,20 +265,19 @@
                     messageDiv.innerHTML = `<div class="alert alert-danger">Error: ${result.message || 'Failed to add category'}</div>`;
                 }
 
-                // Auto-hide the alert after 3 seconds
                 setTimeout(() => {
                     messageDiv.innerHTML = '';
                 }, 3000);
-
             } catch (error) {
                 document.getElementById('message').innerHTML = '<div class="alert alert-danger">An error occurred. Please try again.</div>';
 
-                // Auto-hide the error alert after 3 seconds
                 setTimeout(() => {
                     document.getElementById('message').innerHTML = '';
                 }, 3000);
             }
         });
+
+
     </script>
 </body>
 
