@@ -54,22 +54,34 @@
                         <img src="./assets/img/logo-small.png">
                     </div>
                 </a>
-                <a href="/" class="simple-text logo-normal" data-translate="logotxt">Pustakam</a>
+                <a href="/" class="simple-text logo-normal" data-translate="logotxt">
+                    Pustakam
+                </a>
             </div>
             <div class="sidebar-wrapper">
                 <ul class="nav">
-                    <li><a href="/"><i class="nc-icon nc-bank"></i>
+                    <li>
+                        <a href="/">
+                            <i class="nc-icon nc-bank"></i>
                             <p data-translate="dashboard">Dashboard</p>
-                        </a></li>
-                    <li><a href="./authors.html"><i class="fa-solid fa-users"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="./authers.html">
+                            <i class="fa-solid fa-users"></i>
                             <p data-translate="authors">Authors</p>
-                        </a></li>
-                    <li><a href="./categories.html"><i class="fa fa-folder"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="./categories.html">
+                            <i class="fa fa-folder"></i>
                             <p data-translate="categories">Categories</p>
-                        </a></li>
+                        </a>
+                    </li>
                     <li class="active"><a href="./books.html"><i class="fa fa-book"></i>
                             <p data-translate="books">Books</p>
                         </a></li>
+
                 </ul>
             </div>
         </div>
@@ -77,15 +89,27 @@
         <div class="main-panel">
             <nav class="navbar navbar-expand-lg navbar-absolute fixed-top navbar-transparent">
                 <div class="container-fluid">
+                    <!-- Language Dropdown on the Left -->
                     <select id="language-dropdown" class="form-control"
                         style="width: auto; display: inline-block; margin-right: 15px;">
                         <option value="en" data-translate="optionenglish">English</option>
                         <option value="hi" data-translate="optionhindi">Hindi</option>
                     </select>
+
                     <div class="navbar-wrapper">
-                        <a class="navbar-brand" href="javascript:;" data-translate="books">Books</a>
+                        <a class="navbar-brand" href="javascript:;" data-translate="dashboard">Dashboard</a>
+                    </div>
+
+                    <div class="navbar-toggle">
+                        <button class="navbar-toggler" type="button" onclick="toggleSidebar()">
+                            <span class="navbar-toggler-bar bar1"></span>
+                            <span class="navbar-toggler-bar bar2"></span>
+                            <span class="navbar-toggler-bar bar3"></span>
+                        </button>
                     </div>
                 </div>
+            </nav>
+
             </nav>
 
             <div class="content" style="min-height: 75vh;">
@@ -141,7 +165,76 @@
     <script src="./assets/js/core/popper.min.js"></script>
     <script src="./assets/js/core/bootstrap.min.js"></script>
     <script>
-        // Language handling code (from your previous setup)
+
+        // Language translations
+        const translations = {
+            en: {
+                logotxt: "Pustakam",
+                dashboard: "Dashboard",
+                authors: "Authors",
+                categories: "Categories",
+                books: "Books",
+                id: "ID",
+                book_name_english: "Book Name (English)",
+                book_name_hindi: "Book Name (Hindi)",
+                book_price: "Price",
+                book_price_discount: "Discounted Price",
+                book_languages: "Language",
+                actions: "Actions",
+                loading: "Loading...",
+                delete: "Delete",
+                optionenglish: "English",
+                optionhindi: "Hindi",
+                copyright: "All rights reserved by Pustakam",
+                delete: "Delete",
+                add_book: "Add Book"
+            },
+            hi: {
+                logotxt: "पुस्तकम",
+                dashboard: "डैशबोर्ड",
+                authors: "लेखक",
+                categories: "श्रेणियाँ",
+                books: "पुस्तकें",
+                id: "आईडी",
+                book_name_english: "पुस्तक का नाम (अंग्रेज़ी)",
+                book_name_hindi: "पुस्तक का नाम (हिंदी)",
+                book_price: "मूल्य",
+                book_price_discount: "छूट मूल्य",
+                book_languages: "भाषा",
+                actions: "क्रियाएँ",
+                loading: "लोड हो रहा है...",
+                delete: "हटाएँ",
+                optionenglish: "अंग्रेजी",
+                optionhindi: "हिंदी",
+                copyright: "सभी अधिकार पुस्तकम द्वारा सुरक्षित",
+                delete: "हटाएँ",
+                add_book: "पुस्तक जोड़ें"
+            }
+        };
+
+        // Function to load translations
+        function loadLanguage(language) {
+            const elements = document.querySelectorAll("[data-translate]");
+            elements.forEach((el) => {
+                const key = el.getAttribute("data-translate");
+                el.textContent = translations[language][key] || key;
+            });
+        }
+
+        // Language dropdown handling
+        document.getElementById("language-dropdown").addEventListener("change", function () {
+            const selectedLanguage = this.value;
+            localStorage.setItem("language", selectedLanguage);
+            loadLanguage(selectedLanguage);
+        });
+
+        // Apply language settings on page load
+        document.addEventListener("DOMContentLoaded", () => {
+            const language = localStorage.getItem("language") || "en";
+            document.getElementById("language-dropdown").value = language;
+            loadLanguage(language);
+            fetchBooks();
+        });
 
         // Fetch and display books
         async function fetchBooks() {
@@ -173,6 +266,8 @@
                         `;
                         bookTableBody.insertAdjacentHTML("beforeend", row);
                     });
+                    const language = localStorage.getItem('language') || 'en';
+                    loadLanguage(language);
                 } else {
                     console.error("No data found.");
                 }
@@ -209,7 +304,6 @@
             }, 3000);
         }
 
-        document.addEventListener("DOMContentLoaded", fetchBooks);
     </script>
 </body>
 

@@ -112,10 +112,12 @@
                     </div>
                 </div>
             </nav>
+
             <!-- End Navbar -->
             <div class="content" style="min-height: 75vh;">
                 <div class="col-md-12">
-                    <a href="./add-category.html" class="btn btn-warning text-white">Add Category</a>
+                    <a href="./add-category.html" data-translate="add_auther" class="btn btn-warning text-white">Add
+                        Category</a>
 
                     <div class="card">
                         <div class="card-body">
@@ -210,8 +212,11 @@
             "optionhindi": "Hindi",
             "categories-page-title": "Pustakam - Categories",
             "edit": "Edit",
-            "delete": "Delete",
-            "copyright": "All copyright reserved by pustakam"
+            "delete": "Delete", "books": "Books",
+            "add_auther": "Add Auther",
+            "copyright": "All copyright reserved by pustakam",
+            "edit": "Edit",
+            "delete": "delete",
         };
 
         let hindiJson = {
@@ -228,8 +233,11 @@
             "optionhindi": "हिंदी",
             "categories-page-title": "पुस्तकम - श्रेणियाँ",
             "edit": "संपादित करें",
-            "delete": "हटाएं",
-            "copyright": "सभी कॉपीराइट पुस्तकम द्वारा सुरक्षित"
+            "add_auther": "लेखक जोड़ें",
+            "delete": "हटाएं", "books": "पुस्तकें",
+            "copyright": "सभी कॉपीराइट पुस्तकम द्वारा सुरक्षित",
+            "edit": "बदलें",
+            "delete": "हटाएँ",
         };
 
         function loadLanguage(language) {
@@ -279,6 +287,8 @@
                         `;
                         tableBody.insertAdjacentHTML('beforeend', row);
                     });
+                    const language = localStorage.getItem('language') || 'en';
+                    loadLanguage(language);
 
                     document.getElementById('loading').style.display = 'none';
                     document.getElementById('table-container').style.display = 'block';
