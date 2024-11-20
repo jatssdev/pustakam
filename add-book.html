@@ -114,17 +114,20 @@
                 <div class="container">
                     <h2 class="my-4" data-translate="add_book">Add Book</h2>
                     <form id="bookForm">
-
                         <!-- Book Category -->
                         <div class="form-group">
                             <label for="categorySelect" data-translate="category_select">Book Category</label>
                             <select id="categorySelect" class="form-control custom-select" multiple required></select>
+                            <button type="button" class="btn btn-primary"
+                                onclick="addCategoryAndAuther(event,'category')">+</button>
                         </div>
 
                         <!-- Author Name -->
                         <div class="form-group">
                             <label for="authorSelect" data-translate="author_select">Author Name</label>
                             <select id="authorSelect" class="form-control custom-select" multiple required></select>
+                            <button type="button" class="btn btn-primary"
+                                onclick="addCategoryAndAuther(event,'auther')">+</button>
                         </div>
 
                         <!-- Book Language -->
@@ -133,20 +136,19 @@
                             <select id="languageSelect" class="form-control custom-select" multiple required></select>
                         </div>
 
-                        <!-- Book Name (Hindi) -->
+                        <!-- Book Name (English) -->
                         <div class="form-group">
-                            <label for="bookNameHindi" data-translate="book_name_hindi">Book Name (Title in
-                                Hindi)</label>
-                            <input type="text" id="bookNameHindi" class="form-control"
-                                placeholder="Enter book name in Hindi" required>
+                            <label for="bookNameEnglish" data-translate="book_name_english">Book Name (in
+                                English)</label>
+                            <input type="text" id="bookNameEnglish" class="form-control"
+                                placeholder="Enter book name in English" required>
                         </div>
 
-                        <!-- Book Subtitle (English) -->
+                        <!-- Book Name (Hindi) -->
                         <div class="form-group">
-                            <label for="bookSubtitleEnglish" data-translate="book_subtitle">Book Subtitle (in
-                                English)</label>
-                            <input type="text" id="bookSubtitleEnglish" class="form-control"
-                                placeholder="Enter book subtitle in English">
+                            <label for="bookNameHindi" data-translate="book_name_hindi">Book Name (in Hindi)</label>
+                            <input type="text" id="bookNameHindi" class="form-control"
+                                placeholder="Enter book name in Hindi" required>
                         </div>
 
                         <!-- Book Front Image -->
@@ -168,21 +170,15 @@
                             </div>
                         </div>
 
-                        <!-- Minimum Pages in Percent for Free Demo -->
-                        <div class="form-group">
-                            <label for="bookDemoPercent" data-translate="book_free_demo">Minimum Pages in Percent for
-                                Free Demo</label>
-                            <input type="number" id="bookDemoPercent" class="form-control"
-                                placeholder="Enter percentage" min="0" max="100" required>
-                        </div>
-
-                        <!-- Book Details -->
+                        <!-- Book Details (English) -->
                         <div class="form-group">
                             <label for="bookDetailsEnglish" data-translate="book_details_english">Book Details (in
                                 English)</label>
                             <textarea id="bookDetailsEnglish" class="form-control"
                                 placeholder="Enter book details in English" required></textarea>
                         </div>
+
+                        <!-- Book Details (Hindi) -->
                         <div class="form-group">
                             <label for="bookDetailsHindi" data-translate="book_details_hindi">Book Details (in
                                 Hindi)</label>
@@ -213,9 +209,18 @@
                             </div>
                         </div>
 
+                        <!-- Free Demo Pages Percentage -->
+                        <div class="form-group">
+                            <label for="bookDemoPercent" data-translate="book_free_demo">Free Demo Pages
+                                Percentage</label>
+                            <input type="number" id="bookDemoPercent" class="form-control"
+                                placeholder="Enter percentage (0-100)" min="0" max="100" required>
+                        </div>
+
                         <!-- Submit Button -->
                         <button type="submit" class="btn btn-primary" data-translate="add_book">Add Book</button>
                     </form>
+
                     <div id="message" class="mt-3"></div>
                 </div>
             </div>
@@ -237,6 +242,73 @@
         </div>
     </div>
 
+    <div class="modal fade" id="addCategoryModal" tabindex="-1" role="dialog" aria-labelledby="addCategoryModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addCategoryModalLabel">Add Category</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="addCategoryForm">
+                        <div class="form-group">
+                            <label for="addCategoryEnglish" data-translate="category_english">Category Name
+                                (English)</label>
+                            <input type="text" id="addCategoryEnglish" class="form-control"
+                                placeholder="Enter category name in English" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="addCategoryHindi" data-translate="category_hindi">Category Name (Hindi)</label>
+                            <input type="text" id="addCategoryHindi" class="form-control"
+                                placeholder="Enter category name in Hindi" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Category</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="addAuthorModal" tabindex="-1" role="dialog" aria-labelledby="addAuthorModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addAuthorModalLabel">Add Author</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="addAuthorForm">
+                        <div class="form-group">
+                            <label for="addAuthorEnglish" data-translate="author_english">Author Name (English)</label>
+                            <input type="text" id="addAuthorEnglish" class="form-control"
+                                placeholder="Enter author name in English" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="addAuthorHindi" data-translate="author_hindi">Author Name (Hindi)</label>
+                            <input type="text" id="addAuthorHindi" class="form-control"
+                                placeholder="Enter author name in Hindi" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="authorCategorySelect" data-translate="category_select">Category</label>
+                            <select id="authorCategorySelect" class="form-control custom-select" required>
+                                <!-- Categories will be dynamically populated -->
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Author</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
     <!-- Core JS Files -->
     <script src="./assets/js/core/jquery.min.js"></script>
     <script src="./assets/js/core/popper.min.js"></script>
@@ -245,21 +317,12 @@
 
     <script>
         $(document).ready(function () {
-            // Initialize select2 for dropdowns
-            $('#authorSelect, #categorySelect, #languageSelect').select2({
-                placeholder: "Select options",
-                allowClear: true,
-                width: '100%',
-            });
-
             const translations = {
                 en: {
                     logotxt: "Pustakam",
                     dashboard: "Dashboard",
                     authors: "Authors",
                     categories: "Categories",
-                    add_category: "Add Category",
-                    add_author: "Add Author",
                     add_book: "Add Book",
                     author_select: "Select Authors",
                     category_select: "Select Categories",
@@ -267,26 +330,19 @@
                     book_name_hindi: "Book Name (Hindi)",
                     book_details_english: "Book Details (English)",
                     book_details_hindi: "Book Details (Hindi)",
-                    book_keywords_english: "Book Keywords (English)",
-                    book_keywords_hindi: "Book Keywords (Hindi)",
                     book_language: "Book Language",
                     book_price: "Book Price",
                     book_price_discount: "Discounted Price",
-                    optionenglish: "English",
-                    optionhindi: "Hindi",
-                    copyright: "All rights reserved by Pustakam",
+                    book_free_demo: "Free Demo Pages Percentage",
                     book_thumbnail: "Book Front Image",
                     book_file: "Book File (PDF or EPUB)",
-                    book_free_demo: "Minimum Pages in Percent for Free Demo",
-                    book_subtitle: "Book Subtitle (in English)"
+                    add_button: "Add Book",
                 },
                 hi: {
                     logotxt: "पुस्तकम",
                     dashboard: "डैशबोर्ड",
                     authors: "लेखक",
                     categories: "श्रेणियाँ",
-                    add_category: "श्रेणी जोड़ें",
-                    add_author: "लेखक जोड़ें",
                     add_book: "पुस्तक जोड़ें",
                     author_select: "लेखकों का चयन करें",
                     category_select: "श्रेणियाँ चुनें",
@@ -294,19 +350,14 @@
                     book_name_hindi: "पुस्तक का नाम (हिंदी)",
                     book_details_english: "पुस्तक का विवरण (अंग्रेज़ी)",
                     book_details_hindi: "पुस्तक का विवरण (हिंदी)",
-                    book_keywords_english: "पुस्तक कीवर्ड (अंग्रेज़ी)",
-                    book_keywords_hindi: "पुस्तक कीवर्ड (हिंदी)",
                     book_language: "पुस्तक भाषा",
                     book_price: "पुस्तक मूल्य",
                     book_price_discount: "छूट मूल्य",
-                    optionenglish: "अंग्रेजी",
-                    optionhindi: "हिंदी",
-                    copyright: "सभी अधिकार पुस्तकम द्वारा सुरक्षित",
+                    book_free_demo: "नि: शुल्क डेमो पृष्ठ प्रतिशत",
                     book_thumbnail: "पुस्तक का अग्रभाग छवि",
                     book_file: "पुस्तक फ़ाइल (पीडीएफ़ या ईपब)",
-                    book_free_demo: "नि: शुल्क डेमो के लिए न्यूनतम पृष्ठ प्रतिशत",
-                    book_subtitle: "पुस्तक उपशीर्षक (अंग्रेज़ी में)"
-                }
+                    add_button: "पुस्तक जोड़ें",
+                },
             };
 
             // Load translations
@@ -320,10 +371,10 @@
                 });
             }
 
-            // Change language and store selection
+            // Change language event
             $("#language-dropdown").on("change", function () {
                 const selectedLanguage = $(this).val();
-                localStorage.setItem("language", selectedLanguage);
+                localStorage.setItem("language", selectedLanguage); // Save language preference
                 loadLanguage(selectedLanguage);
             });
 
@@ -331,65 +382,17 @@
             const savedLanguage = localStorage.getItem("language") || "en";
             $("#language-dropdown").val(savedLanguage);
             loadLanguage(savedLanguage);
+        });
 
-            // Custom file input label update
-            $(".custom-file-input").on("change", function () {
-                const fileName = $(this).prop("files")[0]?.name || "Choose file";
-                $(this).next(".custom-file-label").text(fileName);
+        $(document).ready(function () {
+            // Initialize select2 for dropdowns
+            $('#authorSelect, #categorySelect, #languageSelect').select2({
+                placeholder: "Select options",
+                allowClear: true,
+                width: '100%',
             });
 
-            // Google Translate API integration
-            async function translateToHindi(text) {
-                const apiKey = 'AIzaSyBlk5ZotGsdHMkbjPNarkmr9b3FV5n8vDo';
-
-                const url = `https://translation.googleapis.com/language/translate/v2?key=${apiKey}`;
-
-                try {
-                    const response = await $.ajax({
-                        url: url,
-                        type: "POST",
-                        contentType: "application/json",
-                        data: JSON.stringify({
-                            q: text,
-                            source: "en",
-                            target: "hi",
-                            format: "text"
-                        })
-                    });
-
-                    return response.data.translations[0].translatedText || text;
-                } catch (error) {
-                    console.error("Translation API error:", error);
-                    return text; // Fallback in case of an error
-                }
-            }
-
-            // Debounce function for limiting API calls
-            function debounce(func, delay) {
-                let debounceTimer;
-                return function (...args) {
-                    clearTimeout(debounceTimer);
-                    debounceTimer = setTimeout(() => func(...args), delay);
-                };
-            }
-
-            // Auto-translate input fields
-            const fieldMappings = [
-                { englishFieldId: "#bookSubtitleEnglish", hindiFieldId: "#bookNameHindi" },
-                { englishFieldId: "#bookDetailsEnglish", hindiFieldId: "#bookDetailsHindi" }
-            ];
-
-            fieldMappings.forEach(({ englishFieldId, hindiFieldId }) => {
-                $(englishFieldId).on(
-                    "input",
-                    debounce(async function () {
-                        const translatedText = await translateToHindi($(this).val());
-                        $(hindiFieldId).val(translatedText);
-                    }, 500)
-                );
-            });
-
-            // Populate select options
+            // Populate select options dynamically
             async function populateSelectOptions(url, selectElement, keys) {
                 try {
                     const response = await $.getJSON(url);
@@ -423,38 +426,79 @@
                 "languages"
             );
 
+            // Custom file input label update
+            $(".custom-file-input").on("change", function () {
+                const fileName = $(this).prop("files")[0]?.name || "Choose file";
+                $(this).next(".custom-file-label").text(fileName);
+            });
+
             // Handle form submission
             $("#bookForm").on("submit", async function (event) {
                 event.preventDefault();
 
                 const formData = new FormData(this);
+
+                // Handle multi-select fields: Convert selected options to integers
                 formData.set(
                     "author_data",
-                    JSON.stringify(
-                        $("#authorSelect").val().map(val => parseInt(val, 10))
-                    )
+
+                    $("#authorSelect")
+                        .val()
+                        .map(val => parseInt(val, 10))
+
                 );
                 formData.set(
                     "category_data",
-                    JSON.stringify(
-                        $("#categorySelect").val().map(val => parseInt(val, 10))
-                    )
+
+                    $("#categorySelect")
+                        .val()
+                        .map(val => parseInt(val, 10))
+
                 );
                 formData.set(
                     "language_data",
-                    JSON.stringify(
-                        $("#languageSelect").val().map(val => parseInt(val, 10))
-                    )
+
+                    $("#languageSelect")
+                        .val()
+                        .map(val => parseInt(val, 10))
+
                 );
 
+                // Include free demo percentage
+                formData.set("book_free_demo", $("#bookDemoPercent").val());
+
+                // Include book name and details
+                formData.set("book_name_english", $("#bookNameEnglish").val());
+                formData.set("book_name_hindi", $("#bookNameHindi").val());
+                formData.set("book_details_english", $("#bookDetailsEnglish").val());
+                formData.set("book_details_hindi", $("#bookDetailsHindi").val());
+
+                // Include book prices
+                formData.set("book_price", $("#bookPrice").val());
+                formData.set("book_price_discount", $("#bookPriceDiscount").val());
+
+                // Include book files (image and PDF/EPUB)
+                const bookFrontImage = $("#bookFrontImage")[0].files[0];
+                const bookFile = $("#bookFile")[0].files[0];
+
+                if (bookFrontImage) {
+                    formData.set("book_front_image", bookFrontImage);
+                }
+                if (bookFile) {
+                    formData.set("book_file", bookFile);
+                }
+
+
+                console.log(formData)
                 try {
                     const response = await fetch(
                         "https://pustakam.pythonanywhere.com/books/",
                         {
                             method: "POST",
-                            body: formData
+                            body: formData,
                         }
                     );
+
                     const result = await response.json();
 
                     const message = response.ok
@@ -464,10 +508,10 @@
                     $("#message").html(message);
 
                     if (response.ok) {
-                        $("#bookForm")[0].reset();
+                        $("#bookForm")[0].reset(); // Reset the form on success
                     }
 
-                    setTimeout(() => $("#message").html(""), 3000);
+                    setTimeout(() => $("#message").html(""), 3000); // Clear the message after 3 seconds
                 } catch (error) {
                     console.error("Error submitting form:", error);
                     $("#message").html(
@@ -486,7 +530,203 @@
                     discountInput.prop("disabled", false);
                 }
             });
+
         });
+        document.addEventListener("DOMContentLoaded", () => {
+            const googleTranslateAPIKey = 'AIzaSyBlk5ZotGsdHMkbjPNarkmr9b3FV5n8vDo';
+
+
+            // Function to call Google Translate API
+            async function translateToHindi(text) {
+                const url = `https://translation.googleapis.com/language/translate/v2?key=${googleTranslateAPIKey}`;
+                try {
+                    const response = await fetch(url, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            q: text, // The text to translate
+                            source: "en", // Source language
+                            target: "hi", // Target language
+                            format: "text", // Plain text format
+                        }),
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    if (
+                        data &&
+                        data.data &&
+                        data.data.translations &&
+                        data.data.translations[0]
+                    ) {
+                        return data.data.translations[0].translatedText;
+                    } else {
+                        throw new Error("Translation failed. Invalid response structure.");
+                    }
+                } catch (error) {
+                    console.error("Translation API error:", error);
+                    return text; // Fallback: return original text if translation fails
+                }
+            }
+
+            // Debounce function to limit API calls
+            function debounce(func, delay) {
+                let debounceTimer;
+                return function (...args) {
+                    clearTimeout(debounceTimer);
+                    debounceTimer = setTimeout(() => func.apply(this, args), delay);
+                };
+            }
+
+            // Map English fields to their Hindi counterparts
+            const fieldMappings = [
+                { englishFieldId: "bookNameEnglish", hindiFieldId: "bookNameHindi" },
+                { englishFieldId: "bookDetailsEnglish", hindiFieldId: "bookDetailsHindi" },
+                { englishFieldId: "addAuthorEnglish", hindiFieldId: "addAuthorHindi" },
+                { englishFieldId: "addCategoryEnglish", hindiFieldId: "addCategoryHindi" },
+            ];
+
+            // Set up event listeners for auto-translation
+            fieldMappings.forEach(({ englishFieldId, hindiFieldId }) => {
+                const englishField = document.getElementById(englishFieldId);
+                const hindiField = document.getElementById(hindiFieldId);
+
+                if (englishField && hindiField) {
+                    englishField.addEventListener(
+                        "input",
+                        debounce(async function () {
+                            const translatedText = await translateToHindi(englishField.value);
+                            hindiField.value = translatedText;
+                        }, 500)
+                    );
+                }
+            });
+
+
+
+
+
+
+
+
+
+
+
+
+            // load 
+        });
+        // Function to show the modal
+        function addCategoryAndAuther(event, type) {
+            event.preventDefault(); // Prevent form submission or default behavior
+            if (type === 'category') {
+                $('#addCategoryModal').modal('show'); // Show Add Category Modal
+            } else if (type === 'auther') {
+                $('#addAuthorModal').modal('show'); // Show Add Author Modal
+            }
+        }
+
+        // Function to populate categories in the dropdown
+        async function populateCategoryDropdown() {
+            try {
+                const response = await fetch("https://pustakam.pythonanywhere.com/category/");
+                const data = await response.json();
+                const categorySelect = document.getElementById("categorySelect");
+                const authorCategorySelect = document.getElementById("authorCategorySelect");
+
+                if (data && data.data) {
+                    const options = data.data
+                        .map(
+                            (category) =>
+                                `<option value="${category.id}">${category.category_english} (${category.category_hindi})</option>`
+                        )
+                        .join("");
+                    categorySelect.innerHTML = options; // Populate categories in the book form
+                    authorCategorySelect.innerHTML = options; // Populate categories in the Add Author modal
+                }
+            } catch (error) {
+                console.error("Error fetching categories:", error);
+                alert("Failed to load categories. Please try again.");
+            }
+        }
+
+        // Handle Add Category Form Submission
+        document.getElementById("addCategoryForm").addEventListener("submit", async function (event) {
+            event.preventDefault();
+            const categoryEnglish = document.getElementById("addCategoryEnglish").value;
+            const categoryHindi = document.getElementById("addCategoryHindi").value;
+
+            try {
+                const response = await fetch("https://pustakam.pythonanywhere.com/category/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        category_english: categoryEnglish,
+                        category_hindi: categoryHindi,
+                    }),
+                });
+
+                if (response.ok) {
+                    alert("Category added successfully!");
+                    document.getElementById("addCategoryForm").reset(); // Clear the form
+                    $('#addCategoryModal').modal('hide'); // Close the modal
+                    populateCategoryDropdown(); // Reload the category dropdown
+                } else {
+                    alert("Failed to add category. Please try again.");
+                }
+            } catch (error) {
+                console.error("Error adding category:", error);
+                alert("An error occurred. Please try again.");
+            }
+        });
+
+        // Handle Add Author Form Submission
+        document.getElementById("addAuthorForm").addEventListener("submit", async function (event) {
+            event.preventDefault();
+            const authorEnglish = document.getElementById("addAuthorEnglish").value;
+            const authorHindi = document.getElementById("addAuthorHindi").value;
+            const categoryId = document.getElementById("authorCategorySelect").value;
+
+            try {
+                const response = await fetch("https://pustakam.pythonanywhere.com/author/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        author_english: authorEnglish,
+                        author_hindi: authorHindi,
+                        category_data: categoryId,
+                    }),
+                });
+
+                if (response.ok) {
+                    alert("Author added successfully!");
+                    document.getElementById("addAuthorForm").reset(); // Clear the form
+                    $('#addAuthorModal').modal('hide'); // Close the modal
+                    populateCategoryDropdown(); // Reload the category dropdown if needed
+                } else {
+                    alert("Failed to add author. Please try again.");
+                }
+            } catch (error) {
+                console.error("Error adding author:", error);
+                alert("An error occurred. Please try again.");
+            }
+        });
+
+        // Populate categories on page load
+        document.addEventListener("DOMContentLoaded", () => {
+            populateCategoryDropdown(); // Load categories into dropdowns on page load
+        });
+
+
+
     </script>
 
 </body>

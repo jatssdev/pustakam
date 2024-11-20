@@ -120,19 +120,20 @@
                             <div id="table-container" class="table-responsive">
                                 <table class="table">
                                     <thead class="text-primary">
-                                        <th data-translate="id">ID</th>
-                                        <th>Image</th>
-                                        <th data-translate="book_name_english">Book Name (English)</th>
-                                        <th data-translate="book_name_hindi">Book Name (Hindi)</th>
-                                        <th data-translate="book_price">Price</th>
-                                        <th data-translate="book_price_discount">Discounted Price</th>
-                                        <th data-translate="book_languages">Language</th>
-                                        <th data-translate="actions">Actions</th>
+                                        <tr>
+                                            <th data-translate="id">ID</th>
+                                            <th>Image</th>
+                                            <th data-translate="book_name">Book Name (English & Hindi)</th>
+                                            <th data-translate="book_price">Price</th>
+                                            <th data-translate="book_price_discount">Discount</th>
+                                            <th data-translate="actions">Actions</th>
+                                        </tr>
                                     </thead>
                                     <tbody id="book-table-body">
                                         <!-- Rows will be dynamically inserted here -->
                                     </tbody>
                                 </table>
+
                             </div>
                         </div>
                     </div>
@@ -160,10 +161,58 @@
             </footer>
         </div>
     </div>
+    <!-- View Book Modal -->
+    <div class="modal fade" id="viewBookModal" tabindex="-1" aria-labelledby="viewBookModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewBookModalLabel">View Book</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Book Details Content -->
+                    <div id="viewBookContent">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <img id="viewBookThumbnail" class="img-fluid" alt="Book Thumbnail">
+                            </div>
+                            <div class="col-md-8">
+                                <h4 id="viewBookNameEnglish"></h4>
+                                <h5 id="viewBookNameHindi" class="text-muted"></h5>
+                                <p><strong>Price:</strong> ₹<span id="viewBookPrice"></span></p>
+                                <p><strong>Discounted Price:</strong> ₹<span id="viewBookDiscountedPrice"></span></p>
+                                <p><strong>Details (English):</strong></p>
+                                <p id="viewBookDetailsEnglish"></p>
+                                <p><strong>Details (Hindi):</strong></p>
+                                <p id="viewBookDetailsHindi"></p>
+                                <p><strong>Free Demo (%):</strong> <span id="viewBookFreeDemo"></span></p>
+                                <p><strong>Authors:</strong> <span id="viewBookAuthors"></span></p>
+                                <p><strong>Categories:</strong> <span id="viewBookCategories"></span></p>
+                                <p><strong>Languages:</strong> <span id="viewBookLanguages"></span></p>
+                                <p><strong>Keywords:</strong> <span id="viewBookKeywords"></span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a id="viewBookFileLink" class="btn btn-primary" target="_blank">Download Book File</a>
+                    <button id="viewBookContentsButton" class="btn btn-info">View Book Contents</button>
+                    <!-- New Button -->
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
 
     <script src="./assets/js/core/jquery.min.js"></script>
-    <script src="./assets/js/core/popper.min.js"></script>
-    <script src="./assets/js/core/bootstrap.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/epubjs/dist/epub.min.js"></script> -->
+    <script src="./assets/js/core/popper.min.js"></script> <!-- Can be removed if using the new CDN -->
+    <script src="./assets/js/core/bootstrap.min.js"></script> <!-- Can be removed if using the new CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-w76AftaFocD3/8z1JpCFhzU8vNY0P8YOcAN1pTXx4S3MGI6a2E3SuhKuBt3MGi2x"
+        crossorigin="anonymous"></script>
+
     <script>
 
         // Language translations
@@ -250,33 +299,43 @@
 
                 if (data && data.data) {
                     data.data.forEach(book => {
+                        // Fallback for missing book thumbnail
+                        const thumbnail = book.book_front_image
+                            ? `https://pustakam.pythonanywhere.com/${book.book_front_image}`
+                            : "./assets/img/default-thumbnail.png";
+
                         const row = `
-                            <tr id="book-${book.id}">
-                                <td>${book.id}</td>
-                                <td><img class="bookThumbnail" src="https://pustakam.pythonanywhere.com/${book.book_front_image}"></td>
-                                <td>${book.book_name_english}</td>
-                                <td>${book.book_name_hindi}</td>
-                                <td>${book.book_price}</td>
-                                <td>${book.book_price_discount}</td>
-                                <td>${book.book_languages}</td>
-                                <td>
-                                    <button class="btn btn-danger btn-sm" data-translate="delete" onclick="deleteBook(${book.id})">Delete</button>
-                                </td>
-                            </tr>
-                        `;
+                    <tr id="book-${book.id}">
+                        <td>${book.id}</td>
+                        <td><img class="bookThumbnail" src="${thumbnail}" alt="Book Thumbnail" style="width: 50px; height: auto;"></td>
+                        <td>
+                            <strong>${book.book_name_english}</strong><br>
+                            <small>${book.book_name_hindi}</small>
+                        </td>
+                        <td>${book.book_price}</td>
+                        <td>${book.book_price_discount}</td>
+                        <td>
+                            <button class="btn btn-info btn-sm" onclick="viewBook(${book.id})">View</button>
+                            <button class="btn btn-warning btn-sm" onclick="editBook(${book.id})">Edit</button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteBook(${book.id})">Delete</button>
+                        </td>
+                    </tr>
+                `;
                         bookTableBody.insertAdjacentHTML("beforeend", row);
                     });
                     const language = localStorage.getItem('language') || 'en';
                     loadLanguage(language);
                 } else {
-                    console.error("No data found.");
+                    bookTableBody.innerHTML = `<tr><td colspan="6" class="text-center">No books found.</td></tr>`;
                 }
             } catch (error) {
                 console.error("Error fetching books:", error);
+                bookTableBody.innerHTML = `<tr><td colspan="6" class="text-center text-danger">Failed to load books. Please try again later.</td></tr>`;
             } finally {
                 loading.style.display = "none";
             }
         }
+
 
         // Delete book
         async function deleteBook(id) {
@@ -303,6 +362,84 @@
                 deleteMessageDiv.innerHTML = "";
             }, 3000);
         }
+
+        async function viewBook(id) {
+            try {
+                const response = await fetch(`https://pustakam.pythonanywhere.com/books/${id}/`);
+                const result = await response.json();
+
+                if (result.status === "success") {
+                    const book = result.data;
+
+                    // Set Thumbnail
+                    const thumbnail = book.book_front_image
+                        ? `https://pustakam.pythonanywhere.com${book.book_front_image}`
+                        : "./assets/img/default-thumbnail.png";
+                    document.getElementById("viewBookThumbnail").src = thumbnail;
+
+                    // Set Book Details
+                    document.getElementById("viewBookNameEnglish").textContent = book.book_name_english;
+                    document.getElementById("viewBookNameHindi").textContent = book.book_name_hindi;
+                    document.getElementById("viewBookPrice").textContent = book.book_price || "N/A";
+                    document.getElementById("viewBookDiscountedPrice").textContent = book.book_price_discount || "N/A";
+                    document.getElementById("viewBookDetailsEnglish").textContent = book.book_details_english || "N/A";
+                    document.getElementById("viewBookDetailsHindi").textContent = book.book_details_hindi || "N/A";
+                    document.getElementById("viewBookFreeDemo").textContent = book.book_free_demo || "N/A";
+
+                    // Authors
+                    const authors = book.author_data
+                        .map(author => `${author.author_english} (${author.author_hindi})`)
+                        .join(", ");
+                    document.getElementById("viewBookAuthors").textContent = authors || "N/A";
+
+                    // Categories
+                    const categories = book.category_data
+                        .map(category => `${category.category_english} (${category.category_hindi})`)
+                        .join(", ");
+                    document.getElementById("viewBookCategories").textContent = categories || "N/A";
+
+                    // Languages
+                    const languages = book.language_data
+                        .map(language => language.languages)
+                        .join(", ");
+                    document.getElementById("viewBookLanguages").textContent = languages || "N/A";
+
+                    // Keywords
+                    document.getElementById("viewBookKeywords").textContent =
+                        book.book_keywords && book.book_keywords.length > 0
+                            ? book.book_keywords.join(", ")
+                            : "N/A";
+
+                    // Book File Link
+                    const bookFile = book.book_file
+                        ? `https://pustakam.pythonanywhere.com${book.book_file}`
+                        : null;
+                    const bookFileLink = document.getElementById("viewBookFileLink");
+                    if (bookFile) {
+                        bookFileLink.href = bookFile;
+                        bookFileLink.style.display = "inline-block";
+                    } else {
+                        bookFileLink.style.display = "none";
+                    }
+
+                    // Show the modal
+                    const viewBookModal = new bootstrap.Modal(document.getElementById("viewBookModal"));
+                    viewBookModal.show();
+                } else {
+                    alert("Failed to fetch book details.");
+                }
+            } catch (error) {
+                console.error("Error fetching book details:", error);
+                alert("An error occurred while fetching book details. Please try again.");
+            }
+        }
+
+
+        document.getElementById("viewBookContentsButton").addEventListener("click", function () {
+            window.open(`epub-viewer.html`, "_blank");
+        });
+
+
 
     </script>
 </body>
