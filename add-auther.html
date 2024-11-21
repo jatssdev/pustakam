@@ -80,6 +80,12 @@
                     <li><a href="./books.html"><i class="fa fa-book"></i>
                             <p data-translate="books">Books</p>
                         </a></li>
+                    <li>
+                        <a href="./languages.html">
+                            <i class="fa fa-language"></i>
+                            <p data-translate="languages">Languages</p>
+                        </a>
+                    </li>
 
                 </ul>
             </div>
@@ -112,15 +118,17 @@
                 <div class="container">
                     <h2 class="my-4" data-translate="add_author">Add Author</h2>
                     <form id="authorForm">
-                        <div class="form-group">
-                            <label for="authorEnglish" data-translate="author_english">Author Name (English)</label>
-                            <input type="text" id="authorEnglish" class="form-control"
-                                placeholder="Enter author name in English" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="authorHindi" data-translate="author_hindi">Author Name (Hindi)</label>
-                            <input type="text" id="authorHindi" class="form-control"
-                                placeholder="Enter author name in Hindi" required>
+                        <div id="changeOrderParent" class="d-flex flex-column">
+                            <div class="form-group order-1">
+                                <label for="authorEnglish" data-translate="author_english">Author Name (English)</label>
+                                <input type="text" id="authorEnglish" class="form-control"
+                                    placeholder="Enter author name in English" required>
+                            </div>
+                            <div class="form-group order-2">
+                                <label for="authorHindi" data-translate="author_hindi">Author Name (Hindi)</label>
+                                <input type="text" id="authorHindi" class="form-control"
+                                    placeholder="Enter author name in Hindi" required>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label for="categorySelect" data-translate="category">Select Category</label>
@@ -156,10 +164,36 @@
     <script src="./assets/js/core/popper.min.js"></script>
     <script src="./assets/js/core/bootstrap.min.js"></script>
     <script>
+        let changeOrderParentHandler = () => {
+            let changeOrderParent = document.getElementById('changeOrderParent');
+            let english = changeOrderParent.querySelector('.order-1')
+            let hindi = changeOrderParent.querySelector('.order-2')
+            let currLanguage = localStorage.getItem('language') || 'en'
+
+            if (currLanguage === 'hi') {
+                english.classList.add('order-2')
+                hindi.classList.add('order-1')
+                english.classList.remove('order-1')
+                hindi.classList.remove('order-2')
+            } else {
+                english.classList.remove('order-2')
+                hindi.classList.remove('order-1')
+                english.classList.add('order-1')
+                hindi.classList.add('order-2')
+            }
+        }
+        changeOrderParentHandler()
         // Language JSON and translation function
         let englishJson = { "optionenglish": "English", "optionhindi": "Hindi", "logotxt": "Pustakam", "dashboard": "Dashboard", "authors": "Authors", "categories": "Categories", "checkout_details": "Checkout Details", "add_author": "Add Author", "author_english": "Author Name (English)", "author_hindi": "Author Name (Hindi)", "category": "Select Category", "copyright": "All rights reserved by Pustakam" };
         let hindiJson = { "optionenglish": "अंग्रेजी", "optionhindi": "हिंदी", "logotxt": "पुस्तकम", "dashboard": "डैशबोर्ड", "authors": "लेखक", "categories": "श्रेणियाँ", "checkout_details": "विवरण देखें", "add_author": "लेखक जोड़ें", "author_english": "लेखक का नाम (अंग्रेजी)", "author_hindi": "लेखक का नाम (हिंदी)", "category": "श्रेणी चुनें", "copyright": "सभी अधिकार पुस्तकम द्वारा सुरक्षित" };
-
+        const fieldMappings = [
+            { sourceFieldId: "authorEnglish", targetFieldId: "authorHindi", sourceLang: "en", targetLang: "hi" },
+            // Add more mappings as needed
+        ];
+        const fieldMappingsHindi = [
+            { sourceFieldId: "authorHindi", targetFieldId: "authorEnglish", sourceLang: "hi", targetLang: "en" },
+            // Add more mappings as needed
+        ];
         function loadLanguage(language) {
             let translations = language === 'hi' ? hindiJson : englishJson;
             document.querySelectorAll('[data-translate]').forEach(element => {
@@ -172,13 +206,22 @@
             const selectedLanguage = this.value;
             localStorage.setItem('language', selectedLanguage);
             loadLanguage(selectedLanguage);
+            const language = localStorage.getItem('language') || 'en';
+            let fieldMappingsData = language === 'en' ? fieldMappings : fieldMappingsHindi
+            languagesChangHandler(fieldMappingsData)
+            changeOrderParentHandler()
         });
+
+        // Map English fields to their Hindi counterparts
 
         document.addEventListener('DOMContentLoaded', () => {
             const language = localStorage.getItem('language') || 'en';
             document.getElementById('language-dropdown').value = language;
             loadLanguage(language);
             fetchCategories();
+            let fieldMappingsData = language === 'en' ? fieldMappings : fieldMappingsHindi
+            languagesChangHandler(fieldMappingsData)
+
         });
 
         function toggleSidebar() {
@@ -260,58 +303,85 @@
         });
 
 
+        const googleTranslateAPIKey = 'AIzaSyBlk5ZotGsdHMkbjPNarkmr9b3FV5n8vDo';
 
-        async function translateToHindi(text) {
-            const apiKey = 'AIzaSyBlk5ZotGsdHMkbjPNarkmr9b3FV5n8vDo';
+        // Function to call Google Translate API
+        async function translateText(text, sourceLang, targetLang) {
+            const url = `https://translation.googleapis.com/language/translate/v2?key=${googleTranslateAPIKey}`;
+            try {
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        q: text, // The text to translate
+                        source: sourceLang, // Source language
+                        target: targetLang, // Target language
+                        format: "text", // Plain text format
+                    }),
+                });
 
-            const url = `https://translation.googleapis.com/language/translate/v2?key=${apiKey}`;
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
 
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    q: text,
-                    source: 'en',
-                    target: 'hi',
-                    format: 'text'
-                })
-            });
-
-            const result = await response.json();
-            if (result.data && result.data.translations) {
-                return result.data.translations[0].translatedText;
-            } else {
-                console.error('Translation failed:', result);
-                return '';
+                const data = await response.json();
+                if (
+                    data &&
+                    data.data &&
+                    data.data.translations &&
+                    data.data.translations[0]
+                ) {
+                    return data.data.translations[0].translatedText;
+                } else {
+                    throw new Error("Translation failed. Invalid response structure.");
+                }
+            } catch (error) {
+                console.error("Translation API error:", error);
+                return text; // Fallback: return original text if translation fails
             }
         }
 
-        // Debounce function to limit translation API calls
+        // Debounce function to limit API calls
         function debounce(func, delay) {
             let debounceTimer;
             return function (...args) {
-                const context = this;
                 clearTimeout(debounceTimer);
-                debounceTimer = setTimeout(() => func.apply(context, args), delay);
+                debounceTimer = setTimeout(() => func.apply(this, args), delay);
             };
         }
 
-        // Auto-translate Author Name from English to Hindi with debounce
-        document.getElementById('authorEnglish').addEventListener('input', debounce(async function () {
-            const englishText = this.value;
 
-            // Clear Hindi field if English input is empty
-            if (englishText.trim() === '') {
-                document.getElementById('authorHindi').value = '';
-                return;
-            }
+        let activeListeners = []; // Track active event listeners
 
-            // Translate if there is text in the English field
-            const translatedText = await translateToHindi(englishText);
-            document.getElementById('authorHindi').value = translatedText;
+        let languagesChangHandler = (languageData) => {
+            // Remove all active listeners first
+            activeListeners.forEach(({ element, handler }) => {
+                element.removeEventListener("input", handler);
+            });
+            activeListeners = []; // Reset the active listeners array
 
-        }, 500)); // Debounce delay of 500ms
+            // Add new event listeners for the selected language
+            languageData.forEach(({ sourceFieldId, targetFieldId, sourceLang, targetLang }) => {
+                const sourceField = document.getElementById(sourceFieldId);
+                const targetField = document.getElementById(targetFieldId);
 
+                if (sourceField && targetField) {
+                    // Create a debounced handler
+                    const handler = debounce(async function () {
+                        const translatedText = await translateText(sourceField.value, sourceLang, targetLang);
+                        targetField.value = translatedText;
+                    }, 500);
+
+                    // Add the listener
+                    sourceField.addEventListener("input", handler);
+
+                    // Track the listener to allow removal later
+                    activeListeners.push({ element: sourceField, handler });
+                }
+            });
+        };
     </script>
 </body>
 

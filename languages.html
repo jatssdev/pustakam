@@ -232,6 +232,73 @@
     <script src="./assets/js/plugins/perfect-scrollbar.jquery.min.js"></script>
     <script src="./assets/js/paper-dashboard.min.js?v=2.0.1" type="text/javascript"></script>
     <script>
+
+        const translations = {
+            en: {
+                logotxt: "Pustakam",
+                dashboard: "Dashboard",
+                authors: "Authors",
+                categories: "Categories",
+                books: "Books",
+                languages: "Languages",
+                add_language: "Add Language",
+                id: "ID",
+                language_name: "Language",
+                timestamp: "Timestamp",
+                actions: "Actions",
+                edit: "Edit",
+                delete: "Delete",
+                loading: "Loading...",
+                optionenglish: "English",
+                optionhindi: "Hindi",
+                copyright: "All copyright reserved by Pustakam",
+            },
+            hi: {
+                logotxt: "पुस्तकम",
+                dashboard: "डैशबोर्ड",
+                authors: "लेखक",
+                categories: "श्रेणियाँ",
+                books: "पुस्तकें",
+                languages: "भाषाएँ",
+                add_language: "भाषा जोड़ें",
+                id: "आईडी",
+                language_name: "भाषा",
+                timestamp: "समय",
+                actions: "क्रियाएँ",
+                edit: "संपादित करें",
+                delete: "हटाएं",
+                loading: "लोड हो रहा है...",
+                optionenglish: "अंग्रेज़ी",
+                optionhindi: "हिंदी",
+                copyright: "सभी कॉपीराइट पुस्तकम द्वारा सुरक्षित हैं",
+            },
+        };
+
+        // Load translations
+        function loadTranslations(language) {
+            $("[data-translate]").each(function () {
+                const key = $(this).data("translate");
+                if (translations[language][key]) {
+                    $(this).text(translations[language][key]);
+                }
+            });
+        }
+
+        // Change language dropdown handler
+        $("#language-dropdown").on("change", function () {
+            const selectedLanguage = $(this).val();
+            localStorage.setItem("language", selectedLanguage);
+            loadTranslations(selectedLanguage);
+        });
+
+        // Apply saved language on page load
+        $(document).ready(() => {
+            const savedLanguage = localStorage.getItem("language") || "en";
+            $("#language-dropdown").val(savedLanguage);
+            loadTranslations(savedLanguage);
+        });
+
+
         // Fetch and populate languages in the table
         async function fetchLanguages() {
             const tableContainer = document.getElementById("table-container");
