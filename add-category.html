@@ -67,15 +67,15 @@
                         </a>
                     </li>
                     <li>
-                        <a href="./authers.html">
-                            <i class="fa-solid fa-users"></i>
-                            <p data-translate="authors">Authors</p>
-                        </a>
-                    </li>
-                    <li>
                         <a href="./categories.html">
                             <i class="fa fa-folder"></i>
                             <p data-translate="categories">Categories</p>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="./authers.html">
+                            <i class="fa-solid fa-users"></i>
+                            <p data-translate="authors">Authors</p>
                         </a>
                     </li>
                     <li><a href="./books.html"><i class="fa fa-book"></i>
@@ -119,7 +119,7 @@
                 <div class="container">
                     <h2 class="my-4" data-translate="add_category">Add Category</h2>
                     <form id="categoryForm">
-                        <div id="changeOrderParent" class="d-flex flex-column">
+                        <div id="changeOrderParent" class="d-flex">
                             <div class="form-group order-1">
                                 <label for="categoryEnglish" data-translate="category_english">Category Name
                                     (English)</label>
@@ -163,28 +163,31 @@
     <script>
         let changeOrderParentHandler = () => {
             let changeOrderParent = document.getElementById('changeOrderParent');
-            let english = changeOrderParent.querySelector('.order-1')
-            let hindi = changeOrderParent.querySelector('.order-2')
+
             let currLanguage = localStorage.getItem('language') || 'en'
 
             if (currLanguage === 'hi') {
-                english.classList.add('order-2')
-                hindi.classList.add('order-1')
-                english.classList.remove('order-1')
-                hindi.classList.remove('order-2')
+                changeOrderParent.style.flexDirection = 'column-reverse'
             } else {
-                english.classList.remove('order-2')
-                hindi.classList.remove('order-1')
-                english.classList.add('order-1')
-                hindi.classList.add('order-2')
+                changeOrderParent.style.flexDirection = 'column'
             }
         }
         changeOrderParentHandler()
         let activeListeners = []; // Track active event listeners
 
         // Language JSON and translation function
-        const englishJson = { "optionenglish": "English", "optionhindi": "Hindi", "logotxt": "Pustakam", "dashboard": "Dashboard", "authors": "Authors", "categories": "Categories", "checkout_details": "Checkout Details", "add_category": "Add Category", "category_english": "Category Name (English)", "category_hindi": "Category Name (Hindi)", "copyright": "All rights reserved by Pustakam" };
-        const hindiJson = { "optionenglish": "अंग्रेजी", "optionhindi": "हिंदी", "logotxt": "पुस्तकम", "dashboard": "डैशबोर्ड", "authors": "लेखक", "categories": "श्रेणियाँ", "checkout_details": "विवरण देखें", "add_category": "श्रेणी जोड़ें", "category_english": "श्रेणी का नाम (अंग्रेजी)", "category_hindi": "श्रेणी का नाम (हिंदी)", "copyright": "सभी अधिकार पुस्तकम द्वारा सुरक्षित" };
+        const englishJson = {
+            "optionenglish": "English", "optionhindi": "Hindi", "logotxt": "Pustakam", "dashboard": "Dashboard", "authors": "Authors", "categories": "Categories", "checkout_details": "Checkout Details", "add_category": "Add Category", "category_english": "Category Name (English)", "category_hindi": "Category Name (Hindi)", "copyright": "All rights reserved by Pustakam",
+            "books": "Books",
+            "languages": "Languages",
+
+        };
+        const hindiJson = {
+            "optionenglish": "अंग्रेजी", "optionhindi": "हिंदी", "logotxt": "पुस्तकम", "dashboard": "डैशबोर्ड", "authors": "लेखक", "categories": "श्रेणियाँ", "checkout_details": "विवरण देखें", "add_category": "श्रेणी जोड़ें", "category_english": "श्रेणी का नाम (अंग्रेजी)", "category_hindi": "श्रेणी का नाम (हिंदी)", "copyright": "सभी अधिकार पुस्तकम द्वारा सुरक्षित",
+            "books": "पुस्तकें",
+            "languages": "भाषाएँ",
+
+        };
 
         const fieldMappings = [
             { sourceFieldId: "categoryEnglish", targetFieldId: "categoryHindi", sourceLang: "en", targetLang: "hi" },

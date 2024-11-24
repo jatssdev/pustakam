@@ -69,15 +69,15 @@
                         </a>
                     </li>
                     <li>
-                        <a href="./authers.html">
-                            <i class="fa-solid fa-users"></i>
-                            <p data-translate="authors">Authors</p>
-                        </a>
-                    </li>
-                    <li>
                         <a href="./categories.html">
                             <i class="fa fa-folder"></i>
                             <p data-translate="categories">Categories</p>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="./authers.html">
+                            <i class="fa-solid fa-users"></i>
+                            <p data-translate="authors">Authors</p>
                         </a>
                     </li>
                     <li><a href="./books.html"><i class="fa fa-book"></i>
@@ -321,6 +321,16 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 
     <script>
+        // Field mappings for two-directional translation
+        const fieldMappingsEnToHi = [
+            { sourceFieldId: "bookNameEnglish", targetFieldId: "bookNameHindi", sourceLang: "en", targetLang: "hi" },
+            { sourceFieldId: "bookDetailsEnglish", targetFieldId: "bookDetailsHindi", sourceLang: "en", targetLang: "hi" },
+        ];
+
+        const fieldMappingsHiToEn = [
+            { sourceFieldId: "bookNameHindi", targetFieldId: "bookNameEnglish", sourceLang: "hi", targetLang: "en" },
+            { sourceFieldId: "bookDetailsHindi", targetFieldId: "bookDetailsEnglish", sourceLang: "hi", targetLang: "en" },
+        ];
         $(document).ready(function () {
             const translations = {
                 en: {
@@ -342,6 +352,9 @@
                     book_thumbnail: "Book Front Image",
                     book_file: "Book File (PDF or EPUB)",
                     add_button: "Add Book",
+                    "books": "Books",
+                    "languages": "Languages",
+
                 },
                 hi: {
                     logotxt: "पुस्तकम",
@@ -362,6 +375,9 @@
                     book_thumbnail: "पुस्तक का अग्रभाग छवि",
                     book_file: "पुस्तक फ़ाइल (पीडीएफ़ या ईपब)",
                     add_button: "पुस्तक जोड़ें",
+                    "books": "पुस्तकें",
+                    "languages": "भाषाएँ",
+
                 },
             };
 
@@ -376,17 +392,12 @@
                 });
             }
 
-            // Change language event
-            $("#language-dropdown").on("change", function () {
-                const selectedLanguage = $(this).val();
-                localStorage.setItem("language", selectedLanguage); // Save language preference
-                loadLanguage(selectedLanguage);
-            });
 
-            // Load saved language on page load
             const savedLanguage = localStorage.getItem("language") || "en";
-            $("#language-dropdown").val(savedLanguage);
-            loadLanguage(savedLanguage);
+            document.getElementById("language-dropdown").value = savedLanguage;
+            const fieldMappingsData = savedLanguage === "en" ? fieldMappingsEnToHi : fieldMappingsHiToEn;
+            updateLanguageHandlers(fieldMappingsData);
+            populateCategoryDropdown();
         });
 
         $(document).ready(function () {
@@ -536,94 +547,102 @@
             });
 
         });
-        document.addEventListener("DOMContentLoaded", () => {
-            const googleTranslateAPIKey = 'AIzaSyBlk5ZotGsdHMkbjPNarkmr9b3FV5n8vDo';
+        const googleTranslateAPIKey = 'AIzaSyBlk5ZotGsdHMkbjPNarkmr9b3FV5n8vDo';
 
+        // Function to call Google Translate API
+        async function translateText(text, sourceLang, targetLang) {
+            const url = `https://translation.googleapis.com/language/translate/v2?key=${googleTranslateAPIKey}`;
+            try {
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        q: text,
+                        source: sourceLang,
+                        target: targetLang,
+                        format: "text",
+                    }),
+                });
 
-            // Function to call Google Translate API
-            async function translateToHindi(text) {
-                const url = `https://translation.googleapis.com/language/translate/v2?key=${googleTranslateAPIKey}`;
-                try {
-                    const response = await fetch(url, {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify({
-                            q: text, // The text to translate
-                            source: "en", // Source language
-                            target: "hi", // Target language
-                            format: "text", // Plain text format
-                        }),
-                    });
-
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! Status: ${response.status}`);
-                    }
-
-                    const data = await response.json();
-                    if (
-                        data &&
-                        data.data &&
-                        data.data.translations &&
-                        data.data.translations[0]
-                    ) {
-                        return data.data.translations[0].translatedText;
-                    } else {
-                        throw new Error("Translation failed. Invalid response structure.");
-                    }
-                } catch (error) {
-                    console.error("Translation API error:", error);
-                    return text; // Fallback: return original text if translation fails
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
                 }
+
+                const data = await response.json();
+                return data?.data?.translations?.[0]?.translatedText || text;
+            } catch (error) {
+                console.error("Translation API error:", error);
+                return text; // Fallback to the original text
             }
+        }
 
-            // Debounce function to limit API calls
-            function debounce(func, delay) {
-                let debounceTimer;
-                return function (...args) {
-                    clearTimeout(debounceTimer);
-                    debounceTimer = setTimeout(() => func.apply(this, args), delay);
-                };
-            }
+        // Debounce function to limit API calls
+        function debounce(func, delay) {
+            let debounceTimer;
+            return function (...args) {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => func.apply(this, args), delay);
+            };
+        }
 
-            // Map English fields to their Hindi counterparts
-            const fieldMappings = [
-                { englishFieldId: "bookNameEnglish", hindiFieldId: "bookNameHindi" },
-                { englishFieldId: "bookDetailsEnglish", hindiFieldId: "bookDetailsHindi" },
-                { englishFieldId: "addAuthorEnglish", hindiFieldId: "addAuthorHindi" },
-                { englishFieldId: "addCategoryEnglish", hindiFieldId: "addCategoryHindi" },
-            ];
 
-            // Set up event listeners for auto-translation
-            fieldMappings.forEach(({ englishFieldId, hindiFieldId }) => {
-                const englishField = document.getElementById(englishFieldId);
-                const hindiField = document.getElementById(hindiFieldId);
 
-                if (englishField && hindiField) {
-                    englishField.addEventListener(
-                        "input",
-                        debounce(async function () {
-                            const translatedText = await translateToHindi(englishField.value);
-                            hindiField.value = translatedText;
-                        }, 500)
-                    );
+        let activeListeners = []; // Track active event listeners
+
+        // Function to update language handlers dynamically
+        function updateLanguageHandlers(languageData) {
+            // Remove all active listeners
+            activeListeners.forEach(({ element, handler }) => {
+                element.removeEventListener("input", handler);
+            });
+            activeListeners = []; // Reset the active listeners array
+
+            // Add new event listeners for the selected language
+            languageData.forEach(({ sourceFieldId, targetFieldId, sourceLang, targetLang }) => {
+                const sourceField = document.getElementById(sourceFieldId);
+                const targetField = document.getElementById(targetFieldId);
+
+                if (sourceField && targetField) {
+                    const handler = debounce(async function () {
+                        const translatedText = await translateText(sourceField.value, sourceLang, targetLang);
+                        targetField.value = translatedText;
+                    }, 500);
+
+                    sourceField.addEventListener("input", handler);
+                    activeListeners.push({ element: sourceField, handler });
                 }
             });
+        }
 
+        // Set initial translation direction (English to Hindi by default)
+        let currentDirection = "en-to-hi";
+        updateLanguageHandlers(fieldMappingsEnToHi);
 
+        // Dropdown for switching translation direction
+        document.getElementById("language-dropdown").addEventListener("change", function () {
+            const selectedLanguage = this.value;
 
-
-
-
-
-
-
-
-
-
-            // load 
+            // Update language handlers based on selection
+            if (selectedLanguage === "en" && currentDirection !== "en-to-hi") {
+                updateLanguageHandlers(fieldMappingsEnToHi);
+                currentDirection = "en-to-hi";
+            } else if (selectedLanguage === "hi" && currentDirection !== "hi-to-en") {
+                updateLanguageHandlers(fieldMappingsHiToEn);
+                currentDirection = "hi-to-en";
+            }
         });
+
+        // Load initial language and populate categories/authors
+        document.addEventListener("DOMContentLoaded", () => {
+            const savedLanguage = localStorage.getItem("language") || "en";
+            document.getElementById("language-dropdown").value = savedLanguage;
+            const fieldMappingsData = savedLanguage === "en" ? fieldMappingsEnToHi : fieldMappingsHiToEn;
+            updateLanguageHandlers(fieldMappingsData);
+            populateCategoryDropdown();
+        });
+
         // Function to show the modal
         function addCategoryAndAuther(event, type) {
             event.preventDefault(); // Prevent form submission or default behavior

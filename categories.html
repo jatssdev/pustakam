@@ -71,15 +71,15 @@
                         </a>
                     </li>
                     <li>
-                        <a href="./authers.html">
-                            <i class="fa-solid fa-users"></i>
-                            <p data-translate="authors">Authors</p>
-                        </a>
-                    </li>
-                    <li class="active">
                         <a href="./categories.html">
                             <i class="fa fa-folder"></i>
                             <p data-translate="categories">Categories</p>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="./authers.html">
+                            <i class="fa-solid fa-users"></i>
+                            <p data-translate="authors">Authors</p>
                         </a>
                     </li>
                     <li><a href="./books.html"><i class="fa fa-book"></i>
@@ -174,7 +174,8 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editCategoryModalLabel">Edit Category</h5>
+                    <h5 class="modal-title" id="editCategoryModalLabel" data-translate="edit_category">Edit Category
+                    </h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -191,7 +192,8 @@
                             <label for="editCategoryHindi" data-translate="category_hindi">Category Name (Hindi)</label>
                             <input type="text" id="editCategoryHindi" class="form-control" required>
                         </div>
-                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                        <button type="submit" class="btn btn-primary" data-translate="save_changes">Save
+                            Changes</button>
                     </form>
                 </div>
             </div>
@@ -223,6 +225,9 @@
             "copyright": "All copyright reserved by pustakam",
             "edit": "Edit",
             "delete": "delete",
+            "languages": "Languages",
+            "edit_category": "Edit Category",
+            "save_changes": "Save Changes",
         };
 
         let hindiJson = {
@@ -245,6 +250,9 @@
             "edit": "बदलें",
             "add_category": "श्रेणी जोड़ें",
             "delete": "हटाएँ",
+            "languages": "भाषाएँ",
+            "edit_category": "श्रेणी संपादित करें",
+            "save_changes": "परिवर्तनों को सुरक्षित करें",
         };
 
         function loadLanguage(language) {
@@ -280,10 +288,10 @@
                     let tableBody = document.getElementById('category-table-body');
                     tableBody.innerHTML = '';
 
-                    categories.forEach(category => {
+                    categories.forEach((category, i) => {
                         let row = `
                             <tr id="category-${category.id}">
-                                <td>${category.id}</td>
+                                <td>${i + 1}</td>
                                 <td>${category.category_english}</td>
                                 <td>${category.category_hindi}</td>
                                 <td>

@@ -37,3 +37,18 @@ const getBooks = async () => {
 
 // Call the function to fetch categories
 getBooks();
+const getLanguages = async () => {
+    try {
+        let response = await fetch('https://pustakam.pythonanywhere.com/languages/');
+        let data = await response.json();
+        let lengthOfCategories = data.data.length;
+
+        // Assuming you have an element with ID `dashboardCategoriesTotal` to display the count
+        document.getElementById('dashboardlanguagesTotal').innerHTML = lengthOfCategories;
+    } catch (error) {
+        console.error('Error fetching categories:', error);
+    }
+}
+
+// Call the function to fetch categories
+getLanguages();

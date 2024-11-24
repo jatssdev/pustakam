@@ -66,15 +66,15 @@
                         </a>
                     </li>
                     <li>
-                        <a href="./authers.html">
-                            <i class="fa-solid fa-users"></i>
-                            <p data-translate="authors">Authors</p>
-                        </a>
-                    </li>
-                    <li>
                         <a href="./categories.html">
                             <i class="fa fa-folder"></i>
                             <p data-translate="categories">Categories</p>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="./authers.html">
+                            <i class="fa-solid fa-users"></i>
+                            <p data-translate="authors">Authors</p>
                         </a>
                     </li>
                     <li><a href="./books.html"><i class="fa fa-book"></i>
@@ -118,7 +118,7 @@
                 <div class="container">
                     <h2 class="my-4" data-translate="add_author">Add Author</h2>
                     <form id="authorForm">
-                        <div id="changeOrderParent" class="d-flex flex-column">
+                        <div id="changeOrderParent" class="d-flex">
                             <div class="form-group order-1">
                                 <label for="authorEnglish" data-translate="author_english">Author Name (English)</label>
                                 <input type="text" id="authorEnglish" class="form-control"
@@ -132,7 +132,7 @@
                         </div>
                         <div class="form-group">
                             <label for="categorySelect" data-translate="category">Select Category</label>
-                            <select id="categorySelect" class="form-control" required>
+                            <select id="categorySelect" class="form-control">
                                 <option value="" disabled selected>Select a category</option>
                             </select>
                         </div>
@@ -166,26 +166,29 @@
     <script>
         let changeOrderParentHandler = () => {
             let changeOrderParent = document.getElementById('changeOrderParent');
-            let english = changeOrderParent.querySelector('.order-1')
-            let hindi = changeOrderParent.querySelector('.order-2')
+
             let currLanguage = localStorage.getItem('language') || 'en'
 
             if (currLanguage === 'hi') {
-                english.classList.add('order-2')
-                hindi.classList.add('order-1')
-                english.classList.remove('order-1')
-                hindi.classList.remove('order-2')
+                changeOrderParent.style.flexDirection = 'column-reverse'
             } else {
-                english.classList.remove('order-2')
-                hindi.classList.remove('order-1')
-                english.classList.add('order-1')
-                hindi.classList.add('order-2')
+                changeOrderParent.style.flexDirection = 'column'
             }
         }
         changeOrderParentHandler()
         // Language JSON and translation function
-        let englishJson = { "optionenglish": "English", "optionhindi": "Hindi", "logotxt": "Pustakam", "dashboard": "Dashboard", "authors": "Authors", "categories": "Categories", "checkout_details": "Checkout Details", "add_author": "Add Author", "author_english": "Author Name (English)", "author_hindi": "Author Name (Hindi)", "category": "Select Category", "copyright": "All rights reserved by Pustakam" };
-        let hindiJson = { "optionenglish": "अंग्रेजी", "optionhindi": "हिंदी", "logotxt": "पुस्तकम", "dashboard": "डैशबोर्ड", "authors": "लेखक", "categories": "श्रेणियाँ", "checkout_details": "विवरण देखें", "add_author": "लेखक जोड़ें", "author_english": "लेखक का नाम (अंग्रेजी)", "author_hindi": "लेखक का नाम (हिंदी)", "category": "श्रेणी चुनें", "copyright": "सभी अधिकार पुस्तकम द्वारा सुरक्षित" };
+        let englishJson = {
+            "optionenglish": "English", "optionhindi": "Hindi", "logotxt": "Pustakam", "dashboard": "Dashboard", "authors": "Authors", "categories": "Categories", "checkout_details": "Checkout Details", "add_author": "Add Author", "author_english": "Author Name (English)", "author_hindi": "Author Name (Hindi)", "category": "Select Category", "copyright": "All rights reserved by Pustakam",
+            "books": "Books",
+            "languages": "Languages",
+
+        };
+        let hindiJson = {
+            "optionenglish": "अंग्रेजी", "optionhindi": "हिंदी", "logotxt": "पुस्तकम", "dashboard": "डैशबोर्ड", "authors": "लेखक", "categories": "श्रेणियाँ", "checkout_details": "विवरण देखें", "add_author": "लेखक जोड़ें", "author_english": "लेखक का नाम (अंग्रेजी)", "author_hindi": "लेखक का नाम (हिंदी)", "category": "श्रेणी चुनें", "copyright": "सभी अधिकार पुस्तकम द्वारा सुरक्षित",
+            "books": "पुस्तकें",
+            "languages": "भाषाएँ",
+
+        };
         const fieldMappings = [
             { sourceFieldId: "authorEnglish", targetFieldId: "authorHindi", sourceLang: "en", targetLang: "hi" },
             // Add more mappings as needed
@@ -204,12 +207,27 @@
 
         document.getElementById('language-dropdown').addEventListener('change', function () {
             const selectedLanguage = this.value;
+
+            // Set the selected language in localStorage
             localStorage.setItem('language', selectedLanguage);
+
+            // Load the selected language
             loadLanguage(selectedLanguage);
+
+            // Get the updated language from localStorage
             const language = localStorage.getItem('language') || 'en';
-            let fieldMappingsData = language === 'en' ? fieldMappings : fieldMappingsHindi
-            languagesChangHandler(fieldMappingsData)
-            changeOrderParentHandler()
+
+            // Decide which field mappings to use based on the selected language
+            let fieldMappingsData = language === 'en' ? fieldMappings : fieldMappingsHindi;
+
+            // Handle language change with the field mappings
+
+            // Ensure changeOrderParentHandler runs after other operations
+            languagesChangHandler(fieldMappingsData);
+            setTimeout(() => {
+                changeOrderParentHandler();
+
+            }, 0);
         });
 
         // Map English fields to their Hindi counterparts

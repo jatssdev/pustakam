@@ -71,15 +71,15 @@
                         </a>
                     </li>
                     <li>
-                        <a href="./authers.html">
-                            <i class="fa-solid fa-users"></i>
-                            <p data-translate="authors">Authors</p>
-                        </a>
-                    </li>
-                    <li>
                         <a href="./categories.html">
                             <i class="fa fa-folder"></i>
                             <p data-translate="categories">Categories</p>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="./authers.html">
+                            <i class="fa-solid fa-users"></i>
+                            <p data-translate="authors">Authors</p>
                         </a>
                     </li>
                     <li><a href="./books.html"><i class="fa fa-book"></i>
@@ -206,7 +206,8 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editLanguageModalLabel">Edit Language</h5>
+                    <h5 class="modal-title" id="editLanguageModalLabel" data-translate="edit_language">Edit Language
+                    </h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -218,7 +219,8 @@
                             <label for="editLanguageName" data-translate="language_name">Language Name</label>
                             <input type="text" id="editLanguageName" class="form-control" required>
                         </div>
-                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                        <button type="submit" class="btn btn-primary" data-translate="save_changes">Save
+                            Changes</button>
                     </form>
                 </div>
             </div>
@@ -252,6 +254,10 @@
                 optionenglish: "English",
                 optionhindi: "Hindi",
                 copyright: "All copyright reserved by Pustakam",
+                languages: "Languages",
+                edit_languages: "Edit Language",
+                save_changes: "Save Changes",
+
             },
             hi: {
                 logotxt: "पुस्तकम",
@@ -265,12 +271,15 @@
                 language_name: "भाषा",
                 timestamp: "समय",
                 actions: "क्रियाएँ",
-                edit: "संपादित करें",
+                edit: "बदलें",
                 delete: "हटाएं",
                 loading: "लोड हो रहा है...",
                 optionenglish: "अंग्रेज़ी",
                 optionhindi: "हिंदी",
                 copyright: "सभी कॉपीराइट पुस्तकम द्वारा सुरक्षित हैं",
+                languages: "भाषाएँ",
+                edit_language: "भाषा संपादित करें",
+                save_changes: "परिवर्तनों को सुरक्षित करें",
             },
         };
 
@@ -314,10 +323,10 @@
                 const result = await response.json();
 
                 if (result.status === "success" && result.data) {
-                    result.data.forEach((language) => {
+                    result.data.forEach((language, i) => {
                         const row = `
                     <tr id="language-${language.id}">
-                        <td>${language.id}</td>
+                        <td>${i + 1}</td>
                         <td>${language.languages}</td>
                         <td>${language.timestamp}</td>
                         <td>
@@ -327,7 +336,11 @@
                     </tr>
                 `;
                         tableBody.insertAdjacentHTML("beforeend", row);
+
                     });
+
+                    const language = localStorage.getItem('language') || 'en';
+                    loadTranslations(language);
                     tableContainer.style.display = "block";
                 } else {
                     tableBody.innerHTML = `<tr><td colspan="4" class="text-center">No languages found.</td></tr>`;
