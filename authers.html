@@ -76,7 +76,7 @@
                             <p data-translate="categories">Categories</p>
                         </a>
                     </li>
-                    <li>
+                    <li class="active">
                         <a href="./authers.html">
                             <i class="fa-solid fa-users"></i>
                             <p data-translate="authors">Authors</p>
@@ -91,7 +91,12 @@
                             <p data-translate="languages">Languages</p>
                         </a>
                     </li>
-
+                    <li>
+                        <a onclick="Logout()">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                            <p data-translate="logout">Logout</p>
+                        </a>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -207,6 +212,10 @@
     <script src="./assets/js/plugins/perfect-scrollbar.jquery.min.js"></script>
     <script src="./assets/js/paper-dashboard.min.js?v=2.0.1" type="text/javascript"></script>
     <script>
+        function Logout() {
+            localStorage.removeItem('loggedadmin')
+            location.href = '/login.html'
+        }
         let englishJson = {
             "logotxt": "Pustakam",
             "dashboard": "Dashboard",
@@ -232,6 +241,7 @@
             "books": "Books",
             "edit_auther": "Edit Author",
             "save_changes": "Save Changes",
+            "logout": "Logout",
 
 
         };
@@ -262,6 +272,7 @@
 
             "edit_auther": "लेखक संपादित करें",
             "save_changes": "परिवर्तनों को सुरक्षित करें",
+            "logout": "लॉग आउट",
 
         };
 

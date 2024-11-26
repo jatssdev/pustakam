@@ -92,6 +92,12 @@
                             <p data-translate="languages">Languages</p>
                         </a>
                     </li>
+                    <li>
+                        <a onclick="Logout()">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                            <p data-translate="logout">Logout</p>
+                        </a>
+                    </li>
 
                 </ul>
             </div>
@@ -250,6 +256,7 @@
     </div>
 
     <!-- Core JS Files -->
+    <script src="./assets/js/apis/auth.js"></script>
     <script src="./assets/js/core/jquery.min.js"></script>
     <script src="./assets/js/core/popper.min.js"></script>
     <script src="./assets/js/core/bootstrap.min.js"></script>
@@ -261,6 +268,10 @@
     <script src="./assets/demo/demo.js"></script>
     <script src="./assets/js/apis/dashboard.js"></script>
     <script>
+        function Logout() {
+            localStorage.removeItem('loggedadmin')
+            location.href = '/login.html'
+        }
         let englishJson = {
             "optionenglish": "English",
             "optionhindi": "Hindi",
@@ -271,7 +282,8 @@
             "checkout_details": "Checkout Details",
             "copyright": "All copyright reserved by pustakam",
             "books": "Books",
-            "languages": "Languages"
+            "languages": "Languages",
+            "logout": "Logout",
         };
 
         let hindiJson = {
@@ -284,7 +296,8 @@
             "checkout_details": "विवरण देखें",
             "copyright": "सभी कॉपीराइट पुस्तकम द्वारा सुरक्षित",
             "books": "पुस्तकें",
-            "languages": "भाषाएँ"
+            "languages": "भाषाएँ",
+            "logout": "लॉग आउट",
 
         };
 

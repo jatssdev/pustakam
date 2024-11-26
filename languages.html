@@ -91,6 +91,12 @@
                             <p data-translate="languages">Languages</p>
                         </a>
                     </li>
+                    <li>
+                        <a onclick="Logout()">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                            <p data-translate="logout">Logout</p>
+                        </a>
+                    </li>
 
                 </ul>
             </div>
@@ -234,7 +240,10 @@
     <script src="./assets/js/plugins/perfect-scrollbar.jquery.min.js"></script>
     <script src="./assets/js/paper-dashboard.min.js?v=2.0.1" type="text/javascript"></script>
     <script>
-
+        function Logout() {
+            localStorage.removeItem('loggedadmin')
+            location.href = '/login.html'
+        }
         const translations = {
             en: {
                 logotxt: "Pustakam",
@@ -257,6 +266,7 @@
                 languages: "Languages",
                 edit_languages: "Edit Language",
                 save_changes: "Save Changes",
+                "logout": "Logout",
 
             },
             hi: {
@@ -280,6 +290,7 @@
                 languages: "भाषाएँ",
                 edit_language: "भाषा संपादित करें",
                 save_changes: "परिवर्तनों को सुरक्षित करें",
+                "logout": "लॉग आउट",
             },
         };
 

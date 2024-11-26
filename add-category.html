@@ -87,6 +87,12 @@
                             <p data-translate="languages">Languages</p>
                         </a>
                     </li>
+                    <li>
+                        <a onclick="Logout()">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                            <p data-translate="logout">Logout</p>
+                        </a>
+                    </li>
 
                 </ul>
             </div>
@@ -161,6 +167,10 @@
     <script src="./assets/js/core/popper.min.js"></script>
     <script src="./assets/js/core/bootstrap.min.js"></script>
     <script>
+        function Logout() {
+            localStorage.removeItem('loggedadmin')
+            location.href = '/login.html'
+        }
         let changeOrderParentHandler = () => {
             let changeOrderParent = document.getElementById('changeOrderParent');
 
@@ -180,12 +190,14 @@
             "optionenglish": "English", "optionhindi": "Hindi", "logotxt": "Pustakam", "dashboard": "Dashboard", "authors": "Authors", "categories": "Categories", "checkout_details": "Checkout Details", "add_category": "Add Category", "category_english": "Category Name (English)", "category_hindi": "Category Name (Hindi)", "copyright": "All rights reserved by Pustakam",
             "books": "Books",
             "languages": "Languages",
+            "logout": "Logout",
 
         };
         const hindiJson = {
             "optionenglish": "अंग्रेजी", "optionhindi": "हिंदी", "logotxt": "पुस्तकम", "dashboard": "डैशबोर्ड", "authors": "लेखक", "categories": "श्रेणियाँ", "checkout_details": "विवरण देखें", "add_category": "श्रेणी जोड़ें", "category_english": "श्रेणी का नाम (अंग्रेजी)", "category_hindi": "श्रेणी का नाम (हिंदी)", "copyright": "सभी अधिकार पुस्तकम द्वारा सुरक्षित",
             "books": "पुस्तकें",
             "languages": "भाषाएँ",
+            "logout": "लॉग आउट",
 
         };
 

@@ -70,7 +70,7 @@
                             <p data-translate="dashboard">Dashboard</p>
                         </a>
                     </li>
-                    <li>
+                    <li class="active">
                         <a href="./categories.html">
                             <i class="fa fa-folder"></i>
                             <p data-translate="categories">Categories</p>
@@ -89,6 +89,12 @@
                         <a href="./languages.html">
                             <i class="fa fa-language"></i>
                             <p data-translate="languages">Languages</p>
+                        </a>
+                    </li>
+                    <li>
+                        <a onclick="Logout()">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                            <p data-translate="logout">Logout</p>
                         </a>
                     </li>
 
@@ -206,6 +212,10 @@
     <script src="./assets/js/plugins/perfect-scrollbar.jquery.min.js"></script>
     <script src="./assets/js/paper-dashboard.min.js?v=2.0.1" type="text/javascript"></script>
     <script>
+        function Logout() {
+            localStorage.removeItem('loggedadmin')
+            location.href = '/login.html'
+        }
         let englishJson = {
             "logotxt": "Pustakam",
             "dashboard": "Dashboard",
@@ -228,6 +238,7 @@
             "languages": "Languages",
             "edit_category": "Edit Category",
             "save_changes": "Save Changes",
+            "logout": "Logout",
         };
 
         let hindiJson = {
@@ -253,6 +264,7 @@
             "languages": "भाषाएँ",
             "edit_category": "श्रेणी संपादित करें",
             "save_changes": "परिवर्तनों को सुरक्षित करें",
+            "logout": "लॉग आउट",
         };
 
         function loadLanguage(language) {

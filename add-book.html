@@ -89,6 +89,12 @@
                             <p data-translate="languages">Languages</p>
                         </a>
                     </li>
+                    <li>
+                        <a onclick="Logout()">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                            <p data-translate="logout">Logout</p>
+                        </a>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -326,6 +332,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 
     <script>
+        function Logout() {
+            localStorage.removeItem('loggedadmin')
+            location.href = '/login.html'
+        }
         // Update field order based on selected language
         function changeOrderParentHandler() {
             const changeOrderParents = document.querySelectorAll('.changeOrderParent'); // Select all elements with the class
@@ -378,7 +388,8 @@
                 category_hindi: "Category Name (Hindi)",
                 author_english: "Author Name (English)",
                 author_hindi: "Author Name (Hindi)",
-                use_org_price: "Use Original Price"
+                use_org_price: "Use Original Price",
+                "logout": "Logout",
 
             },
             hi: {
@@ -409,7 +420,8 @@
                 category_hindi: "श्रेणी का नाम (हिंदी)",
                 author_english: "लेखक का नाम (अंग्रेज़ी)",
                 author_hindi: "लेखक का नाम (हिंदी)",
-                use_org_price: "मूल मूल्य का उपयोग करें"
+                use_org_price: "मूल मूल्य का उपयोग करें",
+                "logout": "लॉग आउट",
             }
         };
 

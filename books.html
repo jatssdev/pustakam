@@ -87,6 +87,12 @@
                             <p data-translate="languages">Languages</p>
                         </a>
                     </li>
+                    <li>
+                        <a onclick="Logout()">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                            <p data-translate="logout">Logout</p>
+                        </a>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -219,7 +225,10 @@
         crossorigin="anonymous"></script>
 
     <script>
-
+        function Logout() {
+            localStorage.removeItem('loggedadmin')
+            location.href = '/login.html'
+        }
         // Language translations
         const translations = {
             en: {
@@ -243,7 +252,8 @@
                 edit: "Edit",
                 add_book: "Add Book",
                 languages: "Languages",
-                view: "View"
+                view: "View",
+                "logout": "Logout",
             },
             hi: {
                 logotxt: "पुस्तकम",
@@ -266,7 +276,8 @@
                 edit: "बदलें",
                 add_book: "पुस्तक जोड़ें",
                 languages: "भाषाएँ",
-                view: "देखें"
+                view: "देखें",
+                "logout": "लॉग आउट",
             }
         };
 
