@@ -155,14 +155,17 @@
                                 <label for="bookNameEnglish" data-translate="book_name_english">Book Name (in
                                     English)</label>
                                 <input type="text" id="bookNameEnglish" class="form-control"
-                                    placeholder="Enter book name in English" required>
+                                    placeholder="Enter book name in English"
+                                    data-translate="placeholder_book_name_english" required>
                             </div>
 
                             <!-- Book Name (Hindi) -->
                             <div class="form-group">
-                                <label for="bookNameHindi" data-translate="book_name_hindi">Book Name (in Hindi)</label>
+                                <label for="bookNameHindi" data-translate="book_name_hindi"
+                                    data-translate="placeholder_book_name_hindi">Book Name (in Hindi)</label>
                                 <input type="text" id="bookNameHindi" class="form-control"
-                                    placeholder="Enter book name in Hindi" required>
+                                    placeholder="Enter book name in Hindi" data-translate="placeholder_book_name_hindi"
+                                    required>
                             </div>
                         </div>
 
@@ -190,24 +193,25 @@
                             <div class="form-group">
                                 <label for="bookDetailsEnglish" data-translate="book_details_english">Book Details (in
                                     English)</label>
-                                <textarea id="bookDetailsEnglish" class="form-control"
-                                    placeholder="Enter book details in English" required></textarea>
+                                <textarea data-translate="placeholder_book_details_english" id="bookDetailsEnglish"
+                                    class="form-control" placeholder="Enter book details in English"
+                                    required></textarea>
                             </div>
 
                             <!-- Book Details (Hindi) -->
                             <div class="form-group">
                                 <label for="bookDetailsHindi" data-translate="book_details_hindi">Book Details (in
                                     Hindi)</label>
-                                <textarea id="bookDetailsHindi" class="form-control"
-                                    placeholder="Enter book details in Hindi" required></textarea>
+                                <textarea data-translate="placeholder_book_details_hindi" id="bookDetailsHindi"
+                                    class="form-control" placeholder="Enter book details in Hindi" required></textarea>
                             </div>
                         </div>
 
                         <!-- Book Price -->
                         <div class="form-group">
                             <label for="bookPrice" data-translate="book_price">Book Price</label>
-                            <input type="number" id="bookPrice" class="form-control" placeholder="Enter book price"
-                                required>
+                            <input data-translate="placeholder_book_price" type="number" id="bookPrice"
+                                class="form-control" placeholder="Enter book price" required>
                         </div>
 
                         <!-- Discounted Price -->
@@ -215,8 +219,9 @@
                             <label for="bookPriceDiscount" data-translate="book_price_discount">Book Discounted
                                 Price</label>
                             <div class="input-group">
-                                <input type="number" id="bookPriceDiscount" class="form-control"
-                                    placeholder="Enter discounted price" required>
+                                <input data-translate="placeholder_discounted_price" type="number"
+                                    id="bookPriceDiscount" class="form-control" placeholder="Enter discounted price"
+                                    required>
                                 <div class="input-group-append">
                                     <div class="input-group-text">
                                         <input type="checkbox" id="useOriginalPrice">
@@ -231,8 +236,8 @@
                         <div class="form-group">
                             <label for="bookDemoPercent" data-translate="book_free_demo">Free Demo Pages
                                 Percentage</label>
-                            <input type="number" id="bookDemoPercent" class="form-control"
-                                placeholder="Enter percentage (0-100)" min="0" max="100" required>
+                            <input data-translate="placeholder_free_demo" type="number" id="bookDemoPercent"
+                                class="form-control" placeholder="Enter percentage (0-100)" min="0" max="100" required>
                         </div>
 
                         <!-- Submit Button -->
@@ -334,6 +339,19 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 
     <script>
+        let initSelect2 = (placeH) => {
+            $('#authorSelect, #categorySelect, #languageSelect').select2({
+                placeholder: placeH,
+                allowClear: true,
+                width: '100%',
+            });
+        }
+
+
+        let selectMenuPlaceHolder = {
+            en: "Select an option",
+            hi: "विकल्प चुनें",
+        }
         function Logout() {
             localStorage.removeItem('loggedadmin')
             location.href = '/login.html'
@@ -342,6 +360,9 @@
         function changeOrderParentHandler() {
             const changeOrderParents = document.querySelectorAll('.changeOrderParent'); // Select all elements with the class
             const currLanguage = localStorage.getItem('language') || 'en';
+
+            let placeH = currLanguage === 'en' ? selectMenuPlaceHolder.en : selectMenuPlaceHolder.hi
+            initSelect2(placeH)
 
             // Loop through each element and set its flexDirection
             changeOrderParents.forEach(changeOrderParent => {
@@ -385,14 +406,15 @@
                 add_button: "Add Book",
                 optionenglish: "English",
                 optionhindi: "Hindi",
-                copyright: "All rights reserved by Pustakam",
-                category_english: "Category Name (English)",
-                category_hindi: "Category Name (Hindi)",
-                author_english: "Author Name (English)",
-                author_hindi: "Author Name (Hindi)",
                 use_org_price: "Use Original Price",
-                "logout": "Logout",
-
+                logout: "Logout",
+                placeholder_book_name_english: "Enter book name in English",
+                placeholder_book_name_hindi: "Enter book name in Hindi",
+                placeholder_book_details_english: "Enter book details in English",
+                placeholder_book_details_hindi: "Enter book details in Hindi",
+                placeholder_book_price: "Enter book price",
+                placeholder_discounted_price: "Enter discounted price",
+                placeholder_free_demo: "Enter percentage (0-100)",
             },
             hi: {
                 logotxt: "पुस्तकम",
@@ -417,23 +439,30 @@
                 add_button: "पुस्तक जोड़ें",
                 optionenglish: "अंग्रेजी",
                 optionhindi: "हिंदी",
-                copyright: "सभी अधिकार पुस्तकम द्वारा सुरक्षित",
-                category_english: "श्रेणी का नाम (अंग्रेज़ी)",
-                category_hindi: "श्रेणी का नाम (हिंदी)",
-                author_english: "लेखक का नाम (अंग्रेज़ी)",
-                author_hindi: "लेखक का नाम (हिंदी)",
                 use_org_price: "मूल मूल्य का उपयोग करें",
-                "logout": "लॉग आउट",
-            }
+                logout: "लॉग आउट",
+                placeholder_book_name_english: "अंग्रेज़ी में पुस्तक का नाम दर्ज करें",
+                placeholder_book_name_hindi: "हिंदी में पुस्तक का नाम दर्ज करें",
+                placeholder_book_details_english: "अंग्रेज़ी में पुस्तक विवरण दर्ज करें",
+                placeholder_book_details_hindi: "हिंदी में पुस्तक विवरण दर्ज करें",
+                placeholder_book_price: "पुस्तक मूल्य दर्ज करें",
+                placeholder_discounted_price: "छूट मूल्य दर्ज करें",
+                placeholder_free_demo: "प्रतिशत दर्ज करें (0-100)",
+            },
         };
 
 
-        // Update dynamic translations
         function loadLanguage(language) {
             $("[data-translate]").each(function () {
                 const key = $(this).data("translate");
                 const translation = translations[language]?.[key];
-                if (translation) $(this).text(translation);
+                if (translation) {
+                    if ($(this).is("input") || $(this).is("textarea")) {
+                        $(this).attr("placeholder", translation); // Update placeholder
+                    } else {
+                        $(this).text(translation); // Update text
+                    }
+                }
             });
         }
 
@@ -515,6 +544,9 @@
         // Initialize on document ready
         $(document).ready(() => {
             const savedLanguage = localStorage.getItem("language") || "en";
+            let placeH = savedLanguage === 'en' ? selectMenuPlaceHolder.en : selectMenuPlaceHolder.hi
+            initSelect2(placeH)
+
             $("#language-dropdown").val(savedLanguage);
 
             loadLanguage(savedLanguage);
@@ -533,13 +565,100 @@
                 updateFieldTranslationHandlers(newFieldMappings);
                 changeOrderParentHandler();
             });
-        });
-        $(document).ready(function () {
-            $('#authorSelect, #categorySelect, #languageSelect').select2({
-                placeholder: "Select options",
-                allowClear: true,
-                width: '100%',
+            // Handle book front image file selection
+            $("#bookFrontImage").on("change", function () {
+                const fileName = $(this).prop("files")[0]?.name || "Choose file";
+                $(this).next(".custom-file-label").text(fileName);
             });
+
+            // Handle book file (EPUB/PDF) selection
+            $("#bookFile").on("change", function () {
+                const fileName = $(this).prop("files")[0]?.name || "Choose file";
+                $(this).next(".custom-file-label").text(fileName);
+            });
+        });
+
+
+
+        // Submit New Book Functionality
+        $("#bookForm").on("submit", async function (event) {
+            event.preventDefault();
+
+            const formData = new FormData(this);
+
+            // Handle multi-select fields: Convert selected options to integers
+            formData.set(
+                "author_data",
+                $("#authorSelect")
+                    .val()
+                    .map(val => parseInt(val, 10))
+            );
+            formData.set(
+                "category_data",
+                $("#categorySelect")
+                    .val()
+                    .map(val => parseInt(val, 10))
+            );
+            formData.set(
+                "language_data",
+                $("#languageSelect")
+                    .val()
+                    .map(val => parseInt(val, 10))
+            );
+
+            // Include free demo percentage
+            formData.set("book_free_demo", $("#bookDemoPercent").val());
+
+            // Include book name and details
+            formData.set("book_name_english", $("#bookNameEnglish").val());
+            formData.set("book_name_hindi", $("#bookNameHindi").val());
+            formData.set("book_details_english", $("#bookDetailsEnglish").val());
+            formData.set("book_details_hindi", $("#bookDetailsHindi").val());
+
+            // Include book prices
+            formData.set("book_price", $("#bookPrice").val());
+            formData.set("book_price_discount", $("#bookPriceDiscount").val());
+
+            // Include book files (image and PDF/EPUB)
+            const bookFrontImage = $("#bookFrontImage")[0].files[0];
+            const bookFile = $("#bookFile")[0].files[0];
+
+            if (bookFrontImage) {
+                formData.set("book_front_image", bookFrontImage);
+            }
+            if (bookFile) {
+                formData.set("book_file", bookFile);
+            }
+
+            try {
+                const response = await fetch(
+                    "https://pustakam.pythonanywhere.com/books/",
+                    {
+                        method: "POST",
+                        body: formData,
+                    }
+                );
+
+                const result = await response.json();
+
+                const message = response.ok
+                    ? `<div class="alert alert-success">Book added successfully!</div>`
+                    : `<div class="alert alert-danger">Error: ${result.message || "Failed to add book"}</div>`;
+
+                $("#message").html(message);
+
+                if (response.ok) {
+                    $("#bookForm")[0].reset(); // Reset the form on success
+                }
+
+                setTimeout(() => $("#message").html(""), 3000); // Clear the message after 3 seconds
+            } catch (error) {
+                console.error("Error submitting form:", error);
+                $("#message").html(
+                    '<div class="alert alert-danger">An error occurred. Please try again.</div>'
+                );
+                setTimeout(() => $("#message").html(""), 3000);
+            }
         });
 
     </script>

@@ -178,14 +178,14 @@
 
                 const data = await response.json();
 
-                if (response.ok) {
+                if (data.status == 'success') {
                     messageElement.style.color = 'green';
                     messageElement.textContent = '✅ Login successful!';
                     localStorage.setItem('loggedadmin', JSON.stringify({ ...response.data, isAuth: true }))
                     location.href = '/'
                 } else {
                     messageElement.style.color = 'red';
-                    messageElement.textContent = `❌ Login failed: ${data.message || 'Invalid credentials'}`;
+                    messageElement.textContent = `❌ Login failed: ${data.status || 'Invalid credentials'}`;
                 }
             } catch (error) {
                 messageElement.style.color = 'red';
