@@ -129,8 +129,8 @@
                     <form id="languageForm">
                         <div class="form-group">
                             <label for="languageName" data-translate="language_name">Language Name</label>
-                            <input type="text" id="languageName" class="form-control" placeholder="Enter language name"
-                                required>
+                            <input pattern="[a-zA-Z\s]+" type="text" id="languageName" class="form-control"
+                                placeholder="Enter language name" required>
                         </div>
                         <button type="submit" class="btn btn-primary" data-translate="add_language">Add
                             Language</button>
@@ -263,6 +263,18 @@
             setTimeout(() => {
                 document.getElementById("message").innerHTML = "";
             }, 3000);
+        });
+        document.getElementById("languageName").addEventListener("input", function (event) {
+            // Get the current value
+            const currentValue = this.value;
+
+            // Allow only letters (a-z, A-Z) and spaces
+            const validValue = currentValue.replace(/[^a-zA-Z\s]/g, "");
+
+            // Set the corrected value back to the input
+            if (currentValue !== validValue) {
+                this.value = validValue;
+            }
         });
 
     </script>

@@ -266,7 +266,7 @@
                 optionhindi: "Hindi",
                 copyright: "All copyright reserved by Pustakam",
                 languages: "Languages",
-                edit_languages: "Edit Language",
+                edit_language: "Edit Language",
                 save_changes: "Save Changes",
                 "logout": "Logout",
 
@@ -433,7 +433,18 @@
 
                     if (response.ok) {
                         alert("Language deleted successfully!");
+
+                        // Remove the row from the DOM
                         document.getElementById(`language-${id}`).remove();
+
+                        // Recalculate and update the ID column
+                        const rows = document.querySelectorAll("#language-table-body tr");
+                        rows.forEach((row, index) => {
+                            const idCell = row.querySelector("td:first-child"); // First cell in each row
+                            if (idCell) {
+                                idCell.textContent = index + 1; // Update index to be 1-based
+                            }
+                        });
                     } else {
                         alert("Failed to delete the language. Please try again.");
                     }
@@ -443,6 +454,7 @@
                 }
             }
         }
+
 
     </script>
 </body>

@@ -193,6 +193,8 @@
             "books": "Books",
             "languages": "Languages",
             "logout": "Logout",
+            "placeholder_category_english": "Enter category name in English",
+            "placeholder_category_hindi": "Enter category name in Hindi",
 
         };
         const hindiJson = {
@@ -200,6 +202,8 @@
             "books": "पुस्तकें",
             "languages": "भाषाएँ",
             "logout": "लॉग आउट",
+            "placeholder_category_english": "अंग्रेज़ी में श्रेणी का नाम दर्ज करें",
+            "placeholder_category_hindi": "हिंदी में श्रेणी का नाम दर्ज करें",
 
         };
 
@@ -212,10 +216,24 @@
 
         function loadLanguage(language) {
             const translations = language === "hi" ? hindiJson : englishJson;
-            document.querySelectorAll("[data-translate]").forEach(element => {
+            document.querySelectorAll("[data-translate]").forEach((element) => {
                 const key = element.getAttribute("data-translate");
-                element.textContent = translations[key] || key;
+                if (translations[key]) {
+                    element.textContent = translations[key];
+                }
             });
+
+            // Update placeholders
+            const categoryEnglishInput = document.getElementById("categoryEnglish");
+            const categoryHindiInput = document.getElementById("categoryHindi");
+
+            if (categoryEnglishInput && translations["placeholder_category_english"]) {
+                categoryEnglishInput.placeholder = translations["placeholder_category_english"];
+            }
+
+            if (categoryHindiInput && translations["placeholder_category_hindi"]) {
+                categoryHindiInput.placeholder = translations["placeholder_category_hindi"];
+            }
         }
 
         document.getElementById('language-dropdown').addEventListener('change', function () {
