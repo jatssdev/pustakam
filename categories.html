@@ -148,14 +148,7 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <!-- Pagination controls -->
-                            <div id="pagination-controls" class="d-flex justify-content-center mt-4">
-                                <button id="prevPage" class="btn btn-secondary"
-                                    onclick="changePage(currentPage - 1)">Previous</button>
-                                <span id="page-info" class="mx-3"></span>
-                                <button id="nextPage" class="btn btn-secondary"
-                                    onclick="changePage(currentPage + 1)">Next</button>
-                            </div>
+
 
                             <div id="loading" style="display: none; text-align: center; margin: 20px;">
                                 <div class="spinner-border text-primary" role="status">
@@ -165,7 +158,13 @@
                         </div>
                     </div>
                 </div>
-
+                <!-- Pagination controls -->
+                <div id="pagination-controls" class="d-flex align-items-center justify-content-center mt-4">
+                    <button id="prevPage" class="btn btn-secondary" onclick="changePage(currentPage - 1)">
+                        &lt;</button>
+                    <span id="page-info" class="mx-3"></span>
+                    <button id="nextPage" class="btn btn-secondary" onclick="changePage(currentPage + 1)">&gt;</button>
+                </div>
                 <div id="editMessage" class="mt-2"></div>
 
             </div>

@@ -310,49 +310,78 @@
             }
         }
 
-        // Form submission for adding an author
-        // Form submission for adding an author
         document.getElementById('authorForm').addEventListener('submit', async function (event) {
             event.preventDefault();
+
+            // Get the input values
             const authorEnglish = document.getElementById('authorEnglish').value;
             const authorHindi = document.getElementById('authorHindi').value;
             const categoryId = document.getElementById('categorySelect').value;
 
-            const data = {
-                author_english: authorEnglish,
-                author_hindi: authorHindi,
-                category_data: parseInt(categoryId)
-            };
+            const messageDiv = document.getElementById('message');
 
             try {
-                const response = await fetch('https://pustakam.pythonanywhere.com/author/', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
+                // Fetch all authors to check for duplicates
+                const response = await fetch('https://pustakam.pythonanywhere.com/author/');
                 const result = await response.json();
-                const messageDiv = document.getElementById('message');
-                if (response.ok) {
-                    messageDiv.innerHTML = '<div class="alert alert-success">Author added successfully!</div>';
-                    document.getElementById('authorForm').reset();
-                } else {
-                    messageDiv.innerHTML = `<div class="alert alert-danger">Error: ${result.message || 'Failed to add author'}</div>`;
-                }
 
-                // Auto-hide the alert after 3 seconds
+                if (result.status === "success") {
+                    const existingAuthors = result.data;
+
+                    // Check if the author already exists (either English or Hindi)
+                    const isAuthorExist = existingAuthors.some(author =>
+                        author.author_english.toLowerCase() === authorEnglish.toLowerCase() ||
+                        author.author_hindi.toLowerCase() === authorHindi.toLowerCase()
+                    );
+
+                    if (isAuthorExist) {
+                        // Show error message if author already exists
+                        messageDiv.innerHTML = `<div class="alert alert-danger">Author already exists!</div>`;
+                        setTimeout(() => {
+                            messageDiv.innerHTML = '';
+                        }, 3000);
+                        return; // Prevent form submission
+                    }
+
+                    // Proceed with adding the new author if no duplicates found
+                    const data = {
+                        author_english: authorEnglish,
+                        author_hindi: authorHindi,
+                        category_data: parseInt(categoryId)
+                    };
+
+                    const addAuthorResponse = await fetch('https://pustakam.pythonanywhere.com/author/', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+
+                    const addAuthorResult = await addAuthorResponse.json();
+
+                    if (addAuthorResponse.ok) {
+                        messageDiv.innerHTML = '<div class="alert alert-success">Author added successfully!</div>';
+                        document.getElementById('authorForm').reset();
+                    } else {
+                        messageDiv.innerHTML = `<div class="alert alert-danger">Error: ${addAuthorResult.message || 'Failed to add author'}</div>`;
+                    }
+
+                    setTimeout(() => {
+                        messageDiv.innerHTML = '';
+                    }, 3000);
+                } else {
+                    messageDiv.innerHTML = `<div class="alert alert-danger">Error: ${result.message || 'Failed to fetch authors'}</div>`;
+                    setTimeout(() => {
+                        messageDiv.innerHTML = '';
+                    }, 3000);
+                }
+            } catch (error) {
+                messageDiv.innerHTML = '<div class="alert alert-danger">An error occurred. Please try again.</div>';
                 setTimeout(() => {
                     messageDiv.innerHTML = '';
                 }, 3000);
-
-            } catch (error) {
-                document.getElementById('message').innerHTML = '<div class="alert alert-danger">An error occurred. Please try again.</div>';
-
-                // Auto-hide the error alert after 3 seconds
-                setTimeout(() => {
-                    document.getElementById('message').innerHTML = '';
-                }, 3000);
             }
         });
+
 
 
         const googleTranslateAPIKey = 'AIzaSyBlk5ZotGsdHMkbjPNarkmr9b3FV5n8vDo';
