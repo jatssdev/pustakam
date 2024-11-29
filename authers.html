@@ -191,14 +191,18 @@
                     <div id="editMessage" class="mt-2"></div>
                     <form id="editAuthorForm">
                         <input type="hidden" id="editAuthorId">
-                        <div class="form-group">
-                            <label for="editAuthorEnglish" data-translate="author_english">Author Name (English)</label>
-                            <input type="text" id="editAuthorEnglish" class="form-control" required>
+                        <div id="changeOrderParent" class="d-flex">
+                            <div class="form-group">
+                                <label for="editAuthorEnglish" data-translate="author_english">Author Name
+                                    (English)</label>
+                                <input type="text" id="editAuthorEnglish" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="editAuthorHindi" data-translate="author_hindi">Author Name (Hindi)</label>
+                                <input type="text" id="editAuthorHindi" class="form-control" required>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="editAuthorHindi" data-translate="author_hindi">Author Name (Hindi)</label>
-                            <input type="text" id="editAuthorHindi" class="form-control" required>
-                        </div>
+
                         <button type="submit" data-translate="save_changes" class="btn btn-primary">Save
                             Changes</button>
                     </form>
@@ -238,7 +242,7 @@
             "copyright": "All copyright reserved by pustakam",
             "edit": "Edit",
             "delete": "delete",
-            "add_auther": "Add Auther",
+            "add_auther": "Add Author",
             "languages": "Languages",
             "books": "Books",
             "edit_auther": "Edit Author",
@@ -290,6 +294,8 @@
             const selectedLanguage = this.value;
             localStorage.setItem('language', selectedLanguage);
             loadLanguage(selectedLanguage);
+            changeOrderParentHandler()
+
         });
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -468,6 +474,88 @@
                 editMessageDiv.innerHTML = '';
             }, 3000);
         });
+
+        // Function to handle translation between English and Hindi
+        async function translateText(text, sourceLang, targetLang) {
+            const url = `https://translation.googleapis.com/language/translate/v2?key=AIzaSyBlk5ZotGsdHMkbjPNarkmr9b3FV5n8vDo`;
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        q: text,
+                        source: sourceLang,
+                        target: targetLang,
+                        format: 'text',
+                    }),
+                });
+                const data = await response.json();
+                return data?.data?.translations?.[0]?.translatedText || text;
+            } catch (error) {
+                console.error('Translation API error:', error);
+                return text;
+            }
+        }
+
+        // Handle translation on input
+        async function handleTranslation(event) {
+            validateAuthorInput(event)
+            let currLanguage = localStorage.getItem('language');
+            const input = event.target;
+
+            if (input.id === "editAuthorEnglish" && currLanguage === 'en') {
+                const text = input.value;
+                const translatedText = await translateText(text, 'en', 'hi'); // Translate from English to Hindi
+                editAuthorHindiInput.value = translatedText;
+            } else if (input.id === "editAuthorHindi" && currLanguage === 'hi') {
+                const text = input.value;
+                const translatedText = await translateText(text, 'hi', 'en'); // Translate from Hindi to English
+                editAuthorEnglishInput.value = translatedText;
+            }
+        }
+
+        // Attach the handler to both fields
+        const editAuthorEnglishInput = document.getElementById("editAuthorEnglish");
+        const editAuthorHindiInput = document.getElementById("editAuthorHindi");
+
+        editAuthorEnglishInput.addEventListener('input', handleTranslation);
+        editAuthorHindiInput.addEventListener('input', handleTranslation);
+
+        let changeOrderParentHandler = () => {
+            let changeOrderParent = document.getElementById('changeOrderParent');
+
+            let currLanguage = localStorage.getItem('language') || 'en'
+
+            if (currLanguage === 'hi') {
+                changeOrderParent.style.flexDirection = 'column-reverse'
+            } else {
+                changeOrderParent.style.flexDirection = 'column'
+            }
+        }
+        changeOrderParentHandler()
+        // Regular expression to allow only alphabetic characters and spaces
+        const validNamePattern = /^[A-Za-z\s]*$/;
+
+        // Function to handle validation immediately when the user types
+        function validateAuthorInput(event) {
+            const inputField = event.target;
+            let inputValue = inputField.value;
+
+            // Check for invalid characters (non-alphabetic and non-space)
+            if (!validNamePattern.test(inputValue)) {
+                // Show the tooltip with a message
+                inputField.setCustomValidity('Author name should only contain letters and spaces.');
+                inputField.reportValidity(); // Display the error message
+
+                // Remove invalid characters (anything that is not a letter or space)
+                inputValue = inputValue.replace(/[^A-Za-z\s]/g, ''); // Remove special characters and numbers
+                inputField.value = inputValue; // Update the input value without invalid characters
+            } else {
+                // Clear the error if the input is valid
+                inputField.setCustomValidity('');
+            }
+        }
+
 
     </script>
 </body>

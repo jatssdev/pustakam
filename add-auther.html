@@ -141,7 +141,8 @@
                         <div class="form-group">
                             <label for="categorySelect" data-translate="category">Select Category</label>
                             <select id="categorySelect" class="form-control">
-                                <option value="" disabled selected>Select a category</option>
+                                <option value="" disabled selected data-translate="selectCategoryText">Select a category
+                                </option>
                             </select>
                         </div>
                         <button type="submit" class="btn btn-primary" data-translate="add_author">Add Author</button>
@@ -192,19 +193,24 @@
         changeOrderParentHandler()
         // Language JSON and translation function
         let englishJson = {
-            "optionenglish": "English", "optionhindi": "Hindi", "logotxt": "Pustakam", "dashboard": "Dashboard", "authors": "Authors", "categories": "Categories", "checkout_details": "Checkout Details", "add_author": "Add Author", "author_english": "Author Name (English)", "author_hindi": "Author Name (Hindi)", "category": "Select Category", "copyright": "All rights reserved by Pustakam",
-            "books": "Books",
-            "languages": "Languages",
-            "logout": "Logout",
-
+            "optionenglish": "English", "optionhindi": "Hindi", "logotxt": "Pustakam", "dashboard": "Dashboard", "authors": "Authors", "categories": "Categories", "checkout_details": "Checkout Details", "add_author": "Add Author",
+            "author_english": "Author Name (English)", "author_hindi": "Author Name (Hindi)", "category": "Select Category", "copyright": "All rights reserved by Pustakam",
+            "books": "Books", "languages": "Languages", "logout": "Logout",
+            "placeholder_author_english": "Enter author name in English",
+            "placeholder_author_hindi": "Enter author name in Hindi",
+            "selectCategoryText": "Select a category",
         };
+
         let hindiJson = {
-            "optionenglish": "अंग्रेजी", "optionhindi": "हिंदी", "logotxt": "पुस्तकम", "dashboard": "डैशबोर्ड", "authors": "लेखक", "categories": "श्रेणियाँ", "checkout_details": "विवरण देखें", "add_author": "लेखक जोड़ें", "author_english": "लेखक का नाम (अंग्रेजी)", "author_hindi": "लेखक का नाम (हिंदी)", "category": "श्रेणी चुनें", "copyright": "सभी अधिकार पुस्तकम द्वारा सुरक्षित",
-            "books": "पुस्तकें",
-            "languages": "भाषाएँ",
-            "logout": "लॉग आउट",
+            "optionenglish": "अंग्रेज़ी", "optionhindi": "हिंदी", "logotxt": "पुस्तकम", "dashboard": "डैशबोर्ड", "authors": "लेखक", "categories": "श्रेणियाँ", "checkout_details": "विवरण देखें", "add_author": "लेखक जोड़ें",
+            "author_english": "लेखक का नाम (अंग्रेज़ी)", "author_hindi": "लेखक का नाम (हिंदी)", "category": "श्रेणी चुनें", "copyright": "सभी अधिकार पुस्तकम द्वारा सुरक्षित",
+            "books": "पुस्तकें", "languages": "भाषाएँ", "logout": "लॉग आउट",
+            "placeholder_author_english": "अंग्रेज़ी में लेखक का नाम दर्ज करें",
+            "placeholder_author_hindi": "हिंदी में लेखक का नाम दर्ज करें",
+            "selectCategoryText": "श्रेणी चुनें"
 
         };
+
         const fieldMappings = [
             { sourceFieldId: "authorEnglish", targetFieldId: "authorHindi", sourceLang: "en", targetLang: "hi" },
             // Add more mappings as needed
@@ -219,6 +225,18 @@
                 const key = element.getAttribute('data-translate');
                 element.textContent = translations[key] || key;
             });
+
+            // Update placeholders for author name fields
+            const authorEnglishInput = document.getElementById('authorEnglish');
+            const authorHindiInput = document.getElementById('authorHindi');
+
+            if (authorEnglishInput && translations["placeholder_author_english"]) {
+                authorEnglishInput.placeholder = translations["placeholder_author_english"];
+            }
+
+            if (authorHindiInput && translations["placeholder_author_hindi"]) {
+                authorHindiInput.placeholder = translations["placeholder_author_hindi"];
+            }
         }
 
         document.getElementById('language-dropdown').addEventListener('change', function () {
@@ -416,6 +434,37 @@
                 }
             });
         };
+
+        // Get the author fields
+        const authorEnglishInput = document.getElementById('authorEnglish');
+        const authorHindiInput = document.getElementById('authorHindi');
+
+        // Regular expression to allow only alphabetic characters and spaces
+        const validNamePattern = /^[A-Za-z\s]*$/;
+
+        // Function to handle validation immediately when the user types
+        function validateAuthorInput(event) {
+            const inputField = event.target;
+            let inputValue = inputField.value;
+
+            // Check for invalid characters (non-alphabetic and non-space)
+            if (!validNamePattern.test(inputValue)) {
+                // Show the tooltip with a message
+                inputField.setCustomValidity('Author name should only contain letters and spaces.');
+                inputField.reportValidity(); // Display the error message
+
+                // Remove invalid characters (anything that is not a letter or space)
+                inputValue = inputValue.replace(/[^A-Za-z\s]/g, ''); // Remove special characters and numbers
+                inputField.value = inputValue; // Update the input value without invalid characters
+            } else {
+                // Clear the error if the input is valid
+                inputField.setCustomValidity('');
+            }
+        }
+
+        // Attach event listeners to both author name fields
+        authorEnglishInput.addEventListener('input', validateAuthorInput);
+        authorHindiInput.addEventListener('input', validateAuthorInput);
     </script>
 </body>
 
