@@ -148,6 +148,15 @@
                                     </tbody>
                                 </table>
                             </div>
+                            <!-- Pagination controls -->
+                            <div id="pagination-controls" class="d-flex justify-content-center mt-4">
+                                <button id="prevPage" class="btn btn-secondary"
+                                    onclick="changePage(currentPage - 1)">Previous</button>
+                                <span id="page-info" class="mx-3"></span>
+                                <button id="nextPage" class="btn btn-secondary"
+                                    onclick="changePage(currentPage + 1)">Next</button>
+                            </div>
+
                             <div id="loading" style="display: none; text-align: center; margin: 20px;">
                                 <div class="spinner-border text-primary" role="status">
                                     <span class="sr-only" data-translate="loading">Loading...</span>
@@ -217,6 +226,11 @@
     <script src="./assets/js/plugins/perfect-scrollbar.jquery.min.js"></script>
     <script src="./assets/js/paper-dashboard.min.js?v=2.0.1" type="text/javascript"></script>
     <script>
+        let categoriesData = [];  // Store all categories data
+        let currentPage = 1;  // Current page (default to 1)
+        const itemsPerPage = 10; // Number of items per page
+        let totalPages = 1;   // Total pages (calculated based on itemsPerPage)
+
         function Logout() {
             localStorage.removeItem('loggedadmin')
             location.href = '/login.html'
@@ -294,38 +308,21 @@
             loadLanguage(language);
         });
 
+
         const getCategories = async () => {
             try {
+                // Show loading spinner
                 document.getElementById('loading').style.display = 'block';
                 document.getElementById('table-container').style.display = 'none';
 
+                // Fetch all categories
                 let response = await fetch('https://pustakam.pythonanywhere.com/category/');
                 let result = await response.json();
 
                 if (result.status === "success") {
-                    let categories = result.data;
-                    let tableBody = document.getElementById('category-table-body');
-                    tableBody.innerHTML = '';
-
-                    categories.forEach((category, i) => {
-                        let row = `
-                            <tr id="category-${category.id}">
-                                <td>${i + 1}</td>
-                                <td>${category.category_english}</td>
-                                <td>${category.category_hindi}</td>
-                                <td>
-                                    <button class="btn btn-warning btn-sm" data-translate="edit" onclick='editCategory(${JSON.stringify(category)})'>Edit</button>
-                                    <button class="btn btn-danger btn-sm" data-translate="delete" onclick="deleteCategory(${category.id})">Delete</button>
-                                </td>
-                            </tr>
-                        `;
-                        tableBody.insertAdjacentHTML('beforeend', row);
-                    });
-                    const language = localStorage.getItem('language') || 'en';
-                    loadLanguage(language);
-
-                    document.getElementById('loading').style.display = 'none';
-                    document.getElementById('table-container').style.display = 'block';
+                    categoriesData = result.data;  // Store all categories data
+                    totalPages = Math.ceil(categoriesData.length / itemsPerPage);  // Calculate total pages
+                    displayCategories();  // Call function to display categories for the current page
                 } else {
                     console.error('Failed to load data:', result);
                 }
@@ -335,9 +332,53 @@
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('table-container').style.display = 'block';
             }
-        }
+        };
 
         getCategories();
+        const displayCategories = () => {
+            const startIndex = (currentPage - 1) * itemsPerPage;  // Starting index for the current page
+            const endIndex = startIndex + itemsPerPage;  // Ending index for the current page
+            const categoriesForCurrentPage = categoriesData.slice(startIndex, endIndex);  // Get the current page data
+
+            // Clear existing table rows
+            let tableBody = document.getElementById('category-table-body');
+            tableBody.innerHTML = '';
+
+            // Insert the categories for the current page into the table
+            categoriesForCurrentPage.forEach((category, i) => {
+                let row = `
+            <tr id="category-${category.id}">
+                <td>${i + 1 + (currentPage - 1) * itemsPerPage}</td> <!-- Adjusting the index -->
+                <td>${category.category_english}</td>
+                <td>${category.category_hindi}</td>
+                <td>
+                    <button class="btn btn-warning btn-sm" data-translate="edit" onclick='editCategory(${JSON.stringify(category)})'>Edit</button>
+                    <button class="btn btn-danger btn-sm" data-translate="delete" onclick="deleteCategory(${category.id})">Delete</button>
+                </td>
+            </tr>
+        `;
+                tableBody.insertAdjacentHTML('beforeend', row);
+            });
+
+            updatePagination();  // Update the pagination controls based on the current page
+        };
+        // Function to change pages
+        function changePage(page) {
+            if (page < 1 || page > totalPages) return; // Prevent invalid page number
+            currentPage = page;
+            displayCategories();  // Re-display categories based on the new page
+        }
+
+        // Update pagination info (disable/enable buttons)
+        function updatePagination() {
+            document.getElementById('page-info').textContent = `Page ${currentPage} of ${totalPages}`;
+
+            // Enable/Disable the "Previous" button
+            document.getElementById('prevPage').disabled = currentPage === 1;
+
+            // Enable/Disable the "Next" button
+            document.getElementById('nextPage').disabled = currentPage === totalPages;
+        }
 
         function editCategory(category) {
             // Populate modal form with category data
@@ -373,12 +414,16 @@
 
                 if (response.ok) {
                     console.log(`Category with ID ${id} deleted successfully`);
-                    document.getElementById(`category-${id}`).remove();
+                    document.getElementById(`category-${id}`).remove();  // Remove the category row from the table
+
+                    // Recalculate the ID numbers in the table after deletion
                     const rows = document.querySelectorAll("#category-table-body tr");
                     rows.forEach((row, index) => {
                         const idCell = row.querySelector("td:first-child"); // First cell in each row
                         if (idCell) {
-                            idCell.textContent = index + 1; // Update index to be 1-baseds
+                            // Calculate the correct ID number based on the current page
+                            const calculatedId = index + 1 + (currentPage - 1) * itemsPerPage;
+                            idCell.textContent = calculatedId; // Update index to be page-based
                         }
                     });
 
@@ -412,6 +457,7 @@
                 deleteMessageDiv.innerHTML = '';
             }, 3000);
         }
+
 
 
         function toggleSidebar() {
