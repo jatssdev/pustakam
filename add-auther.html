@@ -358,9 +358,11 @@
 
                     const addAuthorResult = await addAuthorResponse.json();
 
-                    if (addAuthorResponse.status === 'success') {
+
+                    if (addAuthorResult.status == 'success') {
                         messageDiv.innerHTML = '<div class="alert alert-success">Author added successfully!</div>';
                         document.getElementById('authorForm').reset();
+                        location.href = '/authers.html'
                     } else {
                         messageDiv.innerHTML = `<div class="alert alert-danger">Error: ${addAuthorResult.message || 'Failed to add author'}</div>`;
                     }

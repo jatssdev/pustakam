@@ -217,6 +217,78 @@
             </div>
         </div>
     </div>
+    <!-- Edit Book Modal -->
+    <div class="modal fade" id="editBookModal" tabindex="-1" aria-labelledby="editBookModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editBookModalLabel">Edit Book</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editBookForm">
+                        <div class="form-group">
+                            <label for="editBookNameEnglish">Book Name (English)</label>
+                            <input type="text" id="editBookNameEnglish" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editBookNameHindi">Book Name (Hindi)</label>
+                            <input type="text" id="editBookNameHindi" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editBookPrice">Price</label>
+                            <input type="number" id="editBookPrice" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editBookDiscountedPrice">Discounted Price</label>
+                            <input type="number" id="editBookDiscountedPrice" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editBookDetailsEnglish">Book Details (English)</label>
+                            <textarea id="editBookDetailsEnglish" class="form-control" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="editBookDetailsHindi">Book Details (Hindi)</label>
+                            <textarea id="editBookDetailsHindi" class="form-control" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="editBookFrontImage">Book Front Image</label>
+                            <input type="file" id="editBookFrontImage" class="form-control" accept="image/*">
+                            <img id="editBookFrontImagePreview" class="img-fluid mt-2" style="max-width: 150px;">
+                        </div>
+                        <div class="form-group">
+                            <label for="editBookFile">Book File (PDF or EPUB)</label>
+                            <input type="file" id="editBookFile" class="form-control" accept=".pdf,.epub">
+                        </div>
+                        <div class="form-group">
+                            <label for="editBookAuthors">Authors</label>
+                            <select id="editBookAuthors" class="form-control custom-select" multiple required>
+                                <!-- Authors will be dynamically populated -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="editBookCategories">Categories</label>
+                            <select id="editBookCategories" class="form-control custom-select" multiple required>
+                                <!-- Categories will be dynamically populated -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="editBookLanguages">Languages</label>
+                            <select id="editBookLanguages" class="form-control custom-select" multiple required>
+                                <!-- Languages will be dynamically populated -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="editBookKeywords">Keywords</label>
+                            <input type="text" id="editBookKeywords" class="form-control">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update Book</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <script src="./assets/js/core/jquery.min.js"></script>
     <!-- <script src="https://cdn.jsdelivr.net/npm/epubjs/dist/epub.min.js"></script> -->
@@ -460,6 +532,118 @@
         document.getElementById("viewBookContentsButton").addEventListener("click", function () {
             window.open(`epub-viewer.html`, "_blank");
         });
+
+        async function editBook(bookId) {
+            try {
+                const response = await fetch(`https://pustakam.pythonanywhere.com/books/${bookId}/`);
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    const book = result.data;
+
+                    // Populate the modal with current book details
+                    document.getElementById('editBookNameEnglish').value = book.book_name_english;
+                    document.getElementById('editBookNameHindi').value = book.book_name_hindi;
+                    document.getElementById('editBookPrice').value = book.book_price;
+                    document.getElementById('editBookDiscountedPrice').value = book.book_price_discount;
+                    document.getElementById('editBookDetailsEnglish').value = book.book_details_english;
+                    document.getElementById('editBookDetailsHindi').value = book.book_details_hindi;
+                    document.getElementById('editBookKeywords').value = book.book_keywords.join(', ') || '';
+
+                    // Set Thumbnail
+                    const thumbnail = book.book_front_image
+                        ? `https://pustakam.pythonanywhere.com${book.book_front_image}`
+                        : "./assets/img/default-thumbnail.png";
+                    document.getElementById('editBookFrontImagePreview').src = thumbnail;
+
+                    // Pre-fill select options for Authors, Categories, and Languages
+                    const authorsSelect = document.getElementById('editBookAuthors');
+                    authorsSelect.innerHTML = ''; // Clear previous selections
+                    book.author_data.forEach(author => {
+                        const option = document.createElement('option');
+                        option.value = author.id;
+                        option.textContent = `${author.author_english} (${author.author_hindi})`;
+                        authorsSelect.appendChild(option);
+                    });
+
+                    const categoriesSelect = document.getElementById('editBookCategories');
+                    categoriesSelect.innerHTML = ''; // Clear previous selections
+                    book.category_data.forEach(category => {
+                        const option = document.createElement('option');
+                        option.value = category.id;
+                        option.textContent = `${category.category_english} (${category.category_hindi})`;
+                        categoriesSelect.appendChild(option);
+                    });
+
+                    const languagesSelect = document.getElementById('editBookLanguages');
+                    languagesSelect.innerHTML = ''; // Clear previous selections
+                    book.language_data.forEach(language => {
+                        const option = document.createElement('option');
+                        option.value = language.id;
+                        option.textContent = language.languages;
+                        languagesSelect.appendChild(option);
+                    });
+
+                    // Open the modal
+                    const editBookModal = new bootstrap.Modal(document.getElementById('editBookModal'));
+                    editBookModal.show();
+
+                    // Handle form submission for editing
+                    document.getElementById('editBookForm').onsubmit = async function (event) {
+                        event.preventDefault();
+
+                        // Create a FormData object to capture the form data
+                        const updatedBook = {
+                            book_name_english: document.getElementById('editBookNameEnglish').value,
+                            book_name_hindi: document.getElementById('editBookNameHindi').value,
+                            book_price: document.getElementById('editBookPrice').value,
+                            book_price_discount: document.getElementById('editBookDiscountedPrice').value,
+                            book_details_english: document.getElementById('editBookDetailsEnglish').value,
+                            book_details_hindi: document.getElementById('editBookDetailsHindi').value,
+                            book_keywords: document.getElementById('editBookKeywords').value.split(',').map(k => k.trim()),
+                            author_data: Array.from(document.getElementById('editBookAuthors').selectedOptions).map(option => option.value),
+                            category_data: Array.from(document.getElementById('editBookCategories').selectedOptions).map(option => option.value),
+                            language_data: Array.from(document.getElementById('editBookLanguages').selectedOptions).map(option => option.value),
+                        };
+
+                        // Optional: Include new image and file if selected
+                        const frontImage = document.getElementById('editBookFrontImage').files[0];
+                        if (frontImage) {
+                            updatedBook.book_front_image = frontImage;
+                        }
+
+                        const bookFile = document.getElementById('editBookFile').files[0];
+                        if (bookFile) {
+                            updatedBook.book_file = bookFile;
+                        }
+
+                        try {
+                            const updateResponse = await fetch(`https://pustakam.pythonanywhere.com/books/${bookId}/`, {
+                                method: 'PUT',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(updatedBook)
+                            });
+
+                            if (updateResponse.ok) {
+                                alert('Book updated successfully!');
+                                editBookModal.hide(); // Close the modal
+                                fetchBooks(); // Refresh the book list
+                            } else {
+                                alert('Error updating book!');
+                            }
+                        } catch (error) {
+                            console.error('Error updating book:', error);
+                            alert('An error occurred while updating the book. Please try again.');
+                        }
+                    };
+                } else {
+                    alert('Failed to fetch book details.');
+                }
+            } catch (error) {
+                console.error('Error fetching book details:', error);
+                alert('An error occurred while fetching book details.');
+            }
+        }
 
 
 

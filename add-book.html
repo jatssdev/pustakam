@@ -673,14 +673,15 @@
 
                 const result = await response.json();
 
-                const message = response.ok
+                const message = result.status === 'success'
                     ? `<div class="alert alert-success">Book added successfully!</div>`
                     : `<div class="alert alert-danger">Error: ${result.message || "Failed to add book"}</div>`;
 
                 $("#message").html(message);
 
-                if (response.ok) {
+                if (result.status === 'success') {
                     $("#bookForm")[0].reset(); // Reset the form on success
+                    location.href = '/books.html'
                 }
 
                 setTimeout(() => $("#message").html(""), 3000); // Clear the message after 3 seconds

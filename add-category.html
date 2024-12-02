@@ -348,9 +348,10 @@
 
                     const addCategoryResult = await addCategoryResponse.json();
 
-                    if (addCategoryResponse.ok) {
+                    if (addCategoryResult.status === 'success') {
                         messageDiv.innerHTML = '<div class="alert alert-success">Category added successfully!</div>';
                         document.getElementById('categoryForm').reset();
+                        location.href = '/categories.html'
                     } else {
                         messageDiv.innerHTML = `<div class="alert alert-danger">Error: ${addCategoryResult.message || 'Failed to add category'}</div>`;
                     }
