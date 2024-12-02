@@ -284,16 +284,20 @@
                 </div>
                 <div class="modal-body">
                     <form id="addCategoryForm">
-                        <div class="form-group">
-                            <label for="addCategoryEnglish" data-translate="category_english">Category Name
-                                (English)</label>
-                            <input type="text" id="addCategoryEnglish" class="form-control"
-                                placeholder="Enter category name in English" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="addCategoryHindi" data-translate="category_hindi">Category Name (Hindi)</label>
-                            <input type="text" id="addCategoryHindi" class="form-control"
-                                placeholder="Enter category name in Hindi" required>
+                        <div class="changeOrderParent d-flex">
+
+                            <div class="form-group">
+                                <label for="addCategoryEnglish" data-translate="category_english">Category Name
+                                    (English)</label>
+                                <input type="text" id="addCategoryEnglish" class="form-control"
+                                    placeholder="Enter category name in English" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="addCategoryHindi" data-translate="category_hindi">Category Name
+                                    (Hindi)</label>
+                                <input type="text" id="addCategoryHindi" class="form-control"
+                                    placeholder="Enter category name in Hindi" required>
+                            </div>
                         </div>
                         <button type="submit" class="btn btn-primary">Add Category</button>
                     </form>
@@ -314,19 +318,24 @@
                 </div>
                 <div class="modal-body">
                     <form id="addAuthorForm">
-                        <div class="form-group">
-                            <label for="addAuthorEnglish" data-translate="author_english">Author Name (English)</label>
-                            <input type="text" id="addAuthorEnglish" class="form-control"
-                                placeholder="Enter author name in English" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="addAuthorHindi" data-translate="author_hindi">Author Name (Hindi)</label>
-                            <input type="text" id="addAuthorHindi" class="form-control"
-                                placeholder="Enter author name in Hindi" required>
+                        <div class="changeOrderParent d-flex">
+
+
+                            <div class="form-group">
+                                <label for="addAuthorEnglish" data-translate="author_english">Author Name
+                                    (English)</label>
+                                <input type="text" id="addAuthorEnglish" class="form-control"
+                                    placeholder="Enter author name in English" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="addAuthorHindi" data-translate="author_hindi">Author Name (Hindi)</label>
+                                <input type="text" id="addAuthorHindi" class="form-control"
+                                    placeholder="Enter author name in Hindi" required>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label for="authorCategorySelect" data-translate="category_select">Category</label>
-                            <select id="authorCategorySelect" class="form-control custom-select" required>
+                            <select id="authorCategorySelect" class="form-control custom-select">
                                 <!-- Categories will be dynamically populated -->
                             </select>
                         </div>
@@ -383,12 +392,14 @@
             { sourceFieldId: "bookNameEnglish", targetFieldId: "bookNameHindi", sourceLang: "en", targetLang: "hi" },
             { sourceFieldId: "bookDetailsEnglish", targetFieldId: "bookDetailsHindi", sourceLang: "en", targetLang: "hi" },
             { sourceFieldId: "addAuthorEnglish", targetFieldId: "addAuthorHindi", sourceLang: "en", targetLang: "hi" },
+            { sourceFieldId: "addCategoryEnglish", targetFieldId: "addCategoryHindi", sourceLang: "en", targetLang: "hi" },
         ];
 
         const fieldMappingsHiToEn = [
             { sourceFieldId: "bookNameHindi", targetFieldId: "bookNameEnglish", sourceLang: "hi", targetLang: "en" },
             { sourceFieldId: "bookDetailsHindi", targetFieldId: "bookDetailsEnglish", sourceLang: "hi", targetLang: "en" },
             { sourceFieldId: "addAuthorHindi", targetFieldId: "addAuthorEnglish", sourceLang: "hi", targetLang: "en" },
+            { sourceFieldId: "addCategoryHindi", targetFieldId: "addCategoryEnglish", sourceLang: "hi", targetLang: "en" },
         ];
 
         const translations = {
@@ -690,6 +701,7 @@
                 $('#addCategoryModal').modal('show');
             } else if (type === 'auther') {
                 // Show the Add Author modal
+                fetchCategories();
                 $('#addAuthorModal').modal('show');
             }
         }
@@ -742,6 +754,27 @@
                 console.error('Error adding author:', error);
             }
         });
+
+        // Fetch categories and populate the "Add Author" modal
+        async function fetchCategories() {
+            try {
+                const response = await fetch('https://pustakam.pythonanywhere.com/category/');
+                const result = await response.json();
+                const categorySelect = $('#authorCategorySelect');
+
+                if (result.status === 'success') {
+                    const categories = result.data;
+                    categorySelect.empty(); // Clear existing options
+                    categories.forEach(category => {
+                        categorySelect.append(new Option(category.category_english, category.id));
+                    });
+                } else {
+                    console.error('Failed to fetch categories:', result.message);
+                }
+            } catch (error) {
+                console.error('Error fetching categories:', error);
+            }
+        }
 
     </script>
 
