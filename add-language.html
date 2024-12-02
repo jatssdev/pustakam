@@ -130,7 +130,7 @@
                         <div class="form-group">
                             <label for="languageName" data-translate="language_name">Language Name</label>
                             <input pattern="[a-zA-Z\s]+" type="text" id="languageName" class="form-control"
-                                placeholder="Enter language name" required>
+                                placeholder="Enter language name" data-translate="placeholder_language_name" required>
                         </div>
                         <button type="submit" class="btn btn-primary" data-translate="add_language">Add
                             Language</button>
@@ -182,6 +182,7 @@
                 "books": "Books",
                 "languages": "Languages",
                 "logout": "Logout",
+                placeholder_language_name: "Enter language name",  // Add this for placeholder
 
             },
             hi: {
@@ -199,16 +200,20 @@
                 "books": "पुस्तकें",
                 "languages": "भाषाएँ",
                 "logout": "लॉग आउट",
+                placeholder_language_name: "भाषा का नाम दर्ज करें",
 
             },
         };
 
-        // Function to load translations
         function loadLanguage(language) {
             document.querySelectorAll("[data-translate]").forEach((element) => {
                 const key = element.getAttribute("data-translate");
                 if (translations[language] && translations[language][key]) {
-                    element.textContent = translations[language][key];
+                    if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                        element.setAttribute('placeholder', translations[language][key]); // Update placeholder
+                    } else {
+                        element.textContent = translations[language][key]; // Update text content
+                    }
                 }
             });
         }
@@ -230,6 +235,28 @@
             const languageName = document.getElementById("languageName").value;
 
             try {
+                // Fetch all existing languages
+                const languagesResponse = await fetch("https://pustakam.pythonanywhere.com/languages/");
+                const languagesData = await languagesResponse.json();
+
+                if (languagesData.status === "success") {
+                    const existingLanguages = languagesData.data.map(lang => lang.languages.toLowerCase()); // Get all existing language names (in lowercase)
+
+                    // Check if the language already exists (case-insensitive)
+                    if (existingLanguages.includes(languageName.toLowerCase())) {
+                        document.getElementById("message").innerHTML = `
+                    <div class="alert alert-danger">Error: The language "${languageName}" already exists!</div>
+                `;
+                        return; // Prevent submission if language already exists
+                    }
+                } else {
+                    document.getElementById("message").innerHTML = `
+                <div class="alert alert-danger">Error: Failed to fetch existing languages.</div>
+            `;
+                    return;
+                }
+
+                // If language does not exist, proceed to add the new language
                 const response = await fetch("https://pustakam.pythonanywhere.com/languages/", {
                     method: "POST",
                     headers: {
@@ -264,6 +291,7 @@
                 document.getElementById("message").innerHTML = "";
             }, 3000);
         });
+
         document.getElementById("languageName").addEventListener("input", function (event) {
             // Get the current value
             const currentValue = this.value;
