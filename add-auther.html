@@ -358,7 +358,7 @@
 
                     const addAuthorResult = await addAuthorResponse.json();
 
-                    if (addAuthorResponse.ok) {
+                    if (addAuthorResponse.status === 'success') {
                         messageDiv.innerHTML = '<div class="alert alert-success">Author added successfully!</div>';
                         document.getElementById('authorForm').reset();
                     } else {

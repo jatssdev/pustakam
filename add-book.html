@@ -47,6 +47,11 @@
                 display: inline-block;
             }
         }
+
+        .custom-file-input:lang(en)~.custom-file-label::after {
+            content: "Browse";
+
+        }
     </style>
 
 </head>
@@ -175,7 +180,8 @@
                             <div class="custom-file">
                                 <input type="file" class="custom-file-input" id="bookFrontImage" accept="image/*"
                                     required>
-                                <label class="custom-file-label" for="bookFrontImage">Choose file</label>
+                                <label class="custom-file-label" for="bookFrontImage"
+                                    data-translate="customFileText">Choose file</label>
                             </div>
                         </div>
 
@@ -184,7 +190,8 @@
                             <label for="bookFile" data-translate="book_file">Book File (PDF or EPUB)</label>
                             <div class="custom-file">
                                 <input type="file" class="custom-file-input" id="bookFile" accept=".pdf,.epub" required>
-                                <label class="custom-file-label" for="bookFile">Choose file</label>
+                                <label class="custom-file-label" for="bookFile" data-translate="customFileText">Choose
+                                    file</label>
                             </div>
                         </div>
 
@@ -375,11 +382,13 @@
         const fieldMappingsEnToHi = [
             { sourceFieldId: "bookNameEnglish", targetFieldId: "bookNameHindi", sourceLang: "en", targetLang: "hi" },
             { sourceFieldId: "bookDetailsEnglish", targetFieldId: "bookDetailsHindi", sourceLang: "en", targetLang: "hi" },
+            { sourceFieldId: "addAuthorEnglish", targetFieldId: "addAuthorHindi", sourceLang: "en", targetLang: "hi" },
         ];
 
         const fieldMappingsHiToEn = [
             { sourceFieldId: "bookNameHindi", targetFieldId: "bookNameEnglish", sourceLang: "hi", targetLang: "en" },
             { sourceFieldId: "bookDetailsHindi", targetFieldId: "bookDetailsEnglish", sourceLang: "hi", targetLang: "en" },
+            { sourceFieldId: "addAuthorHindi", targetFieldId: "addAuthorEnglish", sourceLang: "hi", targetLang: "en" },
         ];
 
         const translations = {
@@ -415,6 +424,7 @@
                 placeholder_book_price: "Enter book price",
                 placeholder_discounted_price: "Enter discounted price",
                 placeholder_free_demo: "Enter percentage (0-100)",
+                customFileText: "Choose file"
             },
             hi: {
                 logotxt: "पुस्तकम",
@@ -448,6 +458,7 @@
                 placeholder_book_price: "पुस्तक मूल्य दर्ज करें",
                 placeholder_discounted_price: "छूट मूल्य दर्ज करें",
                 placeholder_free_demo: "प्रतिशत दर्ज करें (0-100)",
+                customFileText: "फाइलें चुनें"
             },
         };
 
@@ -464,6 +475,9 @@
                     }
                 }
             });
+            let newValue = language == 'en' ? 'Browse' : 'ब्राउज़ करें'
+            var add = '<style>.custom-file-input:lang(en)~.custom-file-label::after{content:"' + newValue + '"!important;}</style>';
+            $('body').append(add);
         }
 
         // Translate text using Google Translate API
@@ -564,16 +578,23 @@
                 const newFieldMappings = selectedLanguage === "en" ? fieldMappingsEnToHi : fieldMappingsHiToEn;
                 updateFieldTranslationHandlers(newFieldMappings);
                 changeOrderParentHandler();
+                let newValue = selectedLanguage == 'en' ? 'Browse' : 'ब्राउज़ करें'
+                var add = '<style>.custom-file-input:lang(en)~.custom-file-label::after{content:"' + newValue + '"!important;}</style>';
+                $('body').append(add);
             });
             // Handle book front image file selection
             $("#bookFrontImage").on("change", function () {
-                const fileName = $(this).prop("files")[0]?.name || "Choose file";
+                let selectedLanguage = localStorage.getItem('language')
+                let defaultText = selectedLanguage === 'en' ? 'Choose file' : 'फाइलें चुनें'
+                const fileName = $(this).prop("files")[0]?.name || defaultText;
                 $(this).next(".custom-file-label").text(fileName);
             });
 
             // Handle book file (EPUB/PDF) selection
             $("#bookFile").on("change", function () {
-                const fileName = $(this).prop("files")[0]?.name || "Choose file";
+                let selectedLanguage = localStorage.getItem('language')
+                let defaultText = selectedLanguage === 'en' ? 'Choose file' : 'फाइलें चुनें'
+                const fileName = $(this).prop("files")[0]?.name || defaultText;
                 $(this).next(".custom-file-label").text(fileName);
             });
         });
@@ -658,6 +679,67 @@
                     '<div class="alert alert-danger">An error occurred. Please try again.</div>'
                 );
                 setTimeout(() => $("#message").html(""), 3000);
+            }
+        });
+
+        function addCategoryAndAuther(event, type) {
+            event.preventDefault();
+
+            if (type === 'category') {
+                // Show the Add Category modal
+                $('#addCategoryModal').modal('show');
+            } else if (type === 'auther') {
+                // Show the Add Author modal
+                $('#addAuthorModal').modal('show');
+            }
+        }
+
+        // Handling Add Category form submission
+        $("#addCategoryForm").on("submit", async function (event) {
+            event.preventDefault();
+            const categoryEnglish = $("#addCategoryEnglish").val();
+            const categoryHindi = $("#addCategoryHindi").val();
+
+            try {
+                const response = await fetch('https://pustakam.pythonanywhere.com/category/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ category_english: categoryEnglish, category_hindi: categoryHindi })
+                });
+
+                if (response.ok) {
+                    $('#addCategoryModal').modal('hide');
+                    // Display success message
+                } else {
+                    // Handle failure
+                }
+            } catch (error) {
+                console.error('Error adding category:', error);
+            }
+        });
+
+        // Handling Add Author form submission
+        $("#addAuthorForm").on("submit", async function (event) {
+            event.preventDefault();
+            const authorEnglish = $("#addAuthorEnglish").val();
+            const authorHindi = $("#addAuthorHindi").val();
+            const categoryId = $("#authorCategorySelect").val();
+
+            try {
+                const response = await fetch('https://pustakam.pythonanywhere.com/author/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ author_english: authorEnglish, author_hindi: authorHindi, category_data: categoryId })
+                });
+
+                if (response.ok) {
+                    $('#addAuthorModal').modal('hide');
+                    // Display success message
+                } else {
+                    // Handle failure
+                }
+            } catch (error) {
+                console.error('Error adding author:', error);
             }
         });
 
