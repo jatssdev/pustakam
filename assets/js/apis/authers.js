@@ -23,7 +23,7 @@ const getAuthers = async () => {
                         <td>${author.category_data.category_english}</td>
                         <td>${author.category_data.category_hindi}</td>
                         <td>
-                            <button class="btn btn-warning btn-sm" onclick="editAuthor(${author.id})">
+                            <button class="btn btn-primary btn-sm" onclick="editAuthor(${author.id})">
                                 Edit
                             </button>
                             <button class="btn btn-danger btn-sm" onclick="deleteAuthor(${author.id})">
