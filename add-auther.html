@@ -350,6 +350,10 @@
                         category_data: parseInt(categoryId)
                     };
 
+                    if (!data.category_data) {
+                        delete data.category_data
+                    }
+
                     const addAuthorResponse = await fetch('https://pustakam.pythonanywhere.com/author/', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },

@@ -4,66 +4,201 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EPUB Viewer</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/epubjs/dist/epub.min.js"></script>
+    <title>EPUB Viewer with Pagination</title>
     <style>
-        body {
-            margin: 0;
+        * {
             padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        body {
             font-family: Arial, sans-serif;
-        }
-
-        #viewer {
-            width: 100%;
-            height: 100vh;
-            overflow: auto;
-            background-color: #f9f9f9;
-        }
-
-        .error-message {
-            padding: 20px;
-            text-align: center;
-            background-color: #f8d7da;
-            color: #721c24;
             margin: 20px;
-            border: 1px solid #f5c6cb;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        #area {
+            width: 100%;
+            height: 600px;
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 20px auto;
+
+        }
+
+        #controls {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 0 10px;
+            border: none;
             border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        #pageInfo {
+            margin-top: 10px;
+            font-size: 18px;
+            color: #333;
+        }
+
+        #fileInput {
+            display: block;
+            margin: 10px auto;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        /* HTML: <div class="loader"></div> */
+        .loader {
+            width: 60px;
+            aspect-ratio: 4;
+            background: radial-gradient(circle closest-side, #000 90%, #0000) 0/calc(100%/3) 100% space;
+            clip-path: inset(0 100% 0 0);
+            animation: l1 1s steps(4) infinite;
+        }
+
+        @keyframes l1 {
+            to {
+                clip-path: inset(0 -34% 0 0)
+            }
+        }
+
+        .preloader {
+            height: 100vh;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.156);
+            display: flex;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            justify-content: center;
         }
     </style>
 </head>
 
 <body>
-    <div id="viewer"></div>
+    <div class="preloader" id="loader">
+        <div class="loader"></div>
+    </div>
+    <h1 id="bookName">View EPUB</h1>
+
+    <div id="area">
+
+    </div>
+    <div id="controls">
+        <button id="prev" disabled>Previous</button>
+        <button id="next" disabled>Next</button>
+        <div id="pageInfo">Page: -- / --</div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.5/jszip.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/epubjs/dist/epub.min.js"></script>
     <script>
-        (async function () {
-            try {
-                // Set the file path (local or dynamic via query params)
-                const urlParams = new URLSearchParams(window.location.search);
-                const fileUrl = urlParams.get('file') || './files/book.epub'; // Default to local file if none provided
+        const viewerArea = document.getElementById("area");
+        const prevButton = document.getElementById("prev");
+        const nextButton = document.getElementById("next");
+        const pageInfo = document.getElementById("pageInfo");
+        const loader = document.getElementById("loader");
+        const bookName = document.getElementById("bookName");
 
-                if (!fileUrl.endsWith('.epub')) {
-                    throw new Error("Unsupported file format. Only EPUB files are supported.");
-                }
+        let rendition = null; // Holds the EPUB.js rendition instance
+        let book = null; // Holds the EPUB.js book instance
+        let totalPages = "--"; // Total number of pages
 
-                // Load the EPUB file
-                const book = ePub(fileUrl);
-                const rendition = book.renderTo("viewer", {
-                    width: "100%",
-                    height: "100%",
-                });
-                await rendition.display();
-            } catch (error) {
-                // Display user-friendly error message
-                document.body.innerHTML = `
-                    <div class="error-message">
-                        <strong>Error:</strong> ${error.message}
-                        <p>Check the console for more details.</p>
-                    </div>
-                `;
-                console.error("EPUB Viewer Error:", error);
+        // Get the book URL from the query parameter
+        const params = new URLSearchParams(window.location.search);
+        const bookUrl = params.get("bookurl"); // Retrieve 'bookurl' from the query string
+
+        if (bookUrl) {
+            // Extract the file name from the URL
+            const urlParts = bookUrl.split('/');
+            const fileName = urlParts[urlParts.length - 1]; // Get the last part of the URL
+
+            bookName.innerHTML = fileName; // Display only the file name
+            loadBook(bookUrl);
+        }
+
+        // Function to load the book
+        function loadBook(url) {
+            loader.style.display = "flex"; // Show the loader
+            book = ePub(url);
+
+            rendition = book.renderTo("area", {
+                method: "default",
+                width: "100%",
+                height: "100%"
+            });
+
+            // Display the first chapter
+            rendition.display().then(() => {
+                loader.style.display = "none"; // Hide the loader once rendering starts
+            });
+
+            // Generate locations to calculate total pages
+            book.locations.generate().then(() => {
+                totalPages = book.locations.length();
+                updatePageInfo(); // Update page info with total pages
+            });
+
+            // Enable buttons after loading the file
+            prevButton.disabled = false;
+            nextButton.disabled = false;
+
+            // Update current page on relocation
+            rendition.on("relocated", (location) => {
+                const currentPage = book.locations.locationFromCfi(location.start.cfi);
+                updatePageInfo(currentPage);
+            });
+        }
+
+        // Navigate to the previous page
+        prevButton.addEventListener("click", () => {
+            if (rendition) {
+                rendition.prev();
             }
-        })();
+        });
+
+        // Navigate to the next page
+        nextButton.addEventListener("click", () => {
+            if (rendition) {
+                rendition.next();
+            }
+        });
+
+        // Update the current page and total pages
+        function updatePageInfo(currentPage = "--") {
+            if (totalPages === "--") {
+                pageInfo.textContent = `Page: ${currentPage} / --`;
+            } else {
+                pageInfo.textContent = `Page: ${currentPage || 1} / ${totalPages}`;
+            }
+        }
+
     </script>
 </body>
 

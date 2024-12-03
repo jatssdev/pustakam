@@ -356,8 +356,8 @@
                 <td>${i + 1 + (currentPage - 1) * itemsPerPage}</td>
                 <td>${author.author_english}</td>
                 <td>${author.author_hindi}</td>
-                <td>${author.category_data.category_english}</td>
-                <td>${author.category_data.category_hindi}</td>
+                <td>${author?.category_data?.category_english}</td>
+                <td>${author?.category_data?.category_hindi}</td>
                 <td>
                     <button class="btn btn-warning btn-sm" onclick='editAuthor(${JSON.stringify(author)})'>Edit</button>
                     <button class="btn btn-danger btn-sm" onclick="deleteAuthor(${author.id})">Delete</button>

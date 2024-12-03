@@ -12,11 +12,15 @@
     <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no'
         name='viewport' />
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,200" rel="stylesheet" />
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" rel="stylesheet">
     <link href="./assets/css/bootstrap.min.css" rel="stylesheet" />
     <link href="./assets/css/paper-dashboard.css?v=2.0.1" rel="stylesheet" />
+    <link href="./assets/demo/demo.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
         integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet">
+
     <style>
         @media (max-width: 991px) {
             .sidebar {
@@ -180,7 +184,9 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="viewBookModalLabel">View Book</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
                 <div class="modal-body">
                     <!-- Book Details Content -->
@@ -211,78 +217,150 @@
                     <a id="viewBookFileLink" class="btn btn-primary" target="_blank">Download Book File</a>
                     <button id="viewBookContentsButton" class="btn btn-info">View Book Contents</button>
                     <!-- New Button -->
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
 
             </div>
         </div>
     </div>
-    <!-- Edit Book Modal -->
-    <div class="modal fade" id="editBookModal" tabindex="-1" aria-labelledby="editBookModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
+
+    <div class="modal fade" id="editBookModal" tabindex="-1" role="dialog" aria-labelledby="editBookModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" style="max-width:100%" role="document">
+            <div class="modal-content" style="width: 70% !important; margin: 0 auto;">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editBookModalLabel">Edit Book</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title" id="editBookModalLabel" data-translate="edit_book">Edit Book</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
                 <div class="modal-body">
                     <form id="editBookForm">
+                        <input type="hidden" id="editBookId"> <!-- Hidden field for Book ID -->
+
+                        <!-- Book Front Image -->
                         <div class="form-group">
-                            <label for="editBookNameEnglish">Book Name (English)</label>
-                            <input type="text" id="editBookNameEnglish" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="editBookNameHindi">Book Name (Hindi)</label>
-                            <input type="text" id="editBookNameHindi" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="editBookPrice">Price</label>
-                            <input type="number" id="editBookPrice" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="editBookDiscountedPrice">Discounted Price</label>
-                            <input type="number" id="editBookDiscountedPrice" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="editBookDetailsEnglish">Book Details (English)</label>
-                            <textarea id="editBookDetailsEnglish" class="form-control" required></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="editBookDetailsHindi">Book Details (Hindi)</label>
-                            <textarea id="editBookDetailsHindi" class="form-control" required></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="editBookFrontImage">Book Front Image</label>
-                            <input type="file" id="editBookFrontImage" class="form-control" accept="image/*">
+                            <label for="editBookFrontImage" data-translate="book_front_image">Book Front Image</label>
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="editBookFrontImage" accept="image/*">
+                                <label class="custom-file-label" for="editBookFrontImage"
+                                    data-translate="choose_file">Choose file</label>
+                            </div>
                             <img id="editBookFrontImagePreview" class="img-fluid mt-2" style="max-width: 150px;">
                         </div>
+
+                        <!-- Book Category -->
                         <div class="form-group">
-                            <label for="editBookFile">Book File (PDF or EPUB)</label>
-                            <input type="file" id="editBookFile" class="form-control" accept=".pdf,.epub">
-                        </div>
-                        <div class="form-group">
-                            <label for="editBookAuthors">Authors</label>
-                            <select id="editBookAuthors" class="form-control custom-select" multiple required>
-                                <!-- Authors will be dynamically populated -->
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="editBookCategories">Categories</label>
-                            <select id="editBookCategories" class="form-control custom-select" multiple required>
+                            <label for="editCategorySelect" data-translate="book_category">Book Category</label>
+                            <select id="editCategorySelect" class="form-control custom-select" multiple required>
                                 <!-- Categories will be dynamically populated -->
                             </select>
                         </div>
+
+                        <!-- Author Name -->
                         <div class="form-group">
-                            <label for="editBookLanguages">Languages</label>
-                            <select id="editBookLanguages" class="form-control custom-select" multiple required>
+                            <label for="editAuthorSelect" data-translate="author_name">Author Name</label>
+                            <select id="editAuthorSelect" class="form-control custom-select" multiple required>
+                                <!-- Authors will be dynamically populated -->
+                            </select>
+                        </div>
+
+                        <!-- Book Language -->
+                        <div class="form-group">
+                            <label for="editLanguageSelect" data-translate="book_language">Book Language</label>
+                            <select id="editLanguageSelect" class="form-control custom-select" multiple required>
                                 <!-- Languages will be dynamically populated -->
                             </select>
                         </div>
-                        <div class="form-group">
-                            <label for="editBookKeywords">Keywords</label>
-                            <input type="text" id="editBookKeywords" class="form-control">
+
+                        <div class="d-flex changeOrderParent">
+                            <!-- Book Name (English) -->
+                            <div class="form-group">
+                                <label for="editBookNameEnglish" data-translate="book_name_english">Book Name (in
+                                    English)</label>
+                                <input type="text" id="editBookNameEnglish" class="form-control"
+                                    data-translate="placeholder_book_name_english" required>
+                            </div>
+
+                            <!-- Book Name (Hindi) -->
+                            <div class="form-group">
+                                <label for="editBookNameHindi" data-translate="book_name_hindi">Book Name (in
+                                    Hindi)</label>
+                                <input type="text" id="editBookNameHindi" class="form-control"
+                                    data-translate="placeholder_book_name_hindi" required>
+                            </div>
                         </div>
-                        <button type="submit" class="btn btn-primary">Update Book</button>
+
+                        <!-- Book File (PDF or EPUB) -->
+                        <div class="form-group">
+                            <label for="editBookFile" data-translate="book_file">Book File (PDF or EPUB)</label>
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="editBookFile" accept=".pdf,.epub">
+                                <label class="custom-file-label" for="editBookFile" data-translate="choose_file">Choose
+                                    file</label>
+                            </div>
+                        </div>
+
+                        <div class="d-flex changeOrderParent">
+                            <!-- Book Details (English) -->
+                            <div class="form-group">
+                                <label for="editBookDetailsEnglish" data-translate="book_details_english">Book Details
+                                    (in English)</label>
+                                <textarea id="editBookDetailsEnglish" class="form-control"
+                                    data-translate="placeholder_book_details_english" required></textarea>
+                            </div>
+
+                            <!-- Book Details (Hindi) -->
+                            <div class="form-group">
+                                <label for="editBookDetailsHindi" data-translate="book_details_hindi">Book Details (in
+                                    Hindi)</label>
+                                <textarea id="editBookDetailsHindi" class="form-control"
+                                    data-translate="placeholder_book_details_hindi" required></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Book Price -->
+                        <div class="form-group">
+                            <label for="editBookPrice" data-translate="book_price">Book Price</label>
+                            <input type="number" id="editBookPrice" class="form-control"
+                                data-translate="placeholder_book_price" required>
+                        </div>
+
+                        <!-- Book Keywords -->
+                        <div class="form-group">
+                            <label for="editBookKeywords" data-translate="book_keywords">Keywords</label>
+                            <input type="text" id="editBookKeywords" class="form-control"
+                                data-translate="placeholder_book_keywords">
+                        </div>
+
+                        <!-- Discounted Price -->
+                        <div class="form-group">
+                            <label for="editBookDiscountedPrice" data-translate="book_discounted_price">Book Discounted
+                                Price</label>
+                            <div class="input-group">
+                                <input type="number" id="editBookDiscountedPrice" class="form-control"
+                                    data-translate="placeholder_discounted_price" required>
+                                <div class="input-group-append">
+                                    <div class="input-group-text">
+                                        <input type="checkbox" id="useOriginalPrice">
+                                        <label for="useOriginalPrice" class="ml-2"
+                                            data-translate="use_original_price">Use Original Price</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Free Demo Pages Percentage -->
+                        <div class="form-group">
+                            <label for="editBookDemoPercent" data-translate="free_demo_percentage">Free Demo Pages
+                                Percentage</label>
+                            <input type="number" id="editBookDemoPercent" class="form-control"
+                                data-translate="placeholder_free_demo_percentage" min="0" max="100" required>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn btn-primary" data-translate="save_changes">Save
+                            Changes</button>
                     </form>
                 </div>
             </div>
@@ -290,19 +368,51 @@
     </div>
 
 
+
+
+
+
+
+
     <script src="./assets/js/core/jquery.min.js"></script>
-    <!-- <script src="https://cdn.jsdelivr.net/npm/epubjs/dist/epub.min.js"></script> -->
-    <script src="./assets/js/core/popper.min.js"></script> <!-- Can be removed if using the new CDN -->
-    <script src="./assets/js/core/bootstrap.min.js"></script> <!-- Can be removed if using the new CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-w76AftaFocD3/8z1JpCFhzU8vNY0P8YOcAN1pTXx4S3MGI6a2E3SuhKuBt3MGi2x"
-        crossorigin="anonymous"></script>
+    <script src="./assets/js/core/popper.min.js"></script>
+    <script src="./assets/js/core/bootstrap.min.js"></script>
+    <script src="./assets/js/plugins/perfect-scrollbar.jquery.min.js"></script>
+    <script src="./assets/js/paper-dashboard.min.js?v=2.0.1" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
 
     <script>
         function Logout() {
             localStorage.removeItem('loggedadmin')
             location.href = '/login.html'
         }
+        let selectMenuPlaceHolder = {
+            en: "Select an option",
+            hi: "विकल्प चुनें",
+        }
+        let initSelect2 = (placeH) => {
+            $('#authorSelect, #categorySelect, #languageSelect,#editAuthorSelect, #editCategorySelect,#editLanguageSelect').select2({
+                placeholder: placeH,
+                allowClear: true,
+                width: '100%',
+            });
+        }
+        function changeOrderParentHandler() {
+            const changeOrderParents = document.querySelectorAll('.changeOrderParent'); // Select all elements with the class
+            const currLanguage = localStorage.getItem('language') || 'en';
+
+            let placeH = currLanguage === 'en' ? selectMenuPlaceHolder.en : selectMenuPlaceHolder.hi
+            initSelect2(placeH)
+
+            // Loop through each element and set its flexDirection
+            changeOrderParents.forEach(changeOrderParent => {
+                changeOrderParent.style.flexDirection = currLanguage === 'hi' ? 'column-reverse' : 'column';
+            });
+        }
+        changeOrderParentHandler()
+
+
         // Language translations
         const translations = {
             en: {
@@ -328,6 +438,31 @@
                 languages: "Languages",
                 view: "View",
                 "logout": "Logout",
+                "edit_book": "Edit Book",
+                "book_front_image": "Book Front Image",
+                "choose_file": "Choose file",
+                "book_category": "Book Category",
+                "author_name": "Author Name",
+                "book_language": "Book Language",
+                "book_name_english": "Book Name (in English)",
+                "book_name_hindi": "Book Name (in Hindi)",
+                "book_file": "Book File (PDF or EPUB)",
+                "book_details_english": "Book Details (in English)",
+                "book_details_hindi": "Book Details (in Hindi)",
+                "book_price": "Book Price",
+                "book_keywords": "Keywords",
+                "book_discounted_price": "Book Discounted Price",
+                "use_original_price": "Use Original Price",
+                "free_demo_percentage": "Free Demo Pages Percentage",
+                "save_changes": "Save Changes",
+                "placeholder_book_name_english": "Enter book name in English",
+                "placeholder_book_name_hindi": "Enter book name in Hindi",
+                "placeholder_book_details_english": "Enter book details in English",
+                "placeholder_book_details_hindi": "Enter book details in Hindi",
+                "placeholder_book_price": "Enter book price",
+                "placeholder_book_keywords": "Enter book keywords",
+                "placeholder_discounted_price": "Enter discounted price",
+                "placeholder_free_demo_percentage": "Enter percentage (0-100)"
             },
             hi: {
                 logotxt: "पुस्तकम",
@@ -352,6 +487,31 @@
                 languages: "भाषाएँ",
                 view: "देखें",
                 "logout": "लॉग आउट",
+                "edit_book": "पुस्तक संपादित करें",
+                "book_front_image": "पुस्तक का अग्रभाग छवि",
+                "choose_file": "फाइल चुनें",
+                "book_category": "पुस्तक श्रेणी",
+                "author_name": "लेखक नाम",
+                "book_language": "पुस्तक भाषा",
+                "book_name_english": "पुस्तक का नाम (अंग्रेज़ी में)",
+                "book_name_hindi": "पुस्तक का नाम (हिंदी में)",
+                "book_file": "पुस्तक फ़ाइल (PDF या EPUB)",
+                "book_details_english": "पुस्तक विवरण (अंग्रेज़ी में)",
+                "book_details_hindi": "पुस्तक विवरण (हिंदी में)",
+                "book_price": "पुस्तक मूल्य",
+                "book_keywords": "किवर्ड",
+                "book_discounted_price": "पुस्तक छूट मूल्य",
+                "use_original_price": "मूल मूल्य का उपयोग करें",
+                "free_demo_percentage": "नि: शुल्क डेमो पृष्ठ प्रतिशत",
+                "save_changes": "बदलाव सहेजें",
+                "placeholder_book_name_english": "अंग्रेज़ी में पुस्तक का नाम दर्ज करें",
+                "placeholder_book_name_hindi": "हिंदी में पुस्तक का नाम दर्ज करें",
+                "placeholder_book_details_english": "अंग्रेज़ी में पुस्तक विवरण दर्ज करें",
+                "placeholder_book_details_hindi": "हिंदी में पुस्तक विवरण दर्ज करें",
+                "placeholder_book_price": "पुस्तक मूल्य दर्ज करें",
+                "placeholder_book_keywords": "पुस्तक किवर्ड दर्ज करें",
+                "placeholder_discounted_price": "छूट मूल्य दर्ज करें",
+                "placeholder_free_demo_percentage": "प्रतिशत दर्ज करें (0-100)"
             }
         };
 
@@ -369,6 +529,8 @@
             const selectedLanguage = this.value;
             localStorage.setItem("language", selectedLanguage);
             loadLanguage(selectedLanguage);
+            changeOrderParentHandler()
+
         });
 
         // Apply language settings on page load
@@ -433,6 +595,12 @@
 
         // Delete book
         async function deleteBook(id) {
+            // Ask for confirmation before deleting
+            const isConfirmed = window.confirm("Are you sure you want to delete this book?");
+            if (!isConfirmed) {
+                return; // If not confirmed, do nothing
+            }
+
             const deleteMessageDiv = document.getElementById("deleteMessage");
 
             try {
@@ -442,7 +610,19 @@
                 });
 
                 if (response.ok) {
-                    document.getElementById(`book-${id}`).remove();
+                    // Remove the book row from the table
+                    const row = document.getElementById(`book-${id}`);
+                    row.remove();
+
+                    // Reorder the remaining rows' ID numbers
+                    const rows = document.querySelectorAll("#book-table-body tr");
+                    rows.forEach((row, index) => {
+                        const idCell = row.querySelector("td:first-child"); // Assuming ID is in the first cell
+                        if (idCell) {
+                            idCell.textContent = index + 1; // Reassign the ID to reflect the new order
+                        }
+                    });
+
                     deleteMessageDiv.innerHTML = `<div class="alert alert-success">Book deleted successfully!</div>`;
                 } else {
                     deleteMessageDiv.innerHTML = `<div class="alert alert-danger">Failed to delete book. Please try again.</div>`;
@@ -456,6 +636,7 @@
                 deleteMessageDiv.innerHTML = "";
             }, 3000);
         }
+
 
         async function viewBook(id) {
             try {
@@ -481,13 +662,13 @@
                     document.getElementById("viewBookFreeDemo").textContent = book.book_free_demo || "N/A";
 
                     // Authors
-                    const authors = book.author_data
+                    const authors = book?.author_data
                         .map(author => `${author.author_english} (${author.author_hindi})`)
                         .join(", ");
                     document.getElementById("viewBookAuthors").textContent = authors || "N/A";
 
                     // Categories
-                    const categories = book.category_data
+                    const categories = book?.category_data
                         .map(category => `${category.category_english} (${category.category_hindi})`)
                         .join(", ");
                     document.getElementById("viewBookCategories").textContent = categories || "N/A";
@@ -515,10 +696,14 @@
                     } else {
                         bookFileLink.style.display = "none";
                     }
+                    const viewBookContentsButton = document.getElementById("viewBookContentsButton");
+                    viewBookContentsButton.setAttribute(
+                        "data-bookurl",
+                        `https://pustakam.pythonanywhere.com${book.book_file}`
+                    );
 
-                    // Show the modal
-                    const viewBookModal = new bootstrap.Modal(document.getElementById("viewBookModal"));
-                    viewBookModal.show();
+                    $('#viewBookModal').modal('show');
+
                 } else {
                     alert("Failed to fetch book details.");
                 }
@@ -530,8 +715,10 @@
 
 
         document.getElementById("viewBookContentsButton").addEventListener("click", function () {
-            window.open(`epub-viewer.html`, "_blank");
+            const bookurl = this.dataset.bookurl; // Get the value of the 'data-bookurl' attribute
+            window.open(`epub-viewer.html?bookurl=${encodeURIComponent(bookurl)}`, "_blank"); // Pass the book URL as a query parameter
         });
+
 
         async function editBook(bookId) {
             try {
@@ -549,33 +736,38 @@
                     document.getElementById('editBookDetailsEnglish').value = book.book_details_english;
                     document.getElementById('editBookDetailsHindi').value = book.book_details_hindi;
                     document.getElementById('editBookKeywords').value = book.book_keywords.join(', ') || '';
+                    document.getElementById('editBookDemoPercent').value = book.book_free_demo
 
-                    // Set Thumbnail
-                    const thumbnail = book.book_front_image
-                        ? `https://pustakam.pythonanywhere.com${book.book_front_image}`
+                    let bookFIleName = book.book_file.split('/')
+                    let bookImgName = book.book_front_image.split('/')
+                    $('#editBookFile').next("label").text(bookFIleName[bookFIleName.length - 1]);
+                    $('#editBookFrontImage').next("label").text(bookImgName[bookImgName.length - 1]);
+
+                    const thumbnail = book?.book_front_image
+                        ? `https://pustakam.pythonanywhere.com${book?.book_front_image}`
                         : "./assets/img/default-thumbnail.png";
                     document.getElementById('editBookFrontImagePreview').src = thumbnail;
 
                     // Pre-fill select options for Authors, Categories, and Languages
-                    const authorsSelect = document.getElementById('editBookAuthors');
+                    const authorsSelect = document.getElementById('editAuthorSelect');
                     authorsSelect.innerHTML = ''; // Clear previous selections
-                    book.author_data.forEach(author => {
+                    book?.author_data.forEach(author => {
                         const option = document.createElement('option');
                         option.value = author.id;
                         option.textContent = `${author.author_english} (${author.author_hindi})`;
                         authorsSelect.appendChild(option);
                     });
 
-                    const categoriesSelect = document.getElementById('editBookCategories');
+                    const categoriesSelect = document.getElementById('editCategorySelect');
                     categoriesSelect.innerHTML = ''; // Clear previous selections
-                    book.category_data.forEach(category => {
+                    book?.category_data?.forEach(category => {
                         const option = document.createElement('option');
                         option.value = category.id;
                         option.textContent = `${category.category_english} (${category.category_hindi})`;
                         categoriesSelect.appendChild(option);
                     });
 
-                    const languagesSelect = document.getElementById('editBookLanguages');
+                    const languagesSelect = document.getElementById('editLanguageSelect');
                     languagesSelect.innerHTML = ''; // Clear previous selections
                     book.language_data.forEach(language => {
                         const option = document.createElement('option');
@@ -585,50 +777,77 @@
                     });
 
                     // Open the modal
-                    const editBookModal = new bootstrap.Modal(document.getElementById('editBookModal'));
-                    editBookModal.show();
+                    $('#editBookModal').modal('show');
+                    fetchAuthorsAndCategories(book);
+                    const currLanguage = localStorage.getItem('language') || 'en';
+
+                    let placeH = currLanguage === 'en' ? selectMenuPlaceHolder.en : selectMenuPlaceHolder.hi
+                    initSelect2(placeH)
+
 
                     // Handle form submission for editing
                     document.getElementById('editBookForm').onsubmit = async function (event) {
                         event.preventDefault();
 
                         // Create a FormData object to capture the form data
-                        const updatedBook = {
-                            book_name_english: document.getElementById('editBookNameEnglish').value,
-                            book_name_hindi: document.getElementById('editBookNameHindi').value,
-                            book_price: document.getElementById('editBookPrice').value,
-                            book_price_discount: document.getElementById('editBookDiscountedPrice').value,
-                            book_details_english: document.getElementById('editBookDetailsEnglish').value,
-                            book_details_hindi: document.getElementById('editBookDetailsHindi').value,
-                            book_keywords: document.getElementById('editBookKeywords').value.split(',').map(k => k.trim()),
-                            author_data: Array.from(document.getElementById('editBookAuthors').selectedOptions).map(option => option.value),
-                            category_data: Array.from(document.getElementById('editBookCategories').selectedOptions).map(option => option.value),
-                            language_data: Array.from(document.getElementById('editBookLanguages').selectedOptions).map(option => option.value),
-                        };
+                        const formData = new FormData();
 
-                        // Optional: Include new image and file if selected
+                        // Append text fields
+                        formData.append('book_name_english', document.getElementById('editBookNameEnglish').value);
+                        formData.append('book_name_hindi', document.getElementById('editBookNameHindi').value);
+                        formData.append('book_price', document.getElementById('editBookPrice').value);
+                        formData.append('book_price_discount', document.getElementById('editBookDiscountedPrice').value);
+                        formData.append('book_details_english', document.getElementById('editBookDetailsEnglish').value);
+                        formData.append('book_details_hindi', document.getElementById('editBookDetailsHindi').value);
+
+                        // Append keywords as a single JSON string
+                        const keywords = document.getElementById('editBookKeywords').value?.split(',').map(k => k.trim());
+
+                        keywords.forEach((k) => {
+                            formData.append("book_keywords", k);
+                        });
+
+                        // Append selected categories, authors, and languages individually
+                        const selectedCategories = Array.from(document.getElementById('editCategorySelect').selectedOptions).map(option => option.value);
+                        selectedCategories.forEach((category) => {
+                            formData.append("category_data", category);
+                        });
+
+                        const selectedAuthors = Array.from(document.getElementById('editAuthorSelect').selectedOptions).map(option => option.value);
+                        selectedAuthors.forEach((author) => {
+                            formData.append("author_data", author);
+                        });
+
+                        const selectedLanguages = Array.from(document.getElementById('editLanguageSelect').selectedOptions).map(option => option.value);
+                        selectedLanguages.forEach((language) => {
+                            formData.append("language_data", language);
+                        });
+
+                        // Append optional file fields
                         const frontImage = document.getElementById('editBookFrontImage').files[0];
                         if (frontImage) {
-                            updatedBook.book_front_image = frontImage;
+                            formData.append('book_front_image', frontImage);
                         }
 
                         const bookFile = document.getElementById('editBookFile').files[0];
                         if (bookFile) {
-                            updatedBook.book_file = bookFile;
+                            formData.append('book_file', bookFile);
                         }
 
                         try {
                             const updateResponse = await fetch(`https://pustakam.pythonanywhere.com/books/${bookId}/`, {
-                                method: 'PUT',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify(updatedBook)
+                                method: 'PATCH',
+                                body: formData, // Send the FormData object
                             });
 
-                            if (updateResponse.ok) {
+                            let result = await updateResponse.json()
+                            if (result.status === 'success') {
                                 alert('Book updated successfully!');
-                                editBookModal.hide(); // Close the modal
+                                $('#editBookModal').modal('hide'); // Close the modal
                                 fetchBooks(); // Refresh the book list
                             } else {
+
+                                console.error('Error details:', result);
                                 alert('Error updating book!');
                             }
                         } catch (error) {
@@ -636,6 +855,7 @@
                             alert('An error occurred while updating the book. Please try again.');
                         }
                     };
+
                 } else {
                     alert('Failed to fetch book details.');
                 }
@@ -644,6 +864,163 @@
                 alert('An error occurred while fetching book details.');
             }
         }
+
+
+        async function fetchAuthorsAndCategories(book) {
+            console.log(book.author_data[0].author_english);
+
+            try {
+                // Fetch authors, categories, and languages
+                const [authorsResponse, categoriesResponse, languagesResponse] = await Promise.all([
+                    fetch('https://pustakam.pythonanywhere.com/author/'),
+                    fetch('https://pustakam.pythonanywhere.com/category/'),
+                    fetch('https://pustakam.pythonanywhere.com/languages/')
+                ]);
+
+                const authorsData = await authorsResponse.json();
+                const categoriesData = await categoriesResponse.json();
+                const languagesData = await languagesResponse.json();  // Fetch languages
+
+                if (authorsData.status === 'success' && categoriesData.status === 'success' && languagesData.status === 'success') {
+                    // Populate authors select menu
+                    const authorsSelect = document.getElementById('editAuthorSelect');
+                    authorsSelect.innerHTML = ''; // Clear previous selections
+                    authorsData.data.forEach(author => {
+                        const option = document.createElement('option');
+                        option.value = author.id;
+                        option.textContent = `${author.author_english} (${author.author_hindi})`;
+                        authorsSelect.appendChild(option);
+                    });
+
+                    // Populate categories select menu
+                    const categoriesSelect = document.getElementById('editCategorySelect');
+                    categoriesSelect.innerHTML = ''; // Clear previous selections
+                    categoriesData.data.forEach(category => {
+                        const option = document.createElement('option');
+                        option.value = category.id;
+                        option.textContent = `${category.category_english} (${category.category_hindi})`;
+                        categoriesSelect.appendChild(option);
+                    });
+
+                    // Populate languages select menu
+                    const languagesSelect = document.getElementById('editLanguageSelect');
+                    languagesSelect.innerHTML = ''; // Clear previous selections
+                    languagesData.data.forEach(language => {
+                        const option = document.createElement('option');
+                        option.value = language.id;
+                        option.textContent = language.languages; // Assuming `languages` is the name field
+                        languagesSelect.appendChild(option);
+                    });
+
+                    initSelect2("Select an option");
+
+                    // Set the existing selected values for the select menus (if the book data is available)
+                    if (book) {
+                        // Pre-select authors
+                        const authorIds = book?.author_data?.map(author => author.id); // Get the IDs of the authors
+                        $('#editAuthorSelect').val(authorIds).trigger('change');  // Set the value to the array of IDs and trigger change
+
+                        // Pre-select categories
+                        const categoryIds = book?.category_data?.map(category => category.id); // Get the IDs of the categories
+                        $('#editCategorySelect').val(categoryIds).trigger('change'); // Set the value to the array of IDs and trigger change
+
+                        // Pre-select languages
+                        const languageIds = book?.language_data?.map(language => language.id); // Get the IDs of the languages
+                        $('#editLanguageSelect').val(languageIds).trigger('change'); // Set the value to the array of IDs and trigger change
+
+                        // You can add a console log to verify the selected values
+                        console.log('Selected authors:', authorIds);
+                        console.log('Selected categories:', categoryIds);
+                        console.log('Selected languages:', languageIds);
+                    }
+
+                    // Initialize Select2 with placeholder text
+                } else {
+                    console.error('Failed to fetch authors, categories, or languages data');
+                }
+            } catch (error) {
+                console.error('Error fetching authors, categories, or languages:', error);
+            }
+        }
+
+
+
+
+
+
+
+        // Function to translate text dynamically (using Google Translate API)
+        async function translateText(text, sourceLang, targetLang) {
+            const apiKey = 'AIzaSyBlk5ZotGsdHMkbjPNarkmr9b3FV5n8vDo'; // Replace with your Google API Key
+            const url = `https://translation.googleapis.com/language/translate/v2?key=${apiKey}`;
+
+            try {
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        q: text,
+                        source: sourceLang,
+                        target: targetLang,
+                        format: "text"
+                    }),
+                });
+
+                if (!response.ok) throw new Error('Translation API error!');
+
+                const data = await response.json();
+                return data.data.translations[0].translatedText || text;
+            } catch (error) {
+                console.error("Translation error:", error);
+                return text;
+            }
+        }
+
+        // Debounce function to prevent too many API calls
+        function debounce(func, delay) {
+            let debounceTimer;
+            return function (...args) {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => func.apply(this, args), delay);
+            };
+        }
+
+        // Dynamically translate fields on user input based on current language
+        function setupTranslationHandlers() {
+            const currentLanguage = localStorage.getItem("language") || "en"; // Get the current language
+
+            // Define translation mappings based on the current language
+            const translateFields = [
+                { sourceFieldId: "editBookNameEnglish", targetFieldId: "editBookNameHindi", sourceLang: "en", targetLang: "hi" },
+                { sourceFieldId: "editBookDetailsEnglish", targetFieldId: "editBookDetailsHindi", sourceLang: "en", targetLang: "hi" },
+                { sourceFieldId: "editBookNameHindi", targetFieldId: "editBookNameEnglish", sourceLang: "hi", targetLang: "en" },
+                { sourceFieldId: "editBookDetailsHindi", targetFieldId: "editBookDetailsEnglish", sourceLang: "hi", targetLang: "en" }
+            ];
+
+            // Add translation listeners based on current language
+            translateFields.forEach(({ sourceFieldId, targetFieldId, sourceLang, targetLang }) => {
+                const sourceField = document.getElementById(sourceFieldId);
+                const targetField = document.getElementById(targetFieldId);
+
+                if (sourceField && targetField) {
+                    sourceField.addEventListener("input", debounce(async () => {
+                        if (currentLanguage === "en" && sourceLang === "en") {
+                            // Only translate if source language is English and current language is English
+                            const translatedText = await translateText(sourceField.value, sourceLang, targetLang);
+                            targetField.value = translatedText;
+                        } else if (currentLanguage === "hi" && sourceLang === "hi") {
+                            // Only translate if source language is Hindi and current language is Hindi
+                            const translatedText = await translateText(sourceField.value, sourceLang, targetLang);
+                            targetField.value = translatedText;
+                        }
+                    }, 500));
+                }
+            });
+        }
+
+        setupTranslationHandlers(); // Set up translation handlers for the form fields
+
+
 
 
 
