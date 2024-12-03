@@ -358,7 +358,8 @@
         `;
                 tableBody.insertAdjacentHTML('beforeend', row);
             });
-
+            const language = localStorage.getItem('language') || 'en';
+            loadLanguage(language);
             updatePagination();  // Update the pagination controls based on the current page
         };
         // Function to change pages
