@@ -388,7 +388,7 @@
                     <button class="btn btn-primary btn-sm" data-translate='edit' onclick='editAuthor(${JSON.stringify(author)})'>Edit</button>
                     <button class="btn btn-danger btn-sm" data-translate='delete' onclick="deleteAuthor(${author.id})">Delete</button>
                    <button class="btn btn-info btn-sm">
-    <input style='width:50px' type='number' value='${author.number}' onchange="updateOrder(${author.id}, this.value)">
+    <input style='width:50px' type='number' value='${author.number}' onchange="updateOrder(${author.id}, this)">
 </button>
 
                 
@@ -402,10 +402,32 @@
 
             updatePagination();
         };
-        async function updateOrder(authorId, value) {
+        async function updateOrder(authorId, element) {
+            let newPriority = parseInt(element.value); // Ensure we're working with a number
             const updateMessageDiv = document.getElementById('deleteMessage');
 
+            let oldAuthor = authorsData.find((x) => x.id === authorId);
 
+            // Check for negative values
+            if (newPriority < 0) {
+                updateMessageDiv.innerHTML = `
+            <div class="alert alert-danger" role="alert">
+                Value can't be negative!
+            </div>`;
+                element.value = oldAuthor.number; // Restore the original value
+                return; // Stop further execution
+            }
+
+            // Check if another author already has the same priority number
+            let currentAuthor = authorsData.find((x) => x.number === newPriority && x.id !== authorId && x.number > 0);
+            if (currentAuthor) {
+                updateMessageDiv.innerHTML = `
+            <div class="alert alert-danger" role="alert">
+                This number already exists!
+            </div>`;
+                element.value = oldAuthor.number; // Restore the original value
+                return; // Stop further execution
+            }
 
             try {
                 const response = await fetch(`https://pustakam.pythonanywhere.com/author/${authorId}/`, {
@@ -413,39 +435,44 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ number: value })
+                    body: JSON.stringify({ number: newPriority })
                 });
 
                 let result = await response.json();
 
                 if (response.ok && result.status === 'success') {
-                    // Show success alert
+                    // Show success message
                     updateMessageDiv.innerHTML = `
                 <div class="alert alert-success" role="alert">
                     Order updated successfully!
                 </div>`;
                     authorsData = authorsData.map((x) => {
                         if (x.id === authorId) {
-                            x.number = value
+                            x.number = newPriority; // Update the number in the local data
                         }
-                        return x
-                    })
-                    changeAuthorsByGivenPriority()
+                        return x;
+                    });
+
+                    // Reorder the authors based on the updated priority
+                    changeAuthorsByGivenPriority();
                 } else {
-                    // Show failure alert
+                    // If the API request fails, show an error message
+                    element.value = oldAuthor.number; // Restore the original value
+
                     updateMessageDiv.innerHTML = `
                 <div class="alert alert-danger" role="alert">
-                    Failed to update order. Please try again.
+                ${result.status}
                 </div>`;
                     console.error(result);
                 }
-
             } catch (error) {
                 // Show error alert for network or server errors
                 console.error("Error updating order:", error);
+                element.value = oldAuthor.number; // Restore the original value
+
                 updateMessageDiv.innerHTML = `
             <div class="alert alert-danger" role="alert">
-                An error occurred while updating the order. Please try again.
+            ${error}
             </div>`;
             }
 
@@ -454,6 +481,7 @@
                 updateMessageDiv.innerHTML = '';
             }, 3000);
         }
+
 
 
         // Update Pagination Info

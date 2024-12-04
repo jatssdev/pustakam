@@ -332,8 +332,33 @@
         }
 
         // Function to handle priority (number) update
-        async function updateCategoryOrder(categoryId, newNumber) {
+        async function updateCategoryOrder(categoryId, element) {
             const updateMessageDiv = document.getElementById('deleteMessage');
+            let newNumber = parseInt(element.value); // Ensure we are working with a number
+
+            // Find the category to be updated
+            let oldCategory = categoriesData.find((x) => x.id === categoryId);
+
+            // Check for negative values
+            if (newNumber < 0) {
+                updateMessageDiv.innerHTML = `
+            <div class="alert alert-danger" role="alert">
+                Value can't be negative!
+            </div>`;
+                element.value = oldCategory.number; // Restore the original value
+                return; // Stop further execution
+            }
+
+            // Check if another category already has the same priority number
+            let currentCategory = categoriesData.find((x) => x.number === newNumber && x.id !== categoryId && x.number > 0);
+            if (currentCategory) {
+                updateMessageDiv.innerHTML = `
+            <div class="alert alert-danger" role="alert">
+                This number already exists!
+            </div>`;
+                element.value = oldCategory.number; // Restore the original value
+                return; // Stop further execution
+            }
 
             try {
                 const response = await fetch(`https://pustakam.pythonanywhere.com/category/${categoryId}/`, {
@@ -359,19 +384,23 @@
                         return category;
                     });
 
-                    // Reorder the categories based on the updated number
-                    changeCategoriesByGivenPriority()
+                    // Reorder the categories based on the updated priority
+                    changeCategoriesByGivenPriority();
                 } else {
+                    element.value = oldCategory.number; // Restore the original value
+
                     updateMessageDiv.innerHTML = `
                 <div class="alert alert-danger" role="alert">
-                    Failed to update priority. Please try again.
+                ${result.status}
                 </div>`;
                 }
             } catch (error) {
                 console.error("Error updating category priority:", error);
+                element.value = oldCategory.number; // Restore the original value
+
                 updateMessageDiv.innerHTML = `
             <div class="alert alert-danger" role="alert">
-                An error occurred while updating the priority. Please try again.
+            ${error}
             </div>`;
             }
 
@@ -428,7 +457,7 @@
                 <td>
                     <button class="btn btn-primary btn-sm" data-translate="edit" onclick='editCategory(${JSON.stringify(category)})'>Edit</button>
                     <button class="btn btn-danger btn-sm" data-translate="delete" onclick="deleteCategory(${category.id})">Delete</button>
-                    <button class="btn btn-info btn-sm"> <input style='width:50px' type="number" value="${category.number}" onchange="updateCategoryOrder(${category.id}, this.value)"></button>
+                    <button class="btn btn-info btn-sm"> <input style='width:50px' type="number" value="${category.number}" onchange="updateCategoryOrder(${category.id}, this)"></button>
                     
                 </td>
             </tr>
