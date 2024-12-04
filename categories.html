@@ -306,6 +306,81 @@
             document.getElementById('language-dropdown').value = language;
             loadLanguage(language);
         });
+        let changeCategoriesByGivenPriority = () => {
+            // First, divide categories into two groups:
+            // one with number == 0, and one with number > 0
+            let zeroPriorityCategories = [];
+            let nonZeroPriorityCategories = [];
+
+            categoriesData.forEach(category => {
+                if (category.number > 0) {
+                    nonZeroPriorityCategories.push(category);  // Categories with non-zero number
+                } else {
+                    zeroPriorityCategories.push(category);  // Categories with number 0
+                }
+            });
+
+            // Then, sort both arrays based on the number value (in ascending order)
+            nonZeroPriorityCategories.sort((a, b) => a?.number - b?.number);
+
+            // Concatenate both arrays: non-zero priority categories first, followed by zero-priority categories
+            let orderedCategories = [...nonZeroPriorityCategories, ...zeroPriorityCategories];
+            categoriesData = orderedCategories;
+
+            // Display the ordered categories in the table or perform other updates
+            displayCategories();
+        }
+
+        // Function to handle priority (number) update
+        async function updateCategoryOrder(categoryId, newNumber) {
+            const updateMessageDiv = document.getElementById('deleteMessage');
+
+            try {
+                const response = await fetch(`https://pustakam.pythonanywhere.com/category/${categoryId}/`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ number: newNumber })
+                });
+
+                let result = await response.json();
+
+                if (response.ok && result.status === 'success') {
+                    // Update the category list after the update
+                    updateMessageDiv.innerHTML = `
+                <div class="alert alert-success" role="alert">
+                    Category priority updated successfully!
+                </div>`;
+                    categoriesData = categoriesData.map((category) => {
+                        if (category.id === categoryId) {
+                            category.number = newNumber; // Update the number in the local data
+                        }
+                        return category;
+                    });
+
+                    // Reorder the categories based on the updated number
+                    changeCategoriesByGivenPriority()
+                } else {
+                    updateMessageDiv.innerHTML = `
+                <div class="alert alert-danger" role="alert">
+                    Failed to update priority. Please try again.
+                </div>`;
+                }
+            } catch (error) {
+                console.error("Error updating category priority:", error);
+                updateMessageDiv.innerHTML = `
+            <div class="alert alert-danger" role="alert">
+                An error occurred while updating the priority. Please try again.
+            </div>`;
+            }
+
+            // Automatically hide the alert after 3 seconds
+            setTimeout(() => {
+                updateMessageDiv.innerHTML = '';
+            }, 3000);
+        }
+
 
 
         const getCategories = async () => {
@@ -321,7 +396,7 @@
                 if (result.status === "success") {
                     categoriesData = result.data;  // Store all categories data
                     totalPages = Math.ceil(categoriesData.length / itemsPerPage);  // Calculate total pages
-                    displayCategories();  // Call function to display categories for the current page
+                    changeCategoriesByGivenPriority()
                 } else {
                     console.error('Failed to load data:', result);
                 }
@@ -353,6 +428,7 @@
                 <td>
                     <button class="btn btn-primary btn-sm" data-translate="edit" onclick='editCategory(${JSON.stringify(category)})'>Edit</button>
                     <button class="btn btn-danger btn-sm" data-translate="delete" onclick="deleteCategory(${category.id})">Delete</button>
+                     <input type="number" value="${category.number}" onchange="updateCategoryOrder(${category.id}, this.value)">
                 </td>
             </tr>
         `;
