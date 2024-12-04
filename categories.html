@@ -428,7 +428,8 @@
                 <td>
                     <button class="btn btn-primary btn-sm" data-translate="edit" onclick='editCategory(${JSON.stringify(category)})'>Edit</button>
                     <button class="btn btn-danger btn-sm" data-translate="delete" onclick="deleteCategory(${category.id})">Delete</button>
-                     <input type="number" value="${category.number}" onchange="updateCategoryOrder(${category.id}, this.value)">
+                    <button class="btn btn-info btn-sm"> <input style='width:50px' type="number" value="${category.number}" onchange="updateCategoryOrder(${category.id}, this.value)"></button>
+                    
                 </td>
             </tr>
         `;

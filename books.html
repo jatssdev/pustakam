@@ -603,7 +603,68 @@
         //         loading.style.display = "none";
         //     }
         // }
+        // Sort books by priority
+        let changeBooksByGivenPriority = () => {
+            let zeroPriorityBooks = [];
+            let nonZeroPriorityBooks = [];
 
+            booksData.forEach(book => {
+                if (book.number > 0) {
+                    nonZeroPriorityBooks.push(book);
+                } else {
+                    zeroPriorityBooks.push(book);
+                }
+            });
+
+            nonZeroPriorityBooks.sort((a, b) => a.number - b.number);
+            booksData = [...nonZeroPriorityBooks, ...zeroPriorityBooks];
+            displayBooks();  // Call to display the sorted books
+        };
+        // Update the priority for a book
+        async function updateBookOrder(bookId, newNumber) {
+            const updateMessageDiv = document.getElementById('deleteMessage');
+
+            try {
+                const response = await fetch(`https://pustakam.pythonanywhere.com/books/${bookId}/`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ number: newNumber })
+                });
+
+                let result = await response.json();
+
+                if (response.ok && result.status === 'success') {
+                    updateMessageDiv.innerHTML = `
+                <div class="alert alert-success" role="alert">
+                    Book priority updated successfully!
+                </div>`;
+                    booksData = booksData.map((book) => {
+                        if (book.id === bookId) {
+                            book.number = newNumber;
+                        }
+                        return book;
+                    });
+
+                    changeBooksByGivenPriority();  // Reorder and display
+                } else {
+                    updateMessageDiv.innerHTML = `
+                <div class="alert alert-danger" role="alert">
+                    Failed to update priority. Please try again.
+                </div>`;
+                }
+            } catch (error) {
+                updateMessageDiv.innerHTML = `
+            <div class="alert alert-danger" role="alert">
+                An error occurred while updating the priority. Please try again.
+            </div>`;
+            }
+
+            setTimeout(() => {
+                updateMessageDiv.innerHTML = '';
+            }, 3000);
+        }
         const fetchBooks = async () => {
             try {
                 const response = await fetch('https://pustakam.pythonanywhere.com/books/');
@@ -612,12 +673,13 @@
                 if (result.status === "success") {
                     booksData = result.data;
                     totalPages = Math.ceil(booksData.length / itemsPerPage);
-                    displayBooks();  // Show books for the current page
+                    changeBooksByGivenPriority();
                 }
             } catch (error) {
                 console.error("Error fetching books:", error);
             }
         };
+
         const displayBooks = () => {
             const startIndex = (currentPage - 1) * itemsPerPage;
             const endIndex = startIndex + itemsPerPage;
@@ -638,6 +700,9 @@
                     <button class="btn btn-info" onclick="viewBook(${book.id})">View</button>
                     <button class="btn btn-primary" onclick="editBook(${book.id})">Edit</button>
                     <button class="btn btn-danger" onclick="deleteBook(${book.id})">Delete</button>
+                     <button class="btn btn-info btn-sm">
+                        <input style='width:50px' type="number" value="${book.number}" onchange="updateBookOrder(${book.id}, this.value)">
+                    </button>
                 </td>
             </tr>
         `;
