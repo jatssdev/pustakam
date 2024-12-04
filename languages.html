@@ -132,6 +132,7 @@
                 <div class="col-md-12">
                     <a href="./add-language.html" data-translate="add_language" class="btn btn-primary text-white">Add
                         Language</a>
+                    <div id="editMessage" class="mt-2"></div>
 
                     <div class="card">
                         <div class="card-body">
@@ -158,8 +159,12 @@
                         </div>
                     </div>
                 </div>
+                <div id="pagination-controls" class="d-flex align-items-center justify-content-center mt-4">
+                    <button id="prevPage" class="btn btn-secondary" onclick="changePage(currentPage - 1)">&lt;</button>
+                    <span id="page-info" class="mx-3"></span>
+                    <button id="nextPage" class="btn btn-secondary" onclick="changePage(currentPage + 1)">&gt;</button>
+                </div>
 
-                <div id="editMessage" class="mt-2"></div>
             </div>
 
             <footer class="footer footer-black footer-white">
@@ -242,7 +247,12 @@
     <script src="./assets/js/plugins/perfect-scrollbar.jquery.min.js"></script>
     <script src="./assets/js/paper-dashboard.min.js?v=2.0.1" type="text/javascript"></script>
     <script>
-        let languagesData = []
+
+        let languagesData = [];  // Store all languages data
+        let currentPage = 1;  // Default to page 1
+        const itemsPerPage = 10;  // Number of languages per page
+        let totalPages = 1;
+
         function Logout() {
             localStorage.removeItem('loggedadmin')
             location.href = '/login.html'
@@ -322,103 +332,176 @@
         });
 
 
-        // // Fetch and populate languages in the table
-        // async function fetchLanguages() {
-        //     const tableContainer = document.getElementById("table-container");
-        //     const tableBody = document.getElementById("language-table-body");
-        //     const loadingIndicator = document.getElementById("loading");
-
-        //     try {
-        //         loadingIndicator.style.display = "block";
-        //         tableContainer.style.display = "none";
-        //         tableBody.innerHTML = ""; // Clear previous rows
-
-        //         const response = await fetch("https://pustakam.pythonanywhere.com/languages/");
-        //         const result = await response.json();
-
-        //         if (result.status === "success" && result.data) {
-        //             result.data.forEach((language, i) => {
-        //                 const row = `
-        //             <tr id="language-${language.id}">
-        //                 <td>${i + 1}</td>
-        //                 <td>${language.languages}</td>
-        //                 <td>${language.timestamp}</td>
-        //                 <td>
-        //                     <button class="btn btn-primary btn-sm" onclick="editLanguage(${language.id})" data-translate="edit">Edit</button>
-        //                     <button class="btn btn-danger btn-sm" onclick="deleteLanguage(${language.id})" data-translate="delete">Delete</button>
-        //                 </td>
-        //             </tr>
-        //         `;
-        //                 tableBody.insertAdjacentHTML("beforeend", row);
-
-        //             });
-
-        //             const language = localStorage.getItem('language') || 'en';
-        //             loadTranslations(language);
-        //             tableContainer.style.display = "block";
-        //         } else {
-        //             tableBody.innerHTML = `<tr><td colspan="4" class="text-center">No languages found.</td></tr>`;
-        //         }
-        //     } catch (error) {
-        //         console.error("Error fetching languages:", error);
-        //         tableBody.innerHTML = `<tr><td colspan="4" class="text-center text-danger">Failed to load languages. Please try again later.</td></tr>`;
-        //     } finally {
-        //         loadingIndicator.style.display = "none";
-        //     }
-        // }
-
-        // // Call fetchLanguages on page load
-        // document.addEventListener("DOMContentLoaded", fetchLanguages);
         async function fetchLanguages() {
             const loadingIndicator = document.getElementById("loading");
             const tableContainer = document.getElementById("table-container");
 
             try {
-                loadingIndicator.style.display = "block";
-                tableContainer.style.display = "none";
+                loadingIndicator.style.display = "block";  // Show loading indicator
+                tableContainer.style.display = "none";  // Hide the table while fetching data
 
                 const response = await fetch("https://pustakam.pythonanywhere.com/languages/");
                 const result = await response.json();
 
-
                 if (result.status === "success" && result.data) {
-                    languagesData = result.data; // Return the languages data
-                    displayLanguages()
+                    languagesData = result.data;  // Store languages data
+                    totalPages = Math.ceil(languagesData.length / itemsPerPage);  // Calculate total pages
+                    changeLanguagesByGivenPriority()
                 }
             } catch (error) {
                 console.error("Error fetching languages:", error);
-                return []; // Return empty array if there's an error
             } finally {
-                loadingIndicator.style.display = "none";
+                loadingIndicator.style.display = "none";  // Hide loading indicator
+                tableContainer.style.display = "block";  // Show the table
             }
         }
+
         function displayLanguages() {
+            const startIndex = (currentPage - 1) * itemsPerPage;  // Starting index for the current page
+            const endIndex = startIndex + itemsPerPage;  // Ending index for the current page
+            const languagesForCurrentPage = languagesData.slice(startIndex, endIndex);  // Get current page data
+
             const tableBody = document.getElementById("language-table-body");
+            tableBody.innerHTML = "";  // Clear the table
 
-            tableBody.innerHTML = ""; // Clear the table
-            console.log(languagesData);
-
-
-            languagesData.forEach((language, i) => {
+            // Insert rows into the table for the current page's data
+            languagesForCurrentPage.forEach((language, i) => {
                 const row = `
             <tr id="language-${language.id}">
-                <td>${i + 1}</td>
+                <td>${i + 1 + (currentPage - 1) * itemsPerPage}</td>
                 <td>${language.languages}</td>
                 <td>${language.timestamp}</td>
                 <td>
                     <button class="btn btn-primary btn-sm" onclick="editLanguage(${language.id})" data-translate="edit">Edit</button>
                     <button class="btn btn-danger btn-sm" onclick="deleteLanguage(${language.id})" data-translate="delete">Delete</button>
+                    <button class="btn btn-info btn-sm"  > <input type="number" value="${language.number || 0}" 
+                           onchange="updateLanguagePriority(${language.id}, this)" 
+                           style="width: 50px;"/></button>
                 </td>
             </tr>
         `;
-                tableBody.insertAdjacentHTML("beforeend", row);
+                tableBody.insertAdjacentHTML("beforeend", row);  // Insert the row into the table
             });
+
+            updatePagination();  // Update pagination controls
         }
 
-        document.addEventListener("DOMContentLoaded", async () => {
-            fetchLanguages();  // Fetch the languages
 
-        });
+        // Function to update the priority of a language and reorder
+        let changeLanguagesByGivenPriority = () => {
+            // Separate languages into two groups:
+            // one with priority > 0, and one with priority == 0
+            let zeroPriorityLanguages = [];
+            let nonZeroPriorityLanguages = [];
+
+            languagesData.forEach(language => {
+                if (language.number > 0) {
+                    nonZeroPriorityLanguages.push(language);  // Languages with non-zero priority
+                } else {
+                    zeroPriorityLanguages.push(language);  // Languages with priority 0
+                }
+            });
+
+            // Sort non-zero priority languages by their priority value in ascending order
+            nonZeroPriorityLanguages.sort((a, b) => a.number - b.number);
+
+            // Concatenate both arrays: non-zero priority languages first, followed by zero-priority languages
+            languagesData = [...nonZeroPriorityLanguages, ...zeroPriorityLanguages];
+
+            // Update the table display
+            displayLanguages();
+        };
+
+        // Function to handle priority update for a language
+        async function updateLanguagePriority(languageId, element) {
+            let newPriority = element.value
+            const updateMessageDiv = document.getElementById('editMessage');
+            let currentLang = languagesData.find((x) => x.number == newPriority && x.id !== languageId && x.number > 0);
+            console.log(currentLang);
+
+            if (currentLang) {
+                updateMessageDiv.innerHTML = `
+                <div class="alert alert-danger" role="alert">
+                this numebr is already exists!
+                </div>`;
+
+
+            }
+            else {
+                try {
+                    const response = await fetch(`https://pustakam.pythonanywhere.com/languages/${languageId}/`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ number: newPriority })
+                    });
+
+                    let result = await response.json();
+
+                    if (response.ok && result.status === 'success') {
+                        // Show success message
+                        updateMessageDiv.innerHTML = `
+                <div class="alert alert-success" role="alert">
+                    Language priority updated successfully!
+                </div>`;
+
+                        // Update the language's priority in the local data
+                        languagesData = languagesData.map(language => {
+                            if (language.id === languageId) {
+                                language.number = newPriority;
+                            }
+                            return language;
+                        });
+
+                        // Reorder the languages based on the updated priority
+                        changeLanguagesByGivenPriority();
+                    } else {
+                        updateMessageDiv.innerHTML = `
+                <div class="alert alert-danger" role="alert">
+                    Failed to update priority. Please try again.
+                </div>`;
+                    }
+                } catch (error) {
+                    console.error("Error updating language priority:", error);
+                    updateMessageDiv.innerHTML = `
+            <div class="alert alert-danger" role="alert">
+                An error occurred while updating the priority. Please try again.
+            </div>`;
+                }
+
+                // Automatically hide the alert after 3 seconds
+
+            }
+            setTimeout(() => {
+                updateMessageDiv.innerHTML = '';
+            }, 3000);
+        };
+
+        function updatePagination() {
+            // Update pagination info (current page and total pages)
+            document.getElementById("page-info").textContent = `Page ${currentPage} of ${totalPages}`;
+
+            // Enable/Disable the "Previous" button
+            document.getElementById("prevPage").disabled = currentPage === 1;
+
+            // Enable/Disable the "Next" button
+            document.getElementById("nextPage").disabled = currentPage === totalPages;
+        }
+
+        function changePage(page) {
+            // Ensure the page number is within bounds
+            if (page < 1 || page > totalPages) return;
+
+            currentPage = page;  // Update the current page
+            displayLanguages();  // Re-display the languages for the new page
+        }
+
+
+
+        fetchLanguages();  // Fetch the languages
+
+
 
 
         async function editLanguage(id) {
@@ -487,8 +570,7 @@
                     if (response.ok) {
                         alert("Language deleted successfully!");
 
-                        // Remove the row from the DOM
-                        document.getElementById(`language-${id}`).remove();
+                        languagesData = languagesData.filter((x) => x.id != id)
 
                         // Recalculate and update the ID column
                         const rows = document.querySelectorAll("#language-table-body tr");
@@ -498,6 +580,17 @@
                                 idCell.textContent = index + 1; // Update index to be 1-based
                             }
                         });
+
+                        // Recalculate totalPages
+                        totalPages = Math.ceil(languagesData.length / itemsPerPage);
+
+                        // If the current page is now greater than the number of pages, adjust the current page
+                        if (currentPage > totalPages) {
+                            currentPage = totalPages;
+                        }
+
+                        // Display languages again
+                        displayLanguages();
                     } else {
                         alert("Failed to delete the language. Please try again.");
                     }
@@ -507,6 +600,7 @@
                 }
             }
         }
+
 
 
     </script>
