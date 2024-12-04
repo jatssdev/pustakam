@@ -1,0 +1,1200 @@
+<script src="./assets/js/apis/auth.js"></script>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <link rel="apple-touch-icon" sizes="76x76" href="./assets/img/finalLogo.jpeg">
+    <link rel="icon" type="image/png" href="./assets/img/finalLogo.jpeg">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <title data-translate="books">Pustakam - Books</title>
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no'
+        name='viewport' />
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,200" rel="stylesheet" />
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" rel="stylesheet">
+    <link href="./assets/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="./assets/css/paper-dashboard.css?v=2.0.1" rel="stylesheet" />
+    <link href="./assets/demo/demo.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet">
+
+    <style>
+        @media (max-width: 991px) {
+            .sidebar {
+                display: none;
+                position: fixed;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                z-index: 1040;
+                height: 100%;
+                background-color: #fff;
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.show {
+                display: block;
+                transform: translateX(0);
+            }
+
+            .main-panel {
+                padding-left: 0;
+            }
+
+            .navbar-toggler {
+                display: inline-block;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+        <div class="sidebar" data-color="white" data-active-color="danger">
+            <div class="logo">
+                <a href="/" class="simple-text logo-mini">
+                    <div class="logo-image-small">
+                        <img src="./assets/img/finalLogo.jpeg">
+                    </div>
+                </a>
+                <a href="/" class="simple-text logo-normal" data-translate="logotxt">
+                    Pustakam
+                </a>
+            </div>
+            <div class="sidebar-wrapper">
+                <ul class="nav">
+                    <li>
+                        <a href="/">
+                            <i class="nc-icon nc-bank"></i>
+                            <p data-translate="dashboard">Dashboard</p>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="./categories.html">
+                            <i class="fa fa-folder"></i>
+                            <p data-translate="categories">Categories</p>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="./authers.html">
+                            <i class="fa-solid fa-users"></i>
+                            <p data-translate="authors">Authors</p>
+                        </a>
+                    </li>
+                    <li class="active"><a href="./books.html"><i class="fa fa-book"></i>
+                            <p data-translate="books">Books</p>
+                        </a></li>
+                    <li>
+                        <a href="./languages.html">
+                            <i class="fa fa-language"></i>
+                            <p data-translate="languages">Languages</p>
+                        </a>
+                    </li>
+                    <li>
+                        <a onclick="Logout()">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                            <p data-translate="logout">Logout</p>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="main-panel">
+            <nav class="navbar navbar-expand-lg navbar-absolute fixed-top navbar-transparent">
+                <div class="container-fluid">
+                    <!-- Language Dropdown on the Left -->
+                    <select id="language-dropdown" class="form-control"
+                        style="width: auto; display: inline-block; margin-right: 15px;">
+                        <option value="en" data-translate="optionenglish">English</option>
+                        <option value="hi" data-translate="optionhindi">Hindi</option>
+                    </select>
+
+                    <div class="navbar-wrapper">
+                        <a class="navbar-brand" href="javascript:;" data-translate="dashboard">Dashboard</a>
+                    </div>
+
+                    <div class="navbar-toggle">
+                        <button class="navbar-toggler" type="button" onclick="toggleSidebar()">
+                            <span class="navbar-toggler-bar bar1"></span>
+                            <span class="navbar-toggler-bar bar2"></span>
+                            <span class="navbar-toggler-bar bar3"></span>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            </nav>
+
+            <div class="content" style="min-height: 75vh;">
+                <div class="col-md-12">
+                    <a href="./add-book.html" data-translate="add_book" class="btn btn-primary text-white">Add Book</a>
+                    <div id="deleteMessage" class="mt-3"></div>
+
+                    <div class="card">
+                        <div class="card-body">
+                            <div id="table-container" class="table-responsive">
+                                <table class="table">
+                                    <thead class="text-primary">
+                                        <tr>
+                                            <th data-translate="id">ID</th>
+                                            <th>Image</th>
+                                            <th data-translate="book_name">Book Name (English & Hindi)</th>
+                                            <th data-translate="book_price">Price</th>
+                                            <th data-translate="book_price_discount">Discount</th>
+                                            <th data-translate="actions">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="book-table-body">
+                                        <!-- Rows will be dynamically inserted here -->
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div id="pagination-controls" class="d-flex align-items-center justify-content-center mt-4">
+                        <button id="prevPage" class="btn btn-secondary"
+                            onclick="changePage(currentPage - 1)">&lt;</button>
+                        <span id="page-info" class="mx-3"></span>
+                        <button id="nextPage" class="btn btn-secondary"
+                            onclick="changePage(currentPage + 1)">&gt;</button>
+                    </div>
+                    <div id="loading" style="display: none; text-align: center; margin: 20px;">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="sr-only" data-translate="loading">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <footer class="footer footer-black footer-white">
+                <div class="container-fluid">
+                    <hr>
+                    <div class="row">
+                        <div class="credits mx-auto">
+                            <span class="copyright">
+                                ©
+                                <script>document.write(new Date().getFullYear())</script>, <span
+                                    data-translate="copyright">All rights reserved by Pustakam</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <!-- View Book Modal -->
+    <div class="modal fade" id="viewBookModal" tabindex="-1" aria-labelledby="viewBookModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewBookModalLabel">View Book</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Book Details Content -->
+                    <div id="viewBookContent">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <img id="viewBookThumbnail" class="img-fluid" alt="Book Thumbnail">
+                            </div>
+                            <div class="col-md-8">
+                                <h4 id="viewBookNameEnglish"></h4>
+                                <h5 id="viewBookNameHindi" class="text-muted"></h5>
+                                <p><strong>Price:</strong> ₹<span id="viewBookPrice"></span></p>
+                                <p><strong>Discounted Price:</strong> ₹<span id="viewBookDiscountedPrice"></span></p>
+                                <p><strong>Details (English):</strong></p>
+                                <p id="viewBookDetailsEnglish"></p>
+                                <p><strong>Details (Hindi):</strong></p>
+                                <p id="viewBookDetailsHindi"></p>
+                                <p><strong>Free Demo (%):</strong> <span id="viewBookFreeDemo"></span></p>
+                                <p><strong>Authors:</strong> <span id="viewBookAuthors"></span></p>
+                                <p><strong>Categories:</strong> <span id="viewBookCategories"></span></p>
+                                <p><strong>Languages:</strong> <span id="viewBookLanguages"></span></p>
+                                <p><strong>Keywords:</strong> <span id="viewBookKeywords"></span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a id="viewBookFileLink" class="btn btn-primary" target="_blank">Download Book File</a>
+                    <button id="viewBookContentsButton" class="btn btn-info">View Book Contents</button>
+                    <!-- New Button -->
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="editBookModal" tabindex="-1" role="dialog" aria-labelledby="editBookModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" style="max-width:100%" role="document">
+            <div class="modal-content" style="width: 70% !important; margin: 0 auto;">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editBookModalLabel" data-translate="edit_book">Edit Book</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="editBookForm">
+                        <input type="hidden" id="editBookId"> <!-- Hidden field for Book ID -->
+
+                        <!-- Book Front Image -->
+                        <div class="form-group">
+                            <label for="editBookFrontImage" data-translate="book_front_image">Book Front Image</label>
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="editBookFrontImage" accept="image/*">
+                                <label class="custom-file-label" for="editBookFrontImage"
+                                    data-translate="choose_file">Choose file</label>
+                            </div>
+                            <img id="editBookFrontImagePreview" class="img-fluid mt-2" style="max-width: 150px;">
+                        </div>
+
+                        <!-- Book Category -->
+                        <div class="form-group">
+                            <label for="editCategorySelect" data-translate="book_category">Book Category</label>
+                            <select id="editCategorySelect" class="form-control custom-select" multiple required>
+                                <!-- Categories will be dynamically populated -->
+                            </select>
+                        </div>
+
+                        <!-- Author Name -->
+                        <div class="form-group">
+                            <label for="editAuthorSelect" data-translate="author_name">Author Name</label>
+                            <select id="editAuthorSelect" class="form-control custom-select" multiple required>
+                                <!-- Authors will be dynamically populated -->
+                            </select>
+                        </div>
+
+                        <!-- Book Language -->
+                        <div class="form-group">
+                            <label for="editLanguageSelect" data-translate="book_language">Book Language</label>
+                            <select id="editLanguageSelect" class="form-control custom-select" multiple required>
+                                <!-- Languages will be dynamically populated -->
+                            </select>
+                        </div>
+
+                        <div class="d-flex changeOrderParent">
+                            <!-- Book Name (English) -->
+                            <div class="form-group">
+                                <label for="editBookNameEnglish" data-translate="book_name_english">Book Name (in
+                                    English)</label>
+                                <input type="text" id="editBookNameEnglish" class="form-control"
+                                    data-translate="placeholder_book_name_english" required>
+                            </div>
+
+                            <!-- Book Name (Hindi) -->
+                            <div class="form-group">
+                                <label for="editBookNameHindi" data-translate="book_name_hindi">Book Name (in
+                                    Hindi)</label>
+                                <input type="text" id="editBookNameHindi" class="form-control"
+                                    data-translate="placeholder_book_name_hindi" required>
+                            </div>
+                        </div>
+
+                        <!-- Book File (PDF or EPUB) -->
+                        <div class="form-group">
+                            <label for="editBookFile" data-translate="book_file">Book File (PDF or EPUB)</label>
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="editBookFile" accept=".pdf,.epub">
+                                <label class="custom-file-label" for="editBookFile" data-translate="choose_file">Choose
+                                    file</label>
+                            </div>
+                        </div>
+
+                        <div class="d-flex changeOrderParent">
+                            <!-- Book Details (English) -->
+                            <div class="form-group">
+                                <label for="editBookDetailsEnglish" data-translate="book_details_english">Book Details
+                                    (in English)</label>
+                                <textarea id="editBookDetailsEnglish" class="form-control"
+                                    data-translate="placeholder_book_details_english" required></textarea>
+                            </div>
+
+                            <!-- Book Details (Hindi) -->
+                            <div class="form-group">
+                                <label for="editBookDetailsHindi" data-translate="book_details_hindi">Book Details (in
+                                    Hindi)</label>
+                                <textarea id="editBookDetailsHindi" class="form-control"
+                                    data-translate="placeholder_book_details_hindi" required></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Book Price -->
+                        <div class="form-group">
+                            <label for="editBookPrice" data-translate="book_price">Book Price</label>
+                            <input type="number" id="editBookPrice" class="form-control"
+                                data-translate="placeholder_book_price" required>
+                        </div>
+
+                        <!-- Book Keywords -->
+                        <div class="form-group">
+                            <label for="editBookKeywords" data-translate="book_keywords">Keywords</label>
+                            <input type="text" id="editBookKeywords" class="form-control"
+                                data-translate="placeholder_book_keywords">
+                        </div>
+
+                        <!-- Discounted Price -->
+                        <div class="form-group">
+                            <label for="editBookDiscountedPrice" data-translate="book_discounted_price">Book Discounted
+                                Price</label>
+                            <div class="input-group">
+                                <input type="number" id="editBookDiscountedPrice" class="form-control"
+                                    data-translate="placeholder_discounted_price" required>
+                                <div class="input-group-append">
+                                    <div class="input-group-text">
+                                        <input type="checkbox" id="useOriginalPrice">
+                                        <label for="useOriginalPrice" class="ml-2"
+                                            data-translate="use_original_price">Use Original Price</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Free Demo Pages Percentage -->
+                        <div class="form-group">
+                            <label for="editBookDemoPercent" data-translate="free_demo_percentage">Free Demo Pages
+                                Percentage</label>
+                            <input type="number" id="editBookDemoPercent" class="form-control"
+                                data-translate="placeholder_free_demo_percentage" min="0" max="100" required>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn btn-primary" data-translate="save_changes">Save
+                            Changes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+    <script src="./assets/js/core/jquery.min.js"></script>
+    <script src="./assets/js/core/popper.min.js"></script>
+    <script src="./assets/js/core/bootstrap.min.js"></script>
+    <script src="./assets/js/plugins/perfect-scrollbar.jquery.min.js"></script>
+    <script src="./assets/js/paper-dashboard.min.js?v=2.0.1" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
+
+    <script>
+        let booksData = [];
+        let currentPage = 1;
+        const itemsPerPage = 10;
+        let totalPages = 1;
+
+        function Logout() {
+            localStorage.removeItem('loggedadmin')
+            location.href = '/login.html'
+        }
+        let selectMenuPlaceHolder = {
+            en: "Select an option",
+            hi: "विकल्प चुनें",
+        }
+        let initSelect2 = (placeH) => {
+            $('#authorSelect, #categorySelect, #languageSelect,#editAuthorSelect, #editCategorySelect,#editLanguageSelect').select2({
+                placeholder: placeH,
+                allowClear: true,
+                width: '100%',
+            });
+        }
+        function changeOrderParentHandler() {
+            const changeOrderParents = document.querySelectorAll('.changeOrderParent'); // Select all elements with the class
+            const currLanguage = localStorage.getItem('language') || 'en';
+
+            let placeH = currLanguage === 'en' ? selectMenuPlaceHolder.en : selectMenuPlaceHolder.hi
+            initSelect2(placeH)
+
+            // Loop through each element and set its flexDirection
+            changeOrderParents.forEach(changeOrderParent => {
+                changeOrderParent.style.flexDirection = currLanguage === 'hi' ? 'column-reverse' : 'column';
+            });
+        }
+        changeOrderParentHandler()
+
+
+        // Language translations
+        const translations = {
+            en: {
+                logotxt: "Pustakam",
+                dashboard: "Dashboard",
+                authors: "Authors",
+                categories: "Categories",
+                books: "Books",
+                id: "ID",
+                book_name_english: "Book Name (English)",
+                book_name_hindi: "Book Name (Hindi)",
+                book_price: "Price",
+                book_price_discount: "Discounted Price",
+                book_languages: "Language",
+                actions: "Actions",
+                loading: "Loading...",
+                delete: "Delete",
+                optionenglish: "English",
+                optionhindi: "Hindi",
+                copyright: "All rights reserved by Pustakam",
+                edit: "Edit",
+                add_book: "Add Book",
+                languages: "Languages",
+                view: "View",
+                "logout": "Logout",
+                "edit_book": "Edit Book",
+                "book_front_image": "Book Front Image",
+                "choose_file": "Choose file",
+                "book_category": "Book Category",
+                "author_name": "Author Name",
+                "book_language": "Book Language",
+                "book_name_english": "Book Name (in English)",
+                "book_name_hindi": "Book Name (in Hindi)",
+                "book_file": "Book File (PDF or EPUB)",
+                "book_details_english": "Book Details (in English)",
+                "book_details_hindi": "Book Details (in Hindi)",
+                "book_price": "Book Price",
+                "book_keywords": "Keywords",
+                "book_discounted_price": "Book Discounted Price",
+                "use_original_price": "Use Original Price",
+                "free_demo_percentage": "Free Demo Pages Percentage",
+                "save_changes": "Save Changes",
+                "placeholder_book_name_english": "Enter book name in English",
+                "placeholder_book_name_hindi": "Enter book name in Hindi",
+                "placeholder_book_details_english": "Enter book details in English",
+                "placeholder_book_details_hindi": "Enter book details in Hindi",
+                "placeholder_book_price": "Enter book price",
+                "placeholder_book_keywords": "Enter book keywords",
+                "placeholder_discounted_price": "Enter discounted price",
+                "placeholder_free_demo_percentage": "Enter percentage (0-100)"
+            },
+            hi: {
+                logotxt: "पुस्तकम",
+                dashboard: "डैशबोर्ड",
+                authors: "लेखक",
+                categories: "श्रेणियाँ",
+                books: "पुस्तकें",
+                id: "आईडी",
+                book_name_english: "पुस्तक का नाम (अंग्रेज़ी)",
+                book_name_hindi: "पुस्तक का नाम (हिंदी)",
+                book_price: "मूल्य",
+                book_price_discount: "छूट मूल्य",
+                book_languages: "भाषा",
+                actions: "क्रियाएँ",
+                loading: "लोड हो रहा है...",
+                delete: "हटाएँ",
+                optionenglish: "अंग्रेजी",
+                optionhindi: "हिंदी",
+                copyright: "सभी अधिकार पुस्तकम द्वारा सुरक्षित",
+                edit: "बदलें",
+                add_book: "पुस्तक जोड़ें",
+                languages: "भाषाएँ",
+                view: "देखें",
+                "logout": "लॉग आउट",
+                "edit_book": "पुस्तक संपादित करें",
+                "book_front_image": "पुस्तक का अग्रभाग छवि",
+                "choose_file": "फाइल चुनें",
+                "book_category": "पुस्तक श्रेणी",
+                "author_name": "लेखक नाम",
+                "book_language": "पुस्तक भाषा",
+                "book_name_english": "पुस्तक का नाम (अंग्रेज़ी में)",
+                "book_name_hindi": "पुस्तक का नाम (हिंदी में)",
+                "book_file": "पुस्तक फ़ाइल (PDF या EPUB)",
+                "book_details_english": "पुस्तक विवरण (अंग्रेज़ी में)",
+                "book_details_hindi": "पुस्तक विवरण (हिंदी में)",
+                "book_price": "पुस्तक मूल्य",
+                "book_keywords": "किवर्ड",
+                "book_discounted_price": "पुस्तक छूट मूल्य",
+                "use_original_price": "मूल मूल्य का उपयोग करें",
+                "free_demo_percentage": "नि: शुल्क डेमो पृष्ठ प्रतिशत",
+                "save_changes": "बदलाव सहेजें",
+                "placeholder_book_name_english": "अंग्रेज़ी में पुस्तक का नाम दर्ज करें",
+                "placeholder_book_name_hindi": "हिंदी में पुस्तक का नाम दर्ज करें",
+                "placeholder_book_details_english": "अंग्रेज़ी में पुस्तक विवरण दर्ज करें",
+                "placeholder_book_details_hindi": "हिंदी में पुस्तक विवरण दर्ज करें",
+                "placeholder_book_price": "पुस्तक मूल्य दर्ज करें",
+                "placeholder_book_keywords": "पुस्तक किवर्ड दर्ज करें",
+                "placeholder_discounted_price": "छूट मूल्य दर्ज करें",
+                "placeholder_free_demo_percentage": "प्रतिशत दर्ज करें (0-100)"
+            }
+        };
+
+        // Function to load translations
+        function loadLanguage(language) {
+            const elements = document.querySelectorAll("[data-translate]");
+            elements.forEach((el) => {
+                const key = el.getAttribute("data-translate");
+                el.textContent = translations[language][key] || key;
+            });
+        }
+
+        // Language dropdown handling
+        document.getElementById("language-dropdown").addEventListener("change", function () {
+            const selectedLanguage = this.value;
+            localStorage.setItem("language", selectedLanguage);
+            loadLanguage(selectedLanguage);
+            changeOrderParentHandler()
+
+        });
+
+        // Apply language settings on page load
+        document.addEventListener("DOMContentLoaded", () => {
+            const language = localStorage.getItem("language") || "en";
+            document.getElementById("language-dropdown").value = language;
+            loadLanguage(language);
+            fetchBooks();
+        });
+
+        // Fetch and display books
+        // async function fetchBooks() {
+        //     const bookTableBody = document.getElementById("book-table-body");
+        //     const loading = document.getElementById("loading");
+
+        //     try {
+        //         loading.style.display = "block";
+        //         bookTableBody.innerHTML = "";
+
+        //         const response = await fetch("https://pustakam.pythonanywhere.com/books/");
+        //         const data = await response.json();
+
+        //         if (data && data.data) {
+        //             data.data.forEach((book, i) => {
+        //                 // Fallback for missing book thumbnail
+        //                 const thumbnail = book.book_front_image
+        //                     ? `https://pustakam.pythonanywhere.com/${book.book_front_image}`
+        //                     : "./assets/img/default-thumbnail.png";
+
+        //                 const row = `
+        //             <tr id="book-${book.id}">
+        //                 <td>${i + 1}</td>
+        //                 <td><img class="bookThumbnail" src="${thumbnail}" alt="Book Thumbnail" style="width: 50px; height: auto;"></td>
+        //                 <td>
+        //                     <strong>${book.book_name_english}</strong><br>
+        //                     <small>${book.book_name_hindi}</small>
+        //                 </td>
+        //                 <td>${book.book_price}</td>
+        //                 <td>${book.book_price_discount}</td>
+        //                 <td>
+        //                     <button class="btn btn-info btn-sm" data-translate="view" onclick="viewBook(${book.id})">View</button>
+        //                     <button class="btn btn-primary btn-sm" data-translate="edit" onclick="editBook(${book.id})">Edit</button>
+        //                     <button class="btn btn-danger btn-sm" data-translate="delete" onclick="deleteBook(${book.id})">Delete</button>
+        //                 </td>
+        //             </tr>
+        //         `;
+        //                 bookTableBody.insertAdjacentHTML("beforeend", row);
+        //             });
+        //             const language = localStorage.getItem('language') || 'en';
+        //             loadLanguage(language);
+        //         } else {
+        //             bookTableBody.innerHTML = `<tr><td colspan="6" class="text-center">No books found.</td></tr>`;
+        //         }
+        //     } catch (error) {
+        //         console.error("Error fetching books:", error);
+        //         bookTableBody.innerHTML = `<tr><td colspan="6" class="text-center text-danger">Failed to load books. Please try again later.</td></tr>`;
+        //     } finally {
+        //         loading.style.display = "none";
+        //     }
+        // }
+        // Sort books by priority
+        let changeBooksByGivenPriority = () => {
+            let zeroPriorityBooks = [];
+            let nonZeroPriorityBooks = [];
+
+            booksData.forEach(book => {
+                if (book.number > 0) {
+                    nonZeroPriorityBooks.push(book);
+                } else {
+                    zeroPriorityBooks.push(book);
+                }
+            });
+
+            nonZeroPriorityBooks.sort((a, b) => a.number - b.number);
+            booksData = [...nonZeroPriorityBooks, ...zeroPriorityBooks];
+            displayBooks();  // Call to display the sorted books
+        };
+        // Update the priority for a book
+        async function updateBookOrder(bookId, element) {
+            let newPriority = parseInt(element.value);  // Ensure we're working with a number
+            const updateMessageDiv = document.getElementById('deleteMessage');
+
+            // Find the old book data to restore the value in case of an invalid update
+            let oldBook = booksData.find((x) => x.id === bookId);
+
+            // Check for negative values
+            if (newPriority < 0) {
+                updateMessageDiv.innerHTML = `
+            <div class="alert alert-danger" role="alert">
+                Value can't be negative!
+            </div>`;
+                element.value = oldBook.number;  // Restore the original value
+                return;  // Stop further execution
+            }
+
+            // Check if a book already exists with the same priority
+            let currentBook = booksData.find((x) => x.number === newPriority && x.id !== bookId && x.number > 0);
+            if (currentBook) {
+                updateMessageDiv.innerHTML = `
+            <div class="alert alert-danger" role="alert">
+                This number already exists!
+            </div>`;
+                element.value = oldBook.number;  // Restore the original value
+                return;  // Stop further execution
+            }
+
+            try {
+                const response = await fetch(`https://pustakam.pythonanywhere.com/books/${bookId}/`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ number: newPriority })
+                });
+
+                let result = await response.json();
+
+                if (response.ok && result.status === 'success') {
+                    // Show success message
+                    updateMessageDiv.innerHTML = `
+                <div class="alert alert-success" role="alert">
+                    Book priority updated successfully!
+                </div>`;
+
+                    // Update the book's priority in the local data
+                    booksData = booksData.map((book) => {
+                        if (book.id === bookId) {
+                            book.number = newPriority;
+                        }
+                        return book;
+                    });
+
+                    // Reorder the books based on the updated priority
+                    changeBooksByGivenPriority();  // Reorder and display
+                } else {
+                    element.value = oldBook.number;  // Restore the original value
+
+                    // If the API request fails, show an error message
+                    updateMessageDiv.innerHTML = `
+                <div class="alert alert-danger" role="alert">
+                    
+                ${result.status}
+                </div>`;
+                }
+            } catch (error) {
+                element.value = oldBook.number;  // Restore the original value
+
+                // Show error alert for network or server errors
+                updateMessageDiv.innerHTML = `
+            <div class="alert alert-danger" role="alert">
+            ${error}
+            </div>`;
+            }
+
+            // Automatically hide the alert after 3 seconds
+            setTimeout(() => {
+                updateMessageDiv.innerHTML = '';
+            }, 3000);
+        }
+
+        const fetchBooks = async () => {
+            try {
+                const response = await fetch('https://pustakam.pythonanywhere.com/books/');
+                const result = await response.json();
+
+                if (result.status === "success") {
+                    booksData = result.data;
+                    totalPages = Math.ceil(booksData.length / itemsPerPage);
+                    changeBooksByGivenPriority();
+                }
+            } catch (error) {
+                console.error("Error fetching books:", error);
+            }
+        };
+
+        const displayBooks = () => {
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const booksForCurrentPage = booksData.slice(startIndex, endIndex);
+
+            const bookTableBody = document.getElementById("book-table-body");
+            bookTableBody.innerHTML = "";
+
+            booksForCurrentPage.forEach((book, i) => {
+                const row = `
+            <tr id="book-${book.id}">
+                <td>${i + 1 + (currentPage - 1) * itemsPerPage}</td>
+                <td><img class="bookThumbnail" src="https://pustakam.pythonanywhere.com/${book.book_front_image}" alt="Book Thumbnail"></td>
+                <td>${book.book_name_english}</td>
+                <td>${book.book_price}</td>
+                <td>${book.book_price_discount}</td>
+                <td>
+                    <button class="btn btn-info" onclick="viewBook(${book.id})">View</button>
+                    <button class="btn btn-primary" onclick="editBook(${book.id})">Edit</button>
+                    <button class="btn btn-danger" onclick="deleteBook(${book.id})">Delete</button>
+                     <button class="btn btn-info btn-sm">
+                        <input style='width:50px' type="number" value="${book.number}" onchange="updateBookOrder(${book.id}, this)">
+                    </button>
+                </td>
+            </tr>
+        `;
+                bookTableBody.insertAdjacentHTML("beforeend", row);
+            });
+            updatePagination();
+        };
+        const updatePagination = () => {
+            document.getElementById("page-info").textContent = `Page ${currentPage} of ${totalPages}`;
+            document.getElementById("prevPage").disabled = currentPage === 1;
+            document.getElementById("nextPage").disabled = currentPage === totalPages;
+        };
+
+        const changePage = (page) => {
+            if (page < 1 || page > totalPages) return;
+            currentPage = page;
+            displayBooks();
+        };
+
+        document.getElementById("prevPage").addEventListener("click", () => changePage(currentPage - 1));
+        document.getElementById("nextPage").addEventListener("click", () => changePage(currentPage + 1));
+        fetchBooks()
+
+
+        // Delete book
+        async function deleteBook(id) {
+            // Ask for confirmation before deleting
+            const isConfirmed = window.confirm("Are you sure you want to delete this book?");
+            if (!isConfirmed) {
+                return; // If not confirmed, do nothing
+            }
+
+            const deleteMessageDiv = document.getElementById("deleteMessage");
+
+            try {
+                const response = await fetch(`https://pustakam.pythonanywhere.com/books/${id}/`, {
+                    method: "DELETE",
+                    headers: { "Content-Type": "application/json" },
+                });
+
+                if (response.ok) {
+                    // Remove the book row from the table
+                    const row = document.getElementById(`book-${id}`);
+                    row.remove();
+
+                    // Reorder the remaining rows' ID numbers
+                    const rows = document.querySelectorAll("#book-table-body tr");
+                    rows.forEach((row, index) => {
+                        const idCell = row.querySelector("td:first-child"); // Assuming ID is in the first cell
+                        if (idCell) {
+                            idCell.textContent = index + 1; // Reassign the ID to reflect the new order
+                        }
+                    });
+
+                    deleteMessageDiv.innerHTML = `<div class="alert alert-success">Book deleted successfully!</div>`;
+                } else {
+                    deleteMessageDiv.innerHTML = `<div class="alert alert-danger">Failed to delete book. Please try again.</div>`;
+                }
+            } catch (error) {
+                console.error("Error deleting book:", error);
+                deleteMessageDiv.innerHTML = `<div class="alert alert-danger">An error occurred. Please try again.</div>`;
+            }
+
+            setTimeout(() => {
+                deleteMessageDiv.innerHTML = "";
+            }, 3000);
+        }
+
+
+        async function viewBook(id) {
+            try {
+                const response = await fetch(`https://pustakam.pythonanywhere.com/books/${id}/`);
+                const result = await response.json();
+
+                if (result.status === "success") {
+                    const book = result.data;
+
+                    // Set Thumbnail
+                    const thumbnail = book.book_front_image
+                        ? `https://pustakam.pythonanywhere.com${book.book_front_image}`
+                        : "./assets/img/default-thumbnail.png";
+                    document.getElementById("viewBookThumbnail").src = thumbnail;
+
+                    // Set Book Details
+                    document.getElementById("viewBookNameEnglish").textContent = book.book_name_english;
+                    document.getElementById("viewBookNameHindi").textContent = book.book_name_hindi;
+                    document.getElementById("viewBookPrice").textContent = book.book_price || "N/A";
+                    document.getElementById("viewBookDiscountedPrice").textContent = book.book_price_discount || "N/A";
+                    document.getElementById("viewBookDetailsEnglish").textContent = book.book_details_english || "N/A";
+                    document.getElementById("viewBookDetailsHindi").textContent = book.book_details_hindi || "N/A";
+                    document.getElementById("viewBookFreeDemo").textContent = book.book_free_demo || "N/A";
+
+                    // Authors
+                    const authors = book?.author_data?.map(author => `${author.author_english} (${author.author_hindi})`)
+                        .join(", ");
+                    document.getElementById("viewBookAuthors").textContent = authors || "N/A";
+
+                    // Categories
+                    const categories = book?.category_data?.map(category => `${category.category_english} (${category.category_hindi})`)
+                        .join(", ");
+                    document.getElementById("viewBookCategories").textContent = categories || "N/A";
+
+                    // Languages
+                    const languages = book.language_data?.map(language => language.languages)
+                        .join(", ");
+                    document.getElementById("viewBookLanguages").textContent = languages || "N/A";
+
+                    // Keywords
+                    document.getElementById("viewBookKeywords").textContent =
+                        book.book_keywords && book.book_keywords.length > 0
+                            ? book.book_keywords.join(", ")
+                            : "N/A";
+
+                    // Book File Link
+                    const bookFile = book.book_file
+                        ? `https://pustakam.pythonanywhere.com${book.book_file}`
+                        : null;
+                    const bookFileLink = document.getElementById("viewBookFileLink");
+                    if (bookFile) {
+                        bookFileLink.href = bookFile;
+                        bookFileLink.style.display = "inline-block";
+                    } else {
+                        bookFileLink.style.display = "none";
+                    }
+                    const viewBookContentsButton = document.getElementById("viewBookContentsButton");
+                    viewBookContentsButton.setAttribute(
+                        "data-bookurl",
+                        `https://pustakam.pythonanywhere.com${book.book_file}`
+                    );
+
+                    $('#viewBookModal').modal('show');
+
+                } else {
+                    alert("Failed to fetch book details.");
+                }
+            } catch (error) {
+                console.error("Error fetching book details:", error);
+                alert("An error occurred while fetching book details. Please try again.");
+            }
+        }
+
+
+        document.getElementById("viewBookContentsButton").addEventListener("click", function () {
+            const bookurl = this.dataset.bookurl; // Get the value of the 'data-bookurl' attribute
+            window.open(`epub-viewer.html?bookurl=${encodeURIComponent(bookurl)}`, "_blank"); // Pass the book URL as a query parameter
+        });
+
+
+        async function editBook(bookId) {
+            try {
+                const response = await fetch(`https://pustakam.pythonanywhere.com/books/${bookId}/`);
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    const book = result.data;
+
+                    // Populate the modal with current book details
+                    document.getElementById('editBookNameEnglish').value = book.book_name_english;
+                    document.getElementById('editBookNameHindi').value = book.book_name_hindi;
+                    document.getElementById('editBookPrice').value = book.book_price;
+                    document.getElementById('editBookDiscountedPrice').value = book.book_price_discount;
+                    document.getElementById('editBookDetailsEnglish').value = book.book_details_english;
+                    document.getElementById('editBookDetailsHindi').value = book.book_details_hindi;
+                    document.getElementById('editBookKeywords').value = book.book_keywords.join(', ') || '';
+                    document.getElementById('editBookDemoPercent').value = book.book_free_demo
+
+                    let bookFIleName = book.book_file.split('/')
+                    let bookImgName = book.book_front_image.split('/')
+                    $('#editBookFile').next("label").text(bookFIleName[bookFIleName.length - 1]);
+                    $('#editBookFrontImage').next("label").text(bookImgName[bookImgName.length - 1]);
+
+                    const thumbnail = book?.book_front_image
+                        ? `https://pustakam.pythonanywhere.com${book?.book_front_image}`
+                        : "./assets/img/default-thumbnail.png";
+                    document.getElementById('editBookFrontImagePreview').src = thumbnail;
+
+                    // Pre-fill select options for Authors, Categories, and Languages
+                    const authorsSelect = document.getElementById('editAuthorSelect');
+                    authorsSelect.innerHTML = ''; // Clear previous selections
+                    book?.author_data.forEach(author => {
+                        const option = document.createElement('option');
+                        option.value = author.id;
+                        option.textContent = `${author.author_english} (${author.author_hindi})`;
+                        authorsSelect.appendChild(option);
+                    });
+
+                    const categoriesSelect = document.getElementById('editCategorySelect');
+                    categoriesSelect.innerHTML = ''; // Clear previous selections
+                    book?.category_data?.forEach(category => {
+                        const option = document.createElement('option');
+                        option.value = category.id;
+                        option.textContent = `${category.category_english} (${category.category_hindi})`;
+                        categoriesSelect.appendChild(option);
+                    });
+
+                    const languagesSelect = document.getElementById('editLanguageSelect');
+                    languagesSelect.innerHTML = ''; // Clear previous selections
+                    book.language_data.forEach(language => {
+                        const option = document.createElement('option');
+                        option.value = language.id;
+                        option.textContent = language.languages;
+                        languagesSelect.appendChild(option);
+                    });
+
+                    // Open the modal
+                    $('#editBookModal').modal('show');
+                    fetchAuthorsAndCategories(book);
+                    const currLanguage = localStorage.getItem('language') || 'en';
+
+                    let placeH = currLanguage === 'en' ? selectMenuPlaceHolder.en : selectMenuPlaceHolder.hi
+                    initSelect2(placeH)
+
+
+                    // Handle form submission for editing
+                    document.getElementById('editBookForm').onsubmit = async function (event) {
+                        event.preventDefault();
+
+                        // Create a FormData object to capture the form data
+                        const formData = new FormData();
+
+                        // Append text fields
+                        formData.append('book_name_english', document.getElementById('editBookNameEnglish').value);
+                        formData.append('book_name_hindi', document.getElementById('editBookNameHindi').value);
+                        formData.append('book_price', document.getElementById('editBookPrice').value);
+                        formData.append('book_price_discount', document.getElementById('editBookDiscountedPrice').value);
+                        formData.append('book_details_english', document.getElementById('editBookDetailsEnglish').value);
+                        formData.append('book_details_hindi', document.getElementById('editBookDetailsHindi').value);
+
+                        // Append keywords as a single JSON string
+                        const keywords = document.getElementById('editBookKeywords').value?.split(',').map(k => k.trim());
+
+                        keywords.forEach((k) => {
+                            formData.append("book_keywords", k);
+                        });
+
+                        // Append selected categories, authors, and languages individually
+                        const selectedCategories = Array.from(document.getElementById('editCategorySelect').selectedOptions).map(option => option.value);
+                        selectedCategories.forEach((category) => {
+                            formData.append("category_data", category);
+                        });
+
+                        const selectedAuthors = Array.from(document.getElementById('editAuthorSelect').selectedOptions).map(option => option.value);
+                        selectedAuthors.forEach((author) => {
+                            formData.append("author_data", author);
+                        });
+
+                        const selectedLanguages = Array.from(document.getElementById('editLanguageSelect').selectedOptions).map(option => option.value);
+                        selectedLanguages.forEach((language) => {
+                            formData.append("language_data", language);
+                        });
+
+                        // Append optional file fields
+                        const frontImage = document.getElementById('editBookFrontImage').files[0];
+                        if (frontImage) {
+                            formData.append('book_front_image', frontImage);
+                        }
+
+                        const bookFile = document.getElementById('editBookFile').files[0];
+                        if (bookFile) {
+                            formData.append('book_file', bookFile);
+                        }
+
+                        try {
+                            const updateResponse = await fetch(`https://pustakam.pythonanywhere.com/books/${bookId}/`, {
+                                method: 'PATCH',
+                                body: formData, // Send the FormData object
+                            });
+
+                            let result = await updateResponse.json()
+                            if (result.status === 'success') {
+                                alert('Book updated successfully!');
+                                $('#editBookModal').modal('hide'); // Close the modal
+                                fetchBooks(); // Refresh the book list
+                            } else {
+
+                                console.error('Error details:', result);
+                                alert('Error updating book!');
+                            }
+                        } catch (error) {
+                            console.error('Error updating book:', error);
+                            alert('An error occurred while updating the book. Please try again.');
+                        }
+                    };
+
+                } else {
+                    alert('Failed to fetch book details.');
+                }
+            } catch (error) {
+                console.error('Error fetching book details:', error);
+                alert('An error occurred while fetching book details.');
+            }
+        }
+
+
+        async function fetchAuthorsAndCategories(book) {
+            console.log(book.author_data[0].author_english);
+
+            try {
+                // Fetch authors, categories, and languages
+                const [authorsResponse, categoriesResponse, languagesResponse] = await Promise.all([
+                    fetch('https://pustakam.pythonanywhere.com/author/'),
+                    fetch('https://pustakam.pythonanywhere.com/category/'),
+                    fetch('https://pustakam.pythonanywhere.com/languages/')
+                ]);
+
+                const authorsData = await authorsResponse.json();
+                const categoriesData = await categoriesResponse.json();
+                const languagesData = await languagesResponse.json();  // Fetch languages
+
+                if (authorsData.status === 'success' && categoriesData.status === 'success' && languagesData.status === 'success') {
+                    // Populate authors select menu
+                    const authorsSelect = document.getElementById('editAuthorSelect');
+                    authorsSelect.innerHTML = ''; // Clear previous selections
+                    authorsData.data.forEach(author => {
+                        const option = document.createElement('option');
+                        option.value = author.id;
+                        option.textContent = `${author.author_english} (${author.author_hindi})`;
+                        authorsSelect.appendChild(option);
+                    });
+
+                    // Populate categories select menu
+                    const categoriesSelect = document.getElementById('editCategorySelect');
+                    categoriesSelect.innerHTML = ''; // Clear previous selections
+                    categoriesData.data.forEach(category => {
+                        const option = document.createElement('option');
+                        option.value = category.id;
+                        option.textContent = `${category.category_english} (${category.category_hindi})`;
+                        categoriesSelect.appendChild(option);
+                    });
+
+                    // Populate languages select menu
+                    const languagesSelect = document.getElementById('editLanguageSelect');
+                    languagesSelect.innerHTML = ''; // Clear previous selections
+                    languagesData.data.forEach(language => {
+                        const option = document.createElement('option');
+                        option.value = language.id;
+                        option.textContent = language.languages; // Assuming `languages` is the name field
+                        languagesSelect.appendChild(option);
+                    });
+
+                    initSelect2("Select an option");
+
+                    // Set the existing selected values for the select menus (if the book data is available)
+                    if (book) {
+                        // Pre-select authors
+                        const authorIds = book?.author_data?.map(author => author.id); // Get the IDs of the authors
+                        $('#editAuthorSelect').val(authorIds).trigger('change');  // Set the value to the array of IDs and trigger change
+
+                        // Pre-select categories
+                        const categoryIds = book?.category_data?.map(category => category.id); // Get the IDs of the categories
+                        $('#editCategorySelect').val(categoryIds).trigger('change'); // Set the value to the array of IDs and trigger change
+
+                        // Pre-select languages
+                        const languageIds = book?.language_data?.map(language => language.id); // Get the IDs of the languages
+                        $('#editLanguageSelect').val(languageIds).trigger('change'); // Set the value to the array of IDs and trigger change
+
+                        // You can add a console log to verify the selected values
+                        console.log('Selected authors:', authorIds);
+                        console.log('Selected categories:', categoryIds);
+                        console.log('Selected languages:', languageIds);
+                    }
+
+                    // Initialize Select2 with placeholder text
+                } else {
+                    console.error('Failed to fetch authors, categories, or languages data');
+                }
+            } catch (error) {
+                console.error('Error fetching authors, categories, or languages:', error);
+            }
+        }
+
+
+
+
+
+
+
+        // Function to translate text dynamically (using Google Translate API)
+        async function translateText(text, sourceLang, targetLang) {
+            const apiKey = 'AIzaSyBlk5ZotGsdHMkbjPNarkmr9b3FV5n8vDo'; // Replace with your Google API Key
+            const url = `https://translation.googleapis.com/language/translate/v2?key=${apiKey}`;
+
+            try {
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        q: text,
+                        source: sourceLang,
+                        target: targetLang,
+                        format: "text"
+                    }),
+                });
+
+                if (!response.ok) throw new Error('Translation API error!');
+
+                const data = await response.json();
+                return data.data.translations[0].translatedText || text;
+            } catch (error) {
+                console.error("Translation error:", error);
+                return text;
+            }
+        }
+
+        // Debounce function to prevent too many API calls
+        function debounce(func, delay) {
+            let debounceTimer;
+            return function (...args) {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => func.apply(this, args), delay);
+            };
+        }
+
+        // Dynamically translate fields on user input based on current language
+        function setupTranslationHandlers() {
+            const currentLanguage = localStorage.getItem("language") || "en"; // Get the current language
+
+            // Define translation mappings based on the current language
+            const translateFields = [
+                { sourceFieldId: "editBookNameEnglish", targetFieldId: "editBookNameHindi", sourceLang: "en", targetLang: "hi" },
+                { sourceFieldId: "editBookDetailsEnglish", targetFieldId: "editBookDetailsHindi", sourceLang: "en", targetLang: "hi" },
+                { sourceFieldId: "editBookNameHindi", targetFieldId: "editBookNameEnglish", sourceLang: "hi", targetLang: "en" },
+                { sourceFieldId: "editBookDetailsHindi", targetFieldId: "editBookDetailsEnglish", sourceLang: "hi", targetLang: "en" }
+            ];
+
+            // Add translation listeners based on current language
+            translateFields.forEach(({ sourceFieldId, targetFieldId, sourceLang, targetLang }) => {
+                const sourceField = document.getElementById(sourceFieldId);
+                const targetField = document.getElementById(targetFieldId);
+
+                if (sourceField && targetField) {
+                    sourceField.addEventListener("input", debounce(async () => {
+                        if (currentLanguage === "en" && sourceLang === "en") {
+                            // Only translate if source language is English and current language is English
+                            const translatedText = await translateText(sourceField.value, sourceLang, targetLang);
+                            targetField.value = translatedText;
+                        } else if (currentLanguage === "hi" && sourceLang === "hi") {
+                            // Only translate if source language is Hindi and current language is Hindi
+                            const translatedText = await translateText(sourceField.value, sourceLang, targetLang);
+                            targetField.value = translatedText;
+                        }
+                    }, 500));
+                }
+            });
+        }
+
+        setupTranslationHandlers(); // Set up translation handlers for the form fields
+
+
+
+
+
+    </script>
+</body>
+
+</html>
