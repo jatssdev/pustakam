@@ -125,22 +125,22 @@
             <!-- Page Content -->
             <div class="content" style="min-height: 75vh;">
                 <div class="container">
-                    <h2 class="my-4" data-translate="add_category">Add Category</h2>
-                    <form id="categoryForm">
+                    <h2 class="my-4" data-translate="add_topic">Add Category</h2>
+                    <form id="topicForm">
                         <div id="changeOrderParent" class="d-flex">
                             <div class="form-group order-1">
-                                <label for="categoryEnglish" data-translate="category_english">Category Name
+                                <label for="topicEnglish" data-translate="topic_english">Category Name
                                     (English)</label>
-                                <input type="text" id="categoryEnglish" class="form-control"
-                                    placeholder="Enter category name in English" required>
+                                <input type="text" id="topicEnglish" class="form-control"
+                                    placeholder="Enter topic name in English" required>
                             </div>
                             <div class="form-group order-2">
-                                <label for="categoryHindi" data-translate="category_hindi">Category Name (Hindi)</label>
-                                <input type="text" id="categoryHindi" class="form-control"
-                                    placeholder="Enter category name in Hindi" required>
+                                <label for="topicHindi" data-translate="topic_hindi">Category Name (Hindi)</label>
+                                <input type="text" id="topicHindi" class="form-control"
+                                    placeholder="Enter topic name in Hindi" required>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-primary" data-translate="add_category">Add
+                        <button type="submit" class="btn btn-primary" data-translate="add_topic">Add
                             Category</button>
                     </form>
                     <div id="message" class="mt-3"></div>
@@ -189,29 +189,29 @@
 
         // Language JSON and translation function
         const englishJson = {
-            "optionenglish": "English", "optionhindi": "Hindi", "logotxt": "Pustakam", "dashboard": "Dashboard", "authors": "Authors", "categories": "Categories", "checkout_details": "Checkout Details", "add_category": "Add Category", "category_english": "Category Name (English)", "category_hindi": "Category Name (Hindi)", "copyright": "All rights reserved by Pustakam",
+            "optionenglish": "English", "optionhindi": "Hindi", "logotxt": "Pustakam", "dashboard": "Dashboard", "authors": "Authors", "categories": "Categories", "checkout_details": "Checkout Details", "add_topic": "Add Category", "topic_english": "Category Name (English)", "topic_hindi": "Category Name (Hindi)", "copyright": "All rights reserved by Pustakam",
             "books": "Books",
             "languages": "Languages",
             "logout": "Logout",
-            "placeholder_category_english": "Enter category name in English",
-            "placeholder_category_hindi": "Enter category name in Hindi",
+            "placeholder_topic_english": "Enter topic name in English",
+            "placeholder_topic_hindi": "Enter topic name in Hindi",
 
         };
         const hindiJson = {
-            "optionenglish": "अंग्रेजी", "optionhindi": "हिंदी", "logotxt": "पुस्तकम", "dashboard": "डैशबोर्ड", "authors": "लेखक", "categories": "श्रेणियाँ", "checkout_details": "विवरण देखें", "add_category": "श्रेणी जोड़ें", "category_english": "श्रेणी का नाम (अंग्रेजी)", "category_hindi": "श्रेणी का नाम (हिंदी)", "copyright": "सभी अधिकार पुस्तकम द्वारा सुरक्षित",
+            "optionenglish": "अंग्रेजी", "optionhindi": "हिंदी", "logotxt": "पुस्तकम", "dashboard": "डैशबोर्ड", "authors": "लेखक", "categories": "श्रेणियाँ", "checkout_details": "विवरण देखें", "add_topic": "श्रेणी जोड़ें", "topic_english": "श्रेणी का नाम (अंग्रेजी)", "topic_hindi": "श्रेणी का नाम (हिंदी)", "copyright": "सभी अधिकार पुस्तकम द्वारा सुरक्षित",
             "books": "पुस्तकें",
             "languages": "भाषाएँ",
             "logout": "लॉग आउट",
-            "placeholder_category_english": "अंग्रेज़ी में श्रेणी का नाम दर्ज करें",
-            "placeholder_category_hindi": "हिंदी में श्रेणी का नाम दर्ज करें",
+            "placeholder_topic_english": "अंग्रेज़ी में श्रेणी का नाम दर्ज करें",
+            "placeholder_topic_hindi": "हिंदी में श्रेणी का नाम दर्ज करें",
 
         };
 
         const fieldMappings = [
-            { sourceFieldId: "categoryEnglish", targetFieldId: "categoryHindi", sourceLang: "en", targetLang: "hi" },
+            { sourceFieldId: "topicEnglish", targetFieldId: "topicHindi", sourceLang: "en", targetLang: "hi" },
         ];
         const fieldMappingsHindi = [
-            { sourceFieldId: "categoryHindi", targetFieldId: "categoryEnglish", sourceLang: "hi", targetLang: "en" },
+            { sourceFieldId: "topicHindi", targetFieldId: "topicEnglish", sourceLang: "hi", targetLang: "en" },
         ];
 
         function loadLanguage(language) {
@@ -224,15 +224,15 @@
             });
 
             // Update placeholders
-            const categoryEnglishInput = document.getElementById("categoryEnglish");
-            const categoryHindiInput = document.getElementById("categoryHindi");
+            const topicEnglishInput = document.getElementById("topicEnglish");
+            const topicHindiInput = document.getElementById("topicHindi");
 
-            if (categoryEnglishInput && translations["placeholder_category_english"]) {
-                categoryEnglishInput.placeholder = translations["placeholder_category_english"];
+            if (topicEnglishInput && translations["placeholder_topic_english"]) {
+                topicEnglishInput.placeholder = translations["placeholder_topic_english"];
             }
 
-            if (categoryHindiInput && translations["placeholder_category_hindi"]) {
-                categoryHindiInput.placeholder = translations["placeholder_category_hindi"];
+            if (topicHindiInput && translations["placeholder_topic_hindi"]) {
+                topicHindiInput.placeholder = translations["placeholder_topic_hindi"];
             }
         }
 
@@ -302,36 +302,36 @@
             });
         }
 
-        document.getElementById('categoryForm').addEventListener('submit', async function (event) {
+        document.getElementById('topicForm').addEventListener('submit', async function (event) {
             event.preventDefault();
 
             // Get the input values
-            const categoryEnglish = document.getElementById('categoryEnglish').value;
-            const categoryHindi = document.getElementById('categoryHindi').value;
+            const topicEnglish = document.getElementById('topicEnglish').value;
+            const topicHindi = document.getElementById('topicHindi').value;
 
             const data = {
-                category_english: categoryEnglish,
-                category_hindi: categoryHindi,
+                topic_english: topicEnglish,
+                topic_hindi: topicHindi,
             };
 
             const messageDiv = document.getElementById('message');
 
             try {
                 // Fetch all categories to check for duplicates
-                const response = await fetch('https://pustakam.pythonanywhere.com/category/');
+                const response = await fetch('https://pustakam.pythonanywhere.com/topic/');
                 const result = await response.json();
 
                 if (result.status === "success") {
                     const existingCategories = result.data;
 
-                    // Check if category already exists (either English or Hindi)
-                    const isCategoryExist = existingCategories.some(category =>
-                        category.category_english.toLowerCase() === categoryEnglish.toLowerCase() ||
-                        category.category_hindi.toLowerCase() === categoryHindi.toLowerCase()
+                    // Check if topic already exists (either English or Hindi)
+                    const isCategoryExist = existingCategories.some(topic =>
+                        topic.topic_english.toLowerCase() === topicEnglish.toLowerCase() ||
+                        topic.topic_hindi.toLowerCase() === topicHindi.toLowerCase()
                     );
 
                     if (isCategoryExist) {
-                        // Show error message if category already exists
+                        // Show error message if topic already exists
                         messageDiv.innerHTML = `<div class="alert alert-danger">Category already exists!</div>`;
                         setTimeout(() => {
                             messageDiv.innerHTML = '';
@@ -339,8 +339,8 @@
                         return; // Prevent form submission
                     }
 
-                    // Proceed with adding the new category if no duplicates found
-                    const addCategoryResponse = await fetch('https://pustakam.pythonanywhere.com/category/', {
+                    // Proceed with adding the new topic if no duplicates found
+                    const addCategoryResponse = await fetch('https://pustakam.pythonanywhere.com/topic/', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(data),
@@ -350,10 +350,10 @@
 
                     if (addCategoryResult.status === 'success') {
                         messageDiv.innerHTML = '<div class="alert alert-success">Category added successfully!</div>';
-                        document.getElementById('categoryForm').reset();
+                        document.getElementById('topicForm').reset();
                         location.href = '/categories.html'
                     } else {
-                        messageDiv.innerHTML = `<div class="alert alert-danger">Error: ${addCategoryResult.message || 'Failed to add category'}</div>`;
+                        messageDiv.innerHTML = `<div class="alert alert-danger">Error: ${addCategoryResult.message || 'Failed to add topic'}</div>`;
                     }
 
                     setTimeout(() => {
