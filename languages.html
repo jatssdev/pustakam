@@ -130,8 +130,19 @@
             <!-- End Navbar -->
             <div class="content" style="min-height: 75vh;">
                 <div class="col-md-12">
-                    <a href="./add-language.html" data-translate="add_language" class="btn btn-primary text-white">Add
-                        Language</a>
+
+                    <div class="d-flex align-items-center justify-content-between">
+                        <a href="./add-language.html" data-translate="add_language"
+                            class="btn btn-primary text-white">Add
+                            Language</a>
+                        <div>
+                            <div class="form-group d-flex align-items-center p-0 m-0">
+                                <input data-translate="searchPlaceholder" placeholder="search..."
+                                    oninput="SearchHandler(event)" id="searchInput" class="form-control" type="search">
+                                <!-- <button class="btn btn-primary"><i class="fa-solid fa-magnifying-glass"></i></button> -->
+                            </div>
+                        </div>
+                    </div>
                     <div id="editMessage" class="mt-2"></div>
 
                     <div class="card">
@@ -356,10 +367,10 @@
             }
         }
 
-        function displayLanguages() {
+        function displayLanguages(searchedLanguages) {
             const startIndex = (currentPage - 1) * itemsPerPage;  // Starting index for the current page
             const endIndex = startIndex + itemsPerPage;  // Ending index for the current page
-            const languagesForCurrentPage = languagesData.slice(startIndex, endIndex);  // Get current page data
+            const languagesForCurrentPage = searchedLanguages.slice(startIndex, endIndex);  // Get current page data
 
             const tableBody = document.getElementById("language-table-body");
             tableBody.innerHTML = "";  // Clear the table
@@ -409,7 +420,7 @@
             languagesData = [...nonZeroPriorityLanguages, ...zeroPriorityLanguages];
 
             // Update the table display
-            displayLanguages();
+            displayLanguages(languagesData);
         };
 
         // Function to handle priority update for a language
@@ -512,7 +523,7 @@
             if (page < 1 || page > totalPages) return;
 
             currentPage = page;  // Update the current page
-            displayLanguages();  // Re-display the languages for the new page
+            displayLanguages(languagesData);  // Re-display the languages for the new page
         }
 
 
@@ -608,7 +619,7 @@
                         }
 
                         // Display languages again
-                        displayLanguages();
+                        displayLanguages(languagesData);
                     } else {
                         alert("Failed to delete the language. Please try again.");
                     }
@@ -617,6 +628,12 @@
                     alert("An error occurred while deleting the language.");
                 }
             }
+        }
+        function SearchHandler(e) {
+            e.preventDefault()
+            let value = document.getElementById('searchInput').value
+            let searchedData = languagesData.filter((x) => x.languages.toLowerCase().includes(value.toLowerCase()))
+            displayLanguages(searchedData);
         }
 
 

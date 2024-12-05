@@ -131,7 +131,18 @@
 
             <div class="content" style="min-height: 75vh;">
                 <div class="col-md-12">
-                    <a href="./add-book.html" data-translate="add_book" class="btn btn-primary text-white">Add Book</a>
+
+                    <div class="d-flex align-items-center justify-content-between">
+                        <a href="./add-book.html" data-translate="add_book" class="btn btn-primary text-white">Add
+                            Book</a>
+                        <div>
+                            <div class="form-group d-flex align-items-center p-0 m-0">
+                                <input data-translate="searchPlaceholder" placeholder="search..."
+                                    oninput="SearchHandler(event)" id="searchInput" class="form-control" type="search">
+                                <!-- <button class="btn btn-primary"><i class="fa-solid fa-magnifying-glass"></i></button> -->
+                            </div>
+                        </div>
+                    </div>
                     <div id="deleteMessage" class="mt-3"></div>
 
                     <div class="card">
@@ -619,7 +630,7 @@
 
             nonZeroPriorityBooks.sort((a, b) => a.number - b.number);
             booksData = [...nonZeroPriorityBooks, ...zeroPriorityBooks];
-            displayBooks();  // Call to display the sorted books
+            displayBooks(booksData);  // Call to display the sorted books
         };
         // Update the priority for a book
         async function updateBookOrder(bookId, element) {
@@ -719,10 +730,10 @@
             }
         };
 
-        const displayBooks = () => {
+        const displayBooks = (searchedData) => {
             const startIndex = (currentPage - 1) * itemsPerPage;
             const endIndex = startIndex + itemsPerPage;
-            const booksForCurrentPage = booksData.slice(startIndex, endIndex);
+            const booksForCurrentPage = searchedData.slice(startIndex, endIndex);
 
             const bookTableBody = document.getElementById("book-table-body");
             bookTableBody.innerHTML = "";
@@ -758,7 +769,7 @@
         const changePage = (page) => {
             if (page < 1 || page > totalPages) return;
             currentPage = page;
-            displayBooks();
+            displayBooks(booksData);
         };
 
         document.getElementById("prevPage").addEventListener("click", () => changePage(currentPage - 1));
@@ -1190,7 +1201,12 @@
 
         setupTranslationHandlers(); // Set up translation handlers for the form fields
 
-
+        function SearchHandler(e) {
+            e.preventDefault()
+            let value = document.getElementById('searchInput').value
+            let searchedData = booksData.filter((x) => x.book_name_english.toLowerCase().includes(value.toLowerCase()) || x.book_name_hindi.toLowerCase().includes(value.toLowerCase()))
+            displayBooks(searchedData);
+        }
 
 
 
