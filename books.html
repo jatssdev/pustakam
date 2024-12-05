@@ -133,7 +133,7 @@
                 <div class="col-md-12">
 
                     <div class="d-flex align-items-center justify-content-between">
-                        <a href="./add-book.html" data-translate="add_book" class="btn btn-primary text-white">Add
+                        <a href="./add-book?.html" data-translate="add_book" class="btn btn-primary text-white">Add
                             Book</a>
                         <div>
                             <div class="form-group d-flex align-items-center p-0 m-0">
@@ -580,24 +580,24 @@
         //         if (data && data.data) {
         //             data.data.forEach((book, i) => {
         //                 // Fallback for missing book thumbnail
-        //                 const thumbnail = book.book_front_image
-        //                     ? `https://pustakam.pythonanywhere.com/${book.book_front_image}`
+        //                 const thumbnail = book?.book_front_image
+        //                     ? `https://pustakam.pythonanywhere.com/${book?.book_front_image}`
         //                     : "./assets/img/default-thumbnail.png";
 
         //                 const row = `
-        //             <tr id="book-${book.id}">
+        //             <tr id="book-${book?.id}">
         //                 <td>${i + 1}</td>
         //                 <td><img class="bookThumbnail" src="${thumbnail}" alt="Book Thumbnail" style="width: 50px; height: auto;"></td>
         //                 <td>
-        //                     <strong>${book.book_name_english}</strong><br>
-        //                     <small>${book.book_name_hindi}</small>
+        //                     <strong>${book?.book_name_english}</strong><br>
+        //                     <small>${book?.book_name_hindi}</small>
         //                 </td>
-        //                 <td>${book.book_price}</td>
-        //                 <td>${book.book_price_discount}</td>
+        //                 <td>${book?.book_price}</td>
+        //                 <td>${book?.book_price_discount}</td>
         //                 <td>
-        //                     <button class="btn btn-info btn-sm" data-translate="view" onclick="viewBook(${book.id})">View</button>
-        //                     <button class="btn btn-primary btn-sm" data-translate="edit" onclick="editBook(${book.id})">Edit</button>
-        //                     <button class="btn btn-danger btn-sm" data-translate="delete" onclick="deleteBook(${book.id})">Delete</button>
+        //                     <button class="btn btn-info btn-sm" data-translate="view" onclick="viewBook(${book?.id})">View</button>
+        //                     <button class="btn btn-primary btn-sm" data-translate="edit" onclick="editBook(${book?.id})">Edit</button>
+        //                     <button class="btn btn-danger btn-sm" data-translate="delete" onclick="deleteBook(${book?.id})">Delete</button>
         //                 </td>
         //             </tr>
         //         `;
@@ -837,16 +837,16 @@
                     document.getElementById("viewBookThumbnail").src = thumbnail;
 
                     // Set Book Details
-                    document.getElementById("viewBookNameEnglish").textContent = book.book_name_english;
-                    document.getElementById("viewBookNameHindi").textContent = book.book_name_hindi;
-                    document.getElementById("viewBookPrice").textContent = book.book_price || "N/A";
-                    document.getElementById("viewBookDiscountedPrice").textContent = book.book_price_discount || "N/A";
-                    document.getElementById("viewBookDetailsEnglish").textContent = book.book_details_english || "N/A";
-                    document.getElementById("viewBookDetailsHindi").textContent = book.book_details_hindi || "N/A";
-                    document.getElementById("viewBookFreeDemo").textContent = book.book_free_demo || "N/A";
+                    document.getElementById("viewBookNameEnglish").textContent = book?.book_name_english;
+                    document.getElementById("viewBookNameHindi").textContent = book?.book_name_hindi;
+                    document.getElementById("viewBookPrice").textContent = book?.book_price || "N/A";
+                    document.getElementById("viewBookDiscountedPrice").textContent = book?.book_price_discount || "N/A";
+                    document.getElementById("viewBookDetailsEnglish").textContent = book?.book_details_english || "N/A";
+                    document.getElementById("viewBookDetailsHindi").textContent = book?.book_details_hindi || "N/A";
+                    document.getElementById("viewBookFreeDemo").textContent = book?.book_free_demo || "N/A";
 
                     // Authors
-                    const authors = book?.author_data?.map(author => `${author.author_english} (${author.author_hindi})`)
+                    const authors = book?.author_data?.map(author => `${author?.author_english} (${author?.author_hindi})`)
                         .join(", ");
                     document.getElementById("viewBookAuthors").textContent = authors || "N/A";
 
@@ -856,19 +856,19 @@
                     document.getElementById("viewBookTopics").textContent = topics || "N/A";
 
                     // Languages
-                    const languages = book.language_data?.map(language => language.languages)
+                    const languages = book?.language_data?.map(language => language?.languages)
                         .join(", ");
                     document.getElementById("viewBookLanguages").textContent = languages || "N/A";
 
                     // Keywords
                     document.getElementById("viewBookKeywords").textContent =
-                        book.book_keywords && book.book_keywords.length > 0
-                            ? book.book_keywords.join(", ")
+                        book?.book_keywords && book?.book_keywords?.length > 0
+                            ? book?.book_keywords.join(", ")
                             : "N/A";
 
                     // Book File Link
-                    const bookFile = book.book_file
-                        ? `https://pustakam.pythonanywhere.com${book.book_file}`
+                    const bookFile = book?.book_file
+                        ? `https://pustakam.pythonanywhere.com${book?.book_file}`
                         : null;
                     const bookFileLink = document.getElementById("viewBookFileLink");
                     if (bookFile) {
@@ -880,7 +880,7 @@
                     const viewBookContentsButton = document.getElementById("viewBookContentsButton");
                     viewBookContentsButton.setAttribute(
                         "data-bookurl",
-                        `https://pustakam.pythonanywhere.com${book.book_file}`
+                        `https://pustakam.pythonanywhere.com${book?.book_file}`
                     );
 
                     $('#viewBookModal').modal('show');
@@ -910,19 +910,19 @@
                     const book = result.data;
 
                     // Populate the modal with current book details
-                    document.getElementById('editBookNameEnglish').value = book.book_name_english;
-                    document.getElementById('editBookNameHindi').value = book.book_name_hindi;
-                    document.getElementById('editBookPrice').value = book.book_price;
-                    document.getElementById('editBookDiscountedPrice').value = book.book_price_discount;
-                    document.getElementById('editBookDetailsEnglish').value = book.book_details_english;
-                    document.getElementById('editBookDetailsHindi').value = book.book_details_hindi;
-                    document.getElementById('editBookKeywords').value = book.book_keywords.join(', ') || '';
-                    document.getElementById('editBookDemoPercent').value = book.book_free_demo
+                    document.getElementById('editBookNameEnglish').value = book?.book_name_english;
+                    document.getElementById('editBookNameHindi').value = book?.book_name_hindi;
+                    document.getElementById('editBookPrice').value = book?.book_price;
+                    document.getElementById('editBookDiscountedPrice').value = book?.book_price_discount;
+                    document.getElementById('editBookDetailsEnglish').value = book?.book_details_english;
+                    document.getElementById('editBookDetailsHindi').value = book?.book_details_hindi;
+                    document.getElementById('editBookKeywords').value = book?.book_keywords.join(', ') || '';
+                    document.getElementById('editBookDemoPercent').value = book?.book_free_demo
 
-                    let bookFIleName = book.book_file.split('/')
-                    let bookImgName = book.book_front_image.split('/')
-                    $('#editBookFile').next("label").text(bookFIleName[bookFIleName.length - 1]);
-                    $('#editBookFrontImage').next("label").text(bookImgName[bookImgName.length - 1]);
+                    let bookFIleName = book?.book_file?.split('/')
+                    let bookImgName = book?.book_front_image?.split('/')
+                    $('#editBookFile').next("label").text(bookFIleName ? bookFIleName[bookFIleName?.length - 1] : '');
+                    $('#editBookFrontImage').next("label").text(bookImgName ? bookImgName[bookImgName?.length - 1] : '');
 
                     const thumbnail = book?.book_front_image
                         ? `https://pustakam.pythonanywhere.com${book?.book_front_image}`
@@ -950,10 +950,10 @@
 
                     const languagesSelect = document.getElementById('editLanguageSelect');
                     languagesSelect.innerHTML = ''; // Clear previous selections
-                    book.language_data.forEach(language => {
+                    book?.language_data.forEach(language => {
                         const option = document.createElement('option');
-                        option.value = language.id;
-                        option.textContent = language.languages;
+                        option.value = language?.id;
+                        option.textContent = language?.languages;
                         languagesSelect.appendChild(option);
                     });
 
@@ -1033,7 +1033,7 @@
                             }
                         } catch (error) {
                             console.error('Error updating book:', error);
-                            alert('An error occurred while updating the book. Please try again.');
+                            alert('An error occurred while updating the book?. Please try again.');
                         }
                     };
 
@@ -1048,7 +1048,7 @@
 
 
         async function fetchAuthorsAndTopics(book) {
-            console.log(book.author_data[0].author_english);
+            console.log(book?.author_data[0].author_english);
 
             try {
                 // Fetch authors, topics, and languages
@@ -1088,8 +1088,8 @@
                     languagesSelect.innerHTML = ''; // Clear previous selections
                     languagesData.data.forEach(language => {
                         const option = document.createElement('option');
-                        option.value = language.id;
-                        option.textContent = language.languages; // Assuming `languages` is the name field
+                        option.value = language?.id;
+                        option.textContent = language?.languages; // Assuming `languages` is the name field
                         languagesSelect.appendChild(option);
                     });
 
@@ -1106,7 +1106,7 @@
                         $('#editTopicSelect').val(topicIds).trigger('change'); // Set the value to the array of IDs and trigger change
 
                         // Pre-select languages
-                        const languageIds = book?.language_data?.map(language => language.id); // Get the IDs of the languages
+                        const languageIds = book?.language_data?.map(language => language?.id); // Get the IDs of the languages
                         $('#editLanguageSelect').val(languageIds).trigger('change'); // Set the value to the array of IDs and trigger change
 
                         // You can add a console log to verify the selected values
