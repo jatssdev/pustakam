@@ -8,7 +8,7 @@
     <link rel="apple-touch-icon" sizes="76x76" href="./assets/img/finalLogo.jpeg">
     <link rel="icon" type="image/png" href="./assets/img/finalLogo.jpeg">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <title data-translate="categories-page-title">Pustakam - Categories</title>
+    <title data-translate="topics-page-title">Pustakam - Topics</title>
     <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no'
         name='viewport' />
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,200" rel="stylesheet" />
@@ -73,9 +73,9 @@
                         </a>
                     </li>
                     <li class="active">
-                        <a href="./categories.html">
+                        <a href="./topics.html">
                             <i class="fa fa-folder"></i>
-                            <p data-translate="categories">Categories</p>
+                            <p data-translate="topics">Topics</p>
                         </a>
                     </li>
                     <li>
@@ -132,7 +132,7 @@
                 <div class="col-md-12">
 
                     <div class="d-flex align-items-center justify-content-between">
-                        <a href="./add-category.html" data-translate="add_topic" class="btn btn-primary text-white">Add
+                        <a href="./add-topic.html" data-translate="add_topic" class="btn btn-primary text-white">Add
                             Topic</a>
                         <div>
                             <div class="form-group d-flex align-items-center p-0 m-0">
@@ -235,7 +235,7 @@
     <script src="./assets/js/plugins/perfect-scrollbar.jquery.min.js"></script>
     <script src="./assets/js/paper-dashboard.min.js?v=2.0.1" type="text/javascript"></script>
     <script>
-        let categoriesData = [];  // Store all categories data
+        let topicsData = [];  // Store all topics data
         let currentPage = 1;  // Current page (default to 1)
         const itemsPerPage = 10; // Number of items per page
         let totalPages = 1;   // Total pages (calculated based on itemsPerPage)
@@ -248,7 +248,7 @@
             "logotxt": "Pustakam",
             "dashboard": "Dashboard",
             "authors": "Authors",
-            "categories": "Categories",
+            "topics": "Topics",
             "id": "ID",
             "topic_english": "Topic (English)",
             "topic_hindi": "Topic (Hindi)",
@@ -256,7 +256,7 @@
             "loading": "Loading...",
             "optionenglish": "English",
             "optionhindi": "Hindi",
-            "categories-page-title": "Pustakam - Categories",
+            "topics-page-title": "Pustakam - Topics",
             "edit": "Edit",
             "delete": "Delete", "books": "Books",
             "add_topic": "Add Topic",
@@ -273,7 +273,7 @@
             "logotxt": "पुस्तकम",
             "dashboard": "डैशबोर्ड",
             "authors": "लेखक",
-            "categories": "श्रेणियाँ",
+            "topics": "श्रेणियाँ",
             "id": "आईडी",
             "topic_english": "श्रेणी (अंग्रेज़ी)",
             "topic_hindi": "श्रेणी (हिंदी)",
@@ -281,7 +281,7 @@
             "loading": "लोड हो रहा है...",
             "optionenglish": "अंग्रेज़ी",
             "optionhindi": "हिंदी",
-            "categories-page-title": "पुस्तकम - श्रेणियाँ",
+            "topics-page-title": "पुस्तकम - श्रेणियाँ",
             "edit": "संपादित करें",
             "add_auther": "लेखक जोड़ें",
             "delete": "हटाएं", "books": "पुस्तकें",
@@ -316,29 +316,29 @@
             document.getElementById('language-dropdown').value = language;
             loadLanguage(language);
         });
-        let changeCategoriesByGivenPriority = () => {
-            // First, divide categories into two groups:
+        let changeTopicsByGivenPriority = () => {
+            // First, divide topics into two groups:
             // one with number == 0, and one with number > 0
-            let zeroPriorityCategories = [];
-            let nonZeroPriorityCategories = [];
+            let zeroPriorityTopics = [];
+            let nonZeroPriorityTopics = [];
 
-            categoriesData.forEach(topic => {
+            topicsData.forEach(topic => {
                 if (topic.number > 0) {
-                    nonZeroPriorityCategories.push(topic);  // Categories with non-zero number
+                    nonZeroPriorityTopics.push(topic);  // Topics with non-zero number
                 } else {
-                    zeroPriorityCategories.push(topic);  // Categories with number 0
+                    zeroPriorityTopics.push(topic);  // Topics with number 0
                 }
             });
 
             // Then, sort both arrays based on the number value (in ascending order)
-            nonZeroPriorityCategories.sort((a, b) => a?.number - b?.number);
+            nonZeroPriorityTopics.sort((a, b) => a?.number - b?.number);
 
-            // Concatenate both arrays: non-zero priority categories first, followed by zero-priority categories
-            let orderedCategories = [...nonZeroPriorityCategories, ...zeroPriorityCategories];
-            categoriesData = orderedCategories;
+            // Concatenate both arrays: non-zero priority topics first, followed by zero-priority topics
+            let orderedTopics = [...nonZeroPriorityTopics, ...zeroPriorityTopics];
+            topicsData = orderedTopics;
 
-            // Display the ordered categories in the table or perform other updates
-            displayCategories(categoriesData);
+            // Display the ordered topics in the table or perform other updates
+            displayTopics(topicsData);
         }
 
         // Function to handle priority (number) update
@@ -347,7 +347,7 @@
             let newNumber = parseInt(element.value); // Ensure we are working with a number
 
             // Find the topic to be updated
-            let oldTopic = categoriesData.find((x) => x.id === topicId);
+            let oldTopic = topicsData.find((x) => x.id === topicId);
 
             // Check for negative values
             if (newNumber < 0) {
@@ -360,7 +360,7 @@
             }
 
             // Check if another topic already has the same priority number
-            let currentTopic = categoriesData.find((x) => x.number === newNumber && x.id !== topicId && x.number > 0);
+            let currentTopic = topicsData.find((x) => x.number === newNumber && x.id !== topicId && x.number > 0);
             if (currentTopic) {
                 updateMessageDiv.innerHTML = `
             <div class="alert alert-danger" role="alert">
@@ -387,15 +387,15 @@
                 <div class="alert alert-success" role="alert">
                     Topic priority updated successfully!
                 </div>`;
-                    categoriesData = categoriesData.map((topic) => {
+                    topicsData = topicsData.map((topic) => {
                         if (topic.id === topicId) {
                             topic.number = newNumber; // Update the number in the local data
                         }
                         return topic;
                     });
 
-                    // Reorder the categories based on the updated priority
-                    changeCategoriesByGivenPriority();
+                    // Reorder the topics based on the updated priority
+                    changeTopicsByGivenPriority();
                 } else {
                     element.value = oldTopic.number; // Restore the original value
 
@@ -422,43 +422,43 @@
 
 
 
-        const getCategories = async () => {
+        const getTopics = async () => {
             try {
                 // Show loading spinner
                 document.getElementById('loading').style.display = 'block';
                 document.getElementById('table-container').style.display = 'none';
 
-                // Fetch all categories
+                // Fetch all topics
                 let response = await fetch('https://pustakam.pythonanywhere.com/topic/');
                 let result = await response.json();
 
                 if (result.status === "success") {
-                    categoriesData = result.data;  // Store all categories data
-                    totalPages = Math.ceil(categoriesData.length / itemsPerPage);  // Calculate total pages
-                    changeCategoriesByGivenPriority()
+                    topicsData = result.data;  // Store all topics data
+                    totalPages = Math.ceil(topicsData.length / itemsPerPage);  // Calculate total pages
+                    changeTopicsByGivenPriority()
                 } else {
                     console.error('Failed to load data:', result);
                 }
             } catch (error) {
-                console.error('Error fetching categories:', error);
+                console.error('Error fetching topics:', error);
             } finally {
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('table-container').style.display = 'block';
             }
         };
 
-        getCategories();
-        const displayCategories = (searchedData) => {
+        getTopics();
+        const displayTopics = (searchedData) => {
             const startIndex = (currentPage - 1) * itemsPerPage;  // Starting index for the current page
             const endIndex = startIndex + itemsPerPage;  // Ending index for the current page
-            const categoriesForCurrentPage = searchedData.slice(startIndex, endIndex);  // Get the current page data
+            const topicsForCurrentPage = searchedData.slice(startIndex, endIndex);  // Get the current page data
 
             // Clear existing table rows
             let tableBody = document.getElementById('topic-table-body');
             tableBody.innerHTML = '';
 
-            // Insert the categories for the current page into the table
-            categoriesForCurrentPage.forEach((topic, i) => {
+            // Insert the topics for the current page into the table
+            topicsForCurrentPage.forEach((topic, i) => {
                 let row = `
             <tr id="topic-${topic.id}">
                 <td>${i + 1 + (currentPage - 1) * itemsPerPage}</td> <!-- Adjusting the index -->
@@ -482,7 +482,7 @@
         function changePage(page) {
             if (page < 1 || page > totalPages) return; // Prevent invalid page number
             currentPage = page;
-            displayCategories(categoriesData);  // Re-display categories based on the new page
+            displayTopics(topicsData);  // Re-display topics based on the new page
         }
 
         // Update pagination info (disable/enable buttons)
@@ -620,7 +620,7 @@
                     Topic updated successfully!
                 </div>
             `;
-                    getCategories(); // Refresh the topic list to show updated data
+                    getTopics(); // Refresh the topic list to show updated data
                 } else {
                     editMessageDiv.innerHTML = `
                 <div class="alert alert-danger" role="alert">
@@ -707,8 +707,8 @@
         function SearchHandler(e) {
             e.preventDefault()
             let value = document.getElementById('searchInput').value
-            let searchedData = categoriesData.filter((x) => x.topic_english.toLowerCase().includes(value.toLowerCase()))
-            displayCategories(searchedData);
+            let searchedData = topicsData.filter((x) => x.topic_english.toLowerCase().includes(value.toLowerCase()))
+            displayTopics(searchedData);
         }
 
     </script>

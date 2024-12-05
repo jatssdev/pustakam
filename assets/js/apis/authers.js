@@ -20,8 +20,8 @@ const getAuthers = async () => {
                         <td>${author.id}</td>
                         <td>${author.author_english}</td>
                         <td>${author.author_hindi}</td>
-                        <td>${author.category_data.category_english}</td>
-                        <td>${author.category_data.category_hindi}</td>
+                        <td>${author.topic_data.topic_english}</td>
+                        <td>${author.topic_data.topic_hindi}</td>
                         <td>
                             <button class="btn btn-primary btn-sm" onclick="editAuthor(${author.id})">
                                 Edit

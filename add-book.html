@@ -76,9 +76,9 @@
                         </a>
                     </li>
                     <li>
-                        <a href="./categories.html">
+                        <a href="./topics.html">
                             <i class="fa fa-folder"></i>
-                            <p data-translate="categories">Categories</p>
+                            <p data-translate="topics">Topics</p>
                         </a>
                     </li>
                     <li>
@@ -132,12 +132,12 @@
                 <div class="container">
                     <h2 class="my-4" data-translate="add_book">Add Book</h2>
                     <form id="bookForm">
-                        <!-- Book Category -->
+                        <!-- Book Topic -->
                         <div class="form-group">
-                            <label for="categorySelect" data-translate="category_select">Book Category</label>
-                            <select id="categorySelect" class="form-control custom-select" multiple required></select>
+                            <label for="topicSelect" data-translate="topic_select">Book Topic</label>
+                            <select id="topicSelect" class="form-control custom-select" multiple required></select>
                             <button type="button" class="btn btn-primary"
-                                onclick="addCategoryAndAuther(event,'category')">+</button>
+                                onclick="addTopicAndAuther(event,'topic')">+</button>
                         </div>
 
                         <!-- Author Name -->
@@ -145,7 +145,7 @@
                             <label for="authorSelect" data-translate="author_select">Author Name</label>
                             <select id="authorSelect" class="form-control custom-select" multiple required></select>
                             <button type="button" class="btn btn-primary"
-                                onclick="addCategoryAndAuther(event,'auther')">+</button>
+                                onclick="addTopicAndAuther(event,'auther')">+</button>
                         </div>
 
                         <!-- Book Language -->
@@ -272,34 +272,34 @@
         </div>
     </div>
 
-    <div class="modal fade" id="addCategoryModal" tabindex="-1" role="dialog" aria-labelledby="addCategoryModalLabel"
+    <div class="modal fade" id="addTopicModal" tabindex="-1" role="dialog" aria-labelledby="addTopicModalLabel"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addCategoryModalLabel">Add Category</h5>
+                    <h5 class="modal-title" id="addTopicModalLabel">Add Topic</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form id="addCategoryForm">
+                    <form id="addTopicForm">
                         <div class="changeOrderParent d-flex">
 
                             <div class="form-group">
-                                <label for="addCategoryEnglish" data-translate="category_english">Category Name
+                                <label for="addTopicEnglish" data-translate="topic_english">Topic Name
                                     (English)</label>
-                                <input type="text" id="addCategoryEnglish" class="form-control"
-                                    placeholder="Enter category name in English" required>
+                                <input type="text" id="addTopicEnglish" class="form-control"
+                                    placeholder="Enter topic name in English" required>
                             </div>
                             <div class="form-group">
-                                <label for="addCategoryHindi" data-translate="category_hindi">Category Name
+                                <label for="addTopicHindi" data-translate="topic_hindi">Topic Name
                                     (Hindi)</label>
-                                <input type="text" id="addCategoryHindi" class="form-control"
-                                    placeholder="Enter category name in Hindi" required>
+                                <input type="text" id="addTopicHindi" class="form-control"
+                                    placeholder="Enter topic name in Hindi" required>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-primary">Add Category</button>
+                        <button type="submit" class="btn btn-primary">Add Topic</button>
                     </form>
                 </div>
             </div>
@@ -334,9 +334,9 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="authorCategorySelect" data-translate="category_select">Category</label>
-                            <select id="authorCategorySelect" class="form-control custom-select">
-                                <!-- Categories will be dynamically populated -->
+                            <label for="authorTopicSelect" data-translate="topic_select">Topic</label>
+                            <select id="authorTopicSelect" class="form-control custom-select">
+                                <!-- Topics will be dynamically populated -->
                             </select>
                         </div>
                         <button type="submit" class="btn btn-primary">Add Author</button>
@@ -356,7 +356,7 @@
 
     <script>
         let initSelect2 = (placeH) => {
-            $('#authorSelect, #categorySelect, #languageSelect').select2({
+            $('#authorSelect, #topicSelect, #languageSelect').select2({
                 placeholder: placeH,
                 allowClear: true,
                 width: '100%',
@@ -392,14 +392,14 @@
             { sourceFieldId: "bookNameEnglish", targetFieldId: "bookNameHindi", sourceLang: "en", targetLang: "hi" },
             { sourceFieldId: "bookDetailsEnglish", targetFieldId: "bookDetailsHindi", sourceLang: "en", targetLang: "hi" },
             { sourceFieldId: "addAuthorEnglish", targetFieldId: "addAuthorHindi", sourceLang: "en", targetLang: "hi" },
-            { sourceFieldId: "addCategoryEnglish", targetFieldId: "addCategoryHindi", sourceLang: "en", targetLang: "hi" },
+            { sourceFieldId: "addTopicEnglish", targetFieldId: "addTopicHindi", sourceLang: "en", targetLang: "hi" },
         ];
 
         const fieldMappingsHiToEn = [
             { sourceFieldId: "bookNameHindi", targetFieldId: "bookNameEnglish", sourceLang: "hi", targetLang: "en" },
             { sourceFieldId: "bookDetailsHindi", targetFieldId: "bookDetailsEnglish", sourceLang: "hi", targetLang: "en" },
             { sourceFieldId: "addAuthorHindi", targetFieldId: "addAuthorEnglish", sourceLang: "hi", targetLang: "en" },
-            { sourceFieldId: "addCategoryHindi", targetFieldId: "addCategoryEnglish", sourceLang: "hi", targetLang: "en" },
+            { sourceFieldId: "addTopicHindi", targetFieldId: "addTopicEnglish", sourceLang: "hi", targetLang: "en" },
         ];
 
         const translations = {
@@ -407,12 +407,12 @@
                 logotxt: "Pustakam",
                 dashboard: "Dashboard",
                 authors: "Authors",
-                categories: "Categories",
+                topics: "Topics",
                 books: "Books",
                 languages: "Languages",
                 add_book: "Add Book",
                 author_select: "Select Authors",
-                category_select: "Select Categories",
+                topic_select: "Select Topics",
                 book_name_english: "Book Name (English)",
                 book_name_hindi: "Book Name (Hindi)",
                 book_details_english: "Book Details (English)",
@@ -441,12 +441,12 @@
                 logotxt: "पुस्तकम",
                 dashboard: "डैशबोर्ड",
                 authors: "लेखक",
-                categories: "श्रेणियाँ",
+                topics: "श्रेणियाँ",
                 books: "पुस्तकें",
                 languages: "भाषाएँ",
                 add_book: "पुस्तक जोड़ें",
                 author_select: "लेखकों का चयन करें",
-                category_select: "श्रेणियाँ चुनें",
+                topic_select: "श्रेणियाँ चुनें",
                 book_name_english: "पुस्तक का नाम (अंग्रेज़ी)",
                 book_name_hindi: "पुस्तक का नाम (हिंदी)",
                 book_details_english: "पुस्तक का विवरण (अंग्रेज़ी)",
@@ -547,7 +547,7 @@
             });
         }
 
-        // Load categories dynamically
+        // Load topics dynamically
         async function populateSelectOptions(url, selectElement, keys) {
             try {
                 const response = await fetch(url);
@@ -577,7 +577,7 @@
             loadLanguage(savedLanguage);
             updateFieldTranslationHandlers(savedLanguage === "en" ? fieldMappingsEnToHi : fieldMappingsHiToEn);
 
-            populateSelectOptions("https://pustakam.pythonanywhere.com/category/", "#categorySelect", ["category_english", "category_hindi"]);
+            populateSelectOptions("https://pustakam.pythonanywhere.com/topic/", "#topicSelect", ["topic_english", "topic_hindi"]);
             populateSelectOptions("https://pustakam.pythonanywhere.com/author/", "#authorSelect", ["author_english", "author_hindi"]);
             populateSelectOptions("https://pustakam.pythonanywhere.com/languages/", "#languageSelect", "languages");
 
@@ -620,16 +620,16 @@
 
             // Ensure multi-select fields are handled correctly: Convert selected options to integers
             const selectedAuthors = $("#authorSelect").val().map(val => parseInt(val, 10));
-            const selectedCategories = $("#categorySelect").val().map(val => parseInt(val, 10));
+            const selectedTopics = $("#topicSelect").val().map(val => parseInt(val, 10));
             const selectedLanguages = $("#languageSelect").val().map(val => parseInt(val, 10));
             console.log(selectedAuthors);
-            console.log(selectedCategories);
+            console.log(selectedTopics);
 
 
             // Handle multi-select data by setting them correctly in the formData
 
-            selectedCategories.map((x) => {
-                formData.append("category_data", x);
+            selectedTopics.map((x) => {
+                formData.append("topic_data", x);
             })
             selectedAuthors.map((x) => {
                 formData.append("author_data", x);
@@ -690,40 +690,40 @@
         });
 
 
-        function addCategoryAndAuther(event, type) {
+        function addTopicAndAuther(event, type) {
             event.preventDefault();
 
-            if (type === 'category') {
-                // Show the Add Category modal
-                $('#addCategoryModal').modal('show');
+            if (type === 'topic') {
+                // Show the Add Topic modal
+                $('#addTopicModal').modal('show');
             } else if (type === 'auther') {
                 // Show the Add Author modal
-                fetchCategories();
+                fetchTopics();
                 $('#addAuthorModal').modal('show');
             }
         }
 
-        // Handling Add Category form submission
-        $("#addCategoryForm").on("submit", async function (event) {
+        // Handling Add Topic form submission
+        $("#addTopicForm").on("submit", async function (event) {
             event.preventDefault();
-            const categoryEnglish = $("#addCategoryEnglish").val();
-            const categoryHindi = $("#addCategoryHindi").val();
+            const topicEnglish = $("#addTopicEnglish").val();
+            const topicHindi = $("#addTopicHindi").val();
 
             try {
-                const response = await fetch('https://pustakam.pythonanywhere.com/category/', {
+                const response = await fetch('https://pustakam.pythonanywhere.com/topic/', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ category_english: categoryEnglish, category_hindi: categoryHindi })
+                    body: JSON.stringify({ topic_english: topicEnglish, topic_hindi: topicHindi })
                 });
 
                 if (response.ok) {
-                    $('#addCategoryModal').modal('hide');
+                    $('#addTopicModal').modal('hide');
                     // Display success message
                 } else {
                     // Handle failure
                 }
             } catch (error) {
-                console.error('Error adding category:', error);
+                console.error('Error adding topic:', error);
             }
         });
 
@@ -732,13 +732,13 @@
             event.preventDefault();
             const authorEnglish = $("#addAuthorEnglish").val();
             const authorHindi = $("#addAuthorHindi").val();
-            const categoryId = $("#authorCategorySelect").val();
+            const topicId = $("#authorTopicSelect").val();
 
             try {
                 const response = await fetch('https://pustakam.pythonanywhere.com/author/', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ author_english: authorEnglish, author_hindi: authorHindi, category_data: categoryId })
+                    body: JSON.stringify({ author_english: authorEnglish, author_hindi: authorHindi, topic_data: topicId })
                 });
 
                 if (response.ok) {
@@ -752,24 +752,24 @@
             }
         });
 
-        // Fetch categories and populate the "Add Author" modal
-        async function fetchCategories() {
+        // Fetch topics and populate the "Add Author" modal
+        async function fetchTopics() {
             try {
-                const response = await fetch('https://pustakam.pythonanywhere.com/category/');
+                const response = await fetch('https://pustakam.pythonanywhere.com/topic/');
                 const result = await response.json();
-                const categorySelect = $('#authorCategorySelect');
+                const topicSelect = $('#authorTopicSelect');
 
                 if (result.status === 'success') {
-                    const categories = result.data;
-                    categorySelect.empty(); // Clear existing options
-                    categories.forEach(category => {
-                        categorySelect.append(new Option(category.category_english, category.id));
+                    const topics = result.data;
+                    topicSelect.empty(); // Clear existing options
+                    topics.forEach(topic => {
+                        topicSelect.append(new Option(topic.topic_english, topic.id));
                     });
                 } else {
-                    console.error('Failed to fetch categories:', result.message);
+                    console.error('Failed to fetch topics:', result.message);
                 }
             } catch (error) {
-                console.error('Error fetching categories:', error);
+                console.error('Error fetching topics:', error);
             }
         }
 

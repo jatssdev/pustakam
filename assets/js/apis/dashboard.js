@@ -7,48 +7,48 @@ const getAuthers = async () => {
 
 }
 getAuthers()
-const getCategories = async () => {
+const getTopics = async () => {
     try {
-        let response = await fetch('https://pustakam.pythonanywhere.com/category/');
+        let response = await fetch('https://pustakam.pythonanywhere.com/topic/');
         let data = await response.json();
-        let lengthOfCategories = data.data.length;
+        let lengthOfTopics = data.data.length;
 
-        // Assuming you have an element with ID `dashboardCategoriesTotal` to display the count
-        document.getElementById('dashboardCategoriesTotal').innerHTML = lengthOfCategories;
+        // Assuming you have an element with ID `dashboardTopicsTotal` to display the count
+        document.getElementById('dashboardTopicsTotal').innerHTML = lengthOfTopics;
     } catch (error) {
-        console.error('Error fetching categories:', error);
+        console.error('Error fetching topics:', error);
     }
 }
 
-// Call the function to fetch categories
-getCategories();
+// Call the function to fetch topics
+getTopics();
 const getBooks = async () => {
     try {
         let response = await fetch('https://pustakam.pythonanywhere.com/books/');
         let data = await response.json();
-        let lengthOfCategories = data.data.length;
+        let lengthOfTopics = data.data.length;
 
-        // Assuming you have an element with ID `dashboardCategoriesTotal` to display the count
-        document.getElementById('dashboardBooksTotal').innerHTML = lengthOfCategories;
+        // Assuming you have an element with ID `dashboardTopicsTotal` to display the count
+        document.getElementById('dashboardBooksTotal').innerHTML = lengthOfTopics;
     } catch (error) {
-        console.error('Error fetching categories:', error);
+        console.error('Error fetching topics:', error);
     }
 }
 
-// Call the function to fetch categories
+// Call the function to fetch topics
 getBooks();
 const getLanguages = async () => {
     try {
         let response = await fetch('https://pustakam.pythonanywhere.com/languages/');
         let data = await response.json();
-        let lengthOfCategories = data.data.length;
+        let lengthOfTopics = data.data.length;
 
-        // Assuming you have an element with ID `dashboardCategoriesTotal` to display the count
-        document.getElementById('dashboardlanguagesTotal').innerHTML = lengthOfCategories;
+        // Assuming you have an element with ID `dashboardTopicsTotal` to display the count
+        document.getElementById('dashboardlanguagesTotal').innerHTML = lengthOfTopics;
     } catch (error) {
-        console.error('Error fetching categories:', error);
+        console.error('Error fetching topics:', error);
     }
 }
 
-// Call the function to fetch categories
+// Call the function to fetch topics
 getLanguages();

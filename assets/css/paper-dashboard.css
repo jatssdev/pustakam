@@ -2274,10 +2274,10 @@ h4,
   margin-bottom: 15px;
 }
 
-h4+.category,
-h4.title+.category,
-.h4+.category,
-.h4.title+.category {
+h4+.topic,
+h4.title+.topic,
+.h4+.topic,
+.h4.title+.topic {
   margin-top: -10px;
 }
 
@@ -2312,7 +2312,7 @@ p.description {
   text-decoration: none;
 }
 
-.title+.category {
+.title+.topic {
   margin-top: -10px;
 }
 
@@ -2324,15 +2324,15 @@ p.description {
   font-weight: 300;
 }
 
-.category,
-.card-category {
+.topic,
+.card-topic {
   text-transform: capitalize;
   font-weight: 400;
   color: #9A9A9A;
   font-size: 0.7142em;
 }
 
-.card-category {
+.card-topic {
   font-size: 1em;
 }
 
@@ -3082,7 +3082,7 @@ a[data-toggle="collapse"][aria-expanded="true"] .caret,
   z-index: 1;
 }
 
-.page-header .category,
+.page-header .topic,
 .page-header .description {
   color: rgba(255, 255, 255, 0.8);
 }
@@ -4923,14 +4923,14 @@ s .sidebar[data-active-color="default"] .nav li.active>a,
   color: #FFFFFF;
 }
 
-.panel-header .header .category {
+.panel-header .header .topic {
   max-width: 600px;
   color: rgba(255, 255, 255, 0.5);
   margin: 0 auto;
   font-size: 13px;
 }
 
-.panel-header .header .category a {
+.panel-header .header .topic a {
   color: #FFFFFF;
 }
 
@@ -5457,7 +5457,7 @@ s .sidebar[data-active-color="default"] .nav li.active>a,
   background-color: transparent;
 }
 
-.card-plain:not(.card-subcategories).card-body {
+.card-plain:not(.card-subtopics).card-body {
   padding-left: 0;
   padding-right: 0;
 }
@@ -5467,7 +5467,7 @@ s .sidebar[data-active-color="default"] .nav li.active>a,
   margin-bottom: 0;
 }
 
-.card-chart .card-header .card-category {
+.card-chart .card-header .card-topic {
   margin-bottom: 5px;
 }
 
@@ -5573,7 +5573,7 @@ s .sidebar[data-active-color="default"] .nav li.active>a,
   margin-bottom: 0;
 }
 
-.card-stats .card-body .numbers .card-category {
+.card-stats .card-body .numbers .card-topic {
   color: #9A9A9A;
   font-size: 16px;
   line-height: 1.4em;
@@ -6250,7 +6250,7 @@ s .sidebar[data-active-color="default"] .nav li.active>a,
     font-size: 48px;
   }
 
-  .page-header .container h6.category-absolute {
+  .page-header .container h6.topic-absolute {
     width: 90%;
   }
 

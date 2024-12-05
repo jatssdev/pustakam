@@ -73,9 +73,9 @@
                         </a>
                     </li>
                     <li>
-                        <a href="./categories.html">
+                        <a href="./topics.html">
                             <i class="fa fa-folder"></i>
-                            <p data-translate="categories">Categories</p>
+                            <p data-translate="topics">Topics</p>
                         </a>
                     </li>
                     <li class="active">
@@ -152,8 +152,8 @@
                                         <th data-translate="id">ID</th>
                                         <th data-translate="author_english">Author (English)</th>
                                         <th data-translate="author_hindi">Author (Hindi)</th>
-                                        <th data-translate="category_english">Category (English)</th>
-                                        <th data-translate="category_hindi">Category (Hindi)</th>
+                                        <th data-translate="topic_english">Topic (English)</th>
+                                        <th data-translate="topic_hindi">Topic (Hindi)</th>
                                         <th data-translate="actions">Actions</th>
                                     </thead>
                                     <tbody id="author-table-body">
@@ -255,12 +255,12 @@
             "logotxt": "Pustakam",
             "dashboard": "Dashboard",
             "authors": "Authors",
-            "categories": "Categories",
+            "topics": "Topics",
             "id": "ID",
             "author_english": "Author (English)",
             "author_hindi": "Author (Hindi)",
-            "category_english": "Category (English)",
-            "category_hindi": "Category (Hindi)",
+            "topic_english": "Topic (English)",
+            "topic_hindi": "Topic (Hindi)",
             "actions": "Actions",
             "loading": "Loading...",
             "optionenglish": "English",
@@ -286,12 +286,12 @@
             "logotxt": "पुस्तकम",
             "dashboard": "डैशबोर्ड",
             "authors": "लेखक",
-            "categories": "श्रेणियाँ",
+            "topics": "श्रेणियाँ",
             "id": "आईडी",
             "author_english": "लेखक (अंग्रेज़ी)",
             "author_hindi": "लेखक (हिंदी)",
-            "category_english": "श्रेणी (अंग्रेज़ी)",
-            "category_hindi": "श्रेणी (हिंदी)",
+            "topic_english": "श्रेणी (अंग्रेज़ी)",
+            "topic_hindi": "श्रेणी (हिंदी)",
             "actions": "कार्य",
             "loading": "लोड हो रहा है...",
             "optionenglish": "अंग्रेज़ी",
@@ -402,8 +402,8 @@
                 <td>${i + 1 + (currentPage - 1) * itemsPerPage}</td>
                 <td>${author.author_english}</td>
                 <td>${author.author_hindi}</td>
-                <td>${author?.category_data?.category_english}</td>
-                <td>${author?.category_data?.category_hindi}</td>
+                <td>${author?.topic_data?.topic_english}</td>
+                <td>${author?.topic_data?.topic_hindi}</td>
                 <td>
                     <button class="btn btn-primary btn-sm" data-translate='edit' onclick='editAuthor(${JSON.stringify(author)})'>Edit</button>
                     <button class="btn btn-danger btn-sm" data-translate='delete' onclick="deleteAuthor(${author.id})">Delete</button>

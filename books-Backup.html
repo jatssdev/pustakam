@@ -73,9 +73,9 @@
                         </a>
                     </li>
                     <li>
-                        <a href="./categories.html">
+                        <a href="./topics.html">
                             <i class="fa fa-folder"></i>
-                            <p data-translate="categories">Categories</p>
+                            <p data-translate="topics">Topics</p>
                         </a>
                     </li>
                     <li>
@@ -214,7 +214,7 @@
                                 <p id="viewBookDetailsHindi"></p>
                                 <p><strong>Free Demo (%):</strong> <span id="viewBookFreeDemo"></span></p>
                                 <p><strong>Authors:</strong> <span id="viewBookAuthors"></span></p>
-                                <p><strong>Categories:</strong> <span id="viewBookCategories"></span></p>
+                                <p><strong>Topics:</strong> <span id="viewBookTopics"></span></p>
                                 <p><strong>Languages:</strong> <span id="viewBookLanguages"></span></p>
                                 <p><strong>Keywords:</strong> <span id="viewBookKeywords"></span></p>
                             </div>
@@ -257,11 +257,11 @@
                             <img id="editBookFrontImagePreview" class="img-fluid mt-2" style="max-width: 150px;">
                         </div>
 
-                        <!-- Book Category -->
+                        <!-- Book Topic -->
                         <div class="form-group">
-                            <label for="editCategorySelect" data-translate="book_category">Book Category</label>
-                            <select id="editCategorySelect" class="form-control custom-select" multiple required>
-                                <!-- Categories will be dynamically populated -->
+                            <label for="editTopicSelect" data-translate="book_topic">Book Topic</label>
+                            <select id="editTopicSelect" class="form-control custom-select" multiple required>
+                                <!-- Topics will be dynamically populated -->
                             </select>
                         </div>
 
@@ -405,7 +405,7 @@
             hi: "विकल्प चुनें",
         }
         let initSelect2 = (placeH) => {
-            $('#authorSelect, #categorySelect, #languageSelect,#editAuthorSelect, #editCategorySelect,#editLanguageSelect').select2({
+            $('#authorSelect, #topicSelect, #languageSelect,#editAuthorSelect, #editTopicSelect,#editLanguageSelect').select2({
                 placeholder: placeH,
                 allowClear: true,
                 width: '100%',
@@ -432,7 +432,7 @@
                 logotxt: "Pustakam",
                 dashboard: "Dashboard",
                 authors: "Authors",
-                categories: "Categories",
+                topics: "Topics",
                 books: "Books",
                 id: "ID",
                 book_name_english: "Book Name (English)",
@@ -454,7 +454,7 @@
                 "edit_book": "Edit Book",
                 "book_front_image": "Book Front Image",
                 "choose_file": "Choose file",
-                "book_category": "Book Category",
+                "book_topic": "Book Topic",
                 "author_name": "Author Name",
                 "book_language": "Book Language",
                 "book_name_english": "Book Name (in English)",
@@ -481,7 +481,7 @@
                 logotxt: "पुस्तकम",
                 dashboard: "डैशबोर्ड",
                 authors: "लेखक",
-                categories: "श्रेणियाँ",
+                topics: "श्रेणियाँ",
                 books: "पुस्तकें",
                 id: "आईडी",
                 book_name_english: "पुस्तक का नाम (अंग्रेज़ी)",
@@ -503,7 +503,7 @@
                 "edit_book": "पुस्तक संपादित करें",
                 "book_front_image": "पुस्तक का अग्रभाग छवि",
                 "choose_file": "फाइल चुनें",
-                "book_category": "पुस्तक श्रेणी",
+                "book_topic": "पुस्तक श्रेणी",
                 "author_name": "लेखक नाम",
                 "book_language": "पुस्तक भाषा",
                 "book_name_english": "पुस्तक का नाम (अंग्रेज़ी में)",
@@ -839,10 +839,10 @@
                         .join(", ");
                     document.getElementById("viewBookAuthors").textContent = authors || "N/A";
 
-                    // Categories
-                    const categories = book?.category_data?.map(category => `${category.category_english} (${category.category_hindi})`)
+                    // Topics
+                    const topics = book?.topic_data?.map(topic => `${topic.topic_english} (${topic.topic_hindi})`)
                         .join(", ");
-                    document.getElementById("viewBookCategories").textContent = categories || "N/A";
+                    document.getElementById("viewBookTopics").textContent = topics || "N/A";
 
                     // Languages
                     const languages = book.language_data?.map(language => language.languages)
@@ -918,7 +918,7 @@
                         : "./assets/img/default-thumbnail.png";
                     document.getElementById('editBookFrontImagePreview').src = thumbnail;
 
-                    // Pre-fill select options for Authors, Categories, and Languages
+                    // Pre-fill select options for Authors, Topics, and Languages
                     const authorsSelect = document.getElementById('editAuthorSelect');
                     authorsSelect.innerHTML = ''; // Clear previous selections
                     book?.author_data.forEach(author => {
@@ -928,13 +928,13 @@
                         authorsSelect.appendChild(option);
                     });
 
-                    const categoriesSelect = document.getElementById('editCategorySelect');
-                    categoriesSelect.innerHTML = ''; // Clear previous selections
-                    book?.category_data?.forEach(category => {
+                    const topicsSelect = document.getElementById('editTopicSelect');
+                    topicsSelect.innerHTML = ''; // Clear previous selections
+                    book?.topic_data?.forEach(topic => {
                         const option = document.createElement('option');
-                        option.value = category.id;
-                        option.textContent = `${category.category_english} (${category.category_hindi})`;
-                        categoriesSelect.appendChild(option);
+                        option.value = topic.id;
+                        option.textContent = `${topic.topic_english} (${topic.topic_hindi})`;
+                        topicsSelect.appendChild(option);
                     });
 
                     const languagesSelect = document.getElementById('editLanguageSelect');
@@ -948,7 +948,7 @@
 
                     // Open the modal
                     $('#editBookModal').modal('show');
-                    fetchAuthorsAndCategories(book);
+                    fetchAuthorsAndTopics(book);
                     const currLanguage = localStorage.getItem('language') || 'en';
 
                     let placeH = currLanguage === 'en' ? selectMenuPlaceHolder.en : selectMenuPlaceHolder.hi
@@ -977,10 +977,10 @@
                             formData.append("book_keywords", k);
                         });
 
-                        // Append selected categories, authors, and languages individually
-                        const selectedCategories = Array.from(document.getElementById('editCategorySelect').selectedOptions).map(option => option.value);
-                        selectedCategories.forEach((category) => {
-                            formData.append("category_data", category);
+                        // Append selected topics, authors, and languages individually
+                        const selectedTopics = Array.from(document.getElementById('editTopicSelect').selectedOptions).map(option => option.value);
+                        selectedTopics.forEach((topic) => {
+                            formData.append("topic_data", topic);
                         });
 
                         const selectedAuthors = Array.from(document.getElementById('editAuthorSelect').selectedOptions).map(option => option.value);
@@ -1036,22 +1036,22 @@
         }
 
 
-        async function fetchAuthorsAndCategories(book) {
+        async function fetchAuthorsAndTopics(book) {
             console.log(book.author_data[0].author_english);
 
             try {
-                // Fetch authors, categories, and languages
-                const [authorsResponse, categoriesResponse, languagesResponse] = await Promise.all([
+                // Fetch authors, topics, and languages
+                const [authorsResponse, topicsResponse, languagesResponse] = await Promise.all([
                     fetch('https://pustakam.pythonanywhere.com/author/'),
-                    fetch('https://pustakam.pythonanywhere.com/category/'),
+                    fetch('https://pustakam.pythonanywhere.com/topic/'),
                     fetch('https://pustakam.pythonanywhere.com/languages/')
                 ]);
 
                 const authorsData = await authorsResponse.json();
-                const categoriesData = await categoriesResponse.json();
+                const topicsData = await topicsResponse.json();
                 const languagesData = await languagesResponse.json();  // Fetch languages
 
-                if (authorsData.status === 'success' && categoriesData.status === 'success' && languagesData.status === 'success') {
+                if (authorsData.status === 'success' && topicsData.status === 'success' && languagesData.status === 'success') {
                     // Populate authors select menu
                     const authorsSelect = document.getElementById('editAuthorSelect');
                     authorsSelect.innerHTML = ''; // Clear previous selections
@@ -1062,14 +1062,14 @@
                         authorsSelect.appendChild(option);
                     });
 
-                    // Populate categories select menu
-                    const categoriesSelect = document.getElementById('editCategorySelect');
-                    categoriesSelect.innerHTML = ''; // Clear previous selections
-                    categoriesData.data.forEach(category => {
+                    // Populate topics select menu
+                    const topicsSelect = document.getElementById('editTopicSelect');
+                    topicsSelect.innerHTML = ''; // Clear previous selections
+                    topicsData.data.forEach(topic => {
                         const option = document.createElement('option');
-                        option.value = category.id;
-                        option.textContent = `${category.category_english} (${category.category_hindi})`;
-                        categoriesSelect.appendChild(option);
+                        option.value = topic.id;
+                        option.textContent = `${topic.topic_english} (${topic.topic_hindi})`;
+                        topicsSelect.appendChild(option);
                     });
 
                     // Populate languages select menu
@@ -1090,9 +1090,9 @@
                         const authorIds = book?.author_data?.map(author => author.id); // Get the IDs of the authors
                         $('#editAuthorSelect').val(authorIds).trigger('change');  // Set the value to the array of IDs and trigger change
 
-                        // Pre-select categories
-                        const categoryIds = book?.category_data?.map(category => category.id); // Get the IDs of the categories
-                        $('#editCategorySelect').val(categoryIds).trigger('change'); // Set the value to the array of IDs and trigger change
+                        // Pre-select topics
+                        const topicIds = book?.topic_data?.map(topic => topic.id); // Get the IDs of the topics
+                        $('#editTopicSelect').val(topicIds).trigger('change'); // Set the value to the array of IDs and trigger change
 
                         // Pre-select languages
                         const languageIds = book?.language_data?.map(language => language.id); // Get the IDs of the languages
@@ -1100,16 +1100,16 @@
 
                         // You can add a console log to verify the selected values
                         console.log('Selected authors:', authorIds);
-                        console.log('Selected categories:', categoryIds);
+                        console.log('Selected topics:', topicIds);
                         console.log('Selected languages:', languageIds);
                     }
 
                     // Initialize Select2 with placeholder text
                 } else {
-                    console.error('Failed to fetch authors, categories, or languages data');
+                    console.error('Failed to fetch authors, topics, or languages data');
                 }
             } catch (error) {
-                console.error('Error fetching authors, categories, or languages:', error);
+                console.error('Error fetching authors, topics, or languages:', error);
             }
         }
 

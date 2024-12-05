@@ -68,9 +68,9 @@
                         </a>
                     </li>
                     <li>
-                        <a href="./categories.html">
+                        <a href="./topics.html">
                             <i class="fa fa-folder"></i>
-                            <p data-translate="categories">Categories</p>
+                            <p data-translate="topics">Topics</p>
                         </a>
                     </li>
                     <li>
@@ -139,9 +139,9 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="categorySelect" data-translate="category">Select Category</label>
-                            <select id="categorySelect" class="form-control">
-                                <option value="" disabled selected data-translate="selectCategoryText">Select a category
+                            <label for="topicSelect" data-translate="topic">Select Topic</label>
+                            <select id="topicSelect" class="form-control">
+                                <option value="" disabled selected data-translate="selectTopicText">Select a topic
                                 </option>
                             </select>
                         </div>
@@ -193,21 +193,21 @@
         changeOrderParentHandler()
         // Language JSON and translation function
         let englishJson = {
-            "optionenglish": "English", "optionhindi": "Hindi", "logotxt": "Pustakam", "dashboard": "Dashboard", "authors": "Authors", "categories": "Categories", "checkout_details": "Checkout Details", "add_author": "Add Author",
-            "author_english": "Author Name (English)", "author_hindi": "Author Name (Hindi)", "category": "Select Category", "copyright": "All rights reserved by Pustakam",
+            "optionenglish": "English", "optionhindi": "Hindi", "logotxt": "Pustakam", "dashboard": "Dashboard", "authors": "Authors", "topics": "Topics", "checkout_details": "Checkout Details", "add_author": "Add Author",
+            "author_english": "Author Name (English)", "author_hindi": "Author Name (Hindi)", "topic": "Select Topic", "copyright": "All rights reserved by Pustakam",
             "books": "Books", "languages": "Languages", "logout": "Logout",
             "placeholder_author_english": "Enter author name in English",
             "placeholder_author_hindi": "Enter author name in Hindi",
-            "selectCategoryText": "Select a category",
+            "selectTopicText": "Select a topic",
         };
 
         let hindiJson = {
-            "optionenglish": "अंग्रेज़ी", "optionhindi": "हिंदी", "logotxt": "पुस्तकम", "dashboard": "डैशबोर्ड", "authors": "लेखक", "categories": "श्रेणियाँ", "checkout_details": "विवरण देखें", "add_author": "लेखक जोड़ें",
-            "author_english": "लेखक का नाम (अंग्रेज़ी)", "author_hindi": "लेखक का नाम (हिंदी)", "category": "श्रेणी चुनें", "copyright": "सभी अधिकार पुस्तकम द्वारा सुरक्षित",
+            "optionenglish": "अंग्रेज़ी", "optionhindi": "हिंदी", "logotxt": "पुस्तकम", "dashboard": "डैशबोर्ड", "authors": "लेखक", "topics": "श्रेणियाँ", "checkout_details": "विवरण देखें", "add_author": "लेखक जोड़ें",
+            "author_english": "लेखक का नाम (अंग्रेज़ी)", "author_hindi": "लेखक का नाम (हिंदी)", "topic": "श्रेणी चुनें", "copyright": "सभी अधिकार पुस्तकम द्वारा सुरक्षित",
             "books": "पुस्तकें", "languages": "भाषाएँ", "logout": "लॉग आउट",
             "placeholder_author_english": "अंग्रेज़ी में लेखक का नाम दर्ज करें",
             "placeholder_author_hindi": "हिंदी में लेखक का नाम दर्ज करें",
-            "selectCategoryText": "श्रेणी चुनें"
+            "selectTopicText": "श्रेणी चुनें"
 
         };
 
@@ -270,7 +270,7 @@
             const language = localStorage.getItem('language') || 'en';
             document.getElementById('language-dropdown').value = language;
             loadLanguage(language);
-            fetchCategories();
+            fetchTopics();
             let fieldMappingsData = language === 'en' ? fieldMappings : fieldMappingsHindi
             languagesChangHandler(fieldMappingsData)
 
@@ -292,21 +292,21 @@
             }
         });
 
-        // Fetch and populate categories
-        async function fetchCategories() {
+        // Fetch and populate topics
+        async function fetchTopics() {
             try {
-                const response = await fetch('https://pustakam.pythonanywhere.com/category/');
+                const response = await fetch('https://pustakam.pythonanywhere.com/topic/');
                 const data = await response.json();
-                const categorySelect = document.getElementById('categorySelect');
+                const topicSelect = document.getElementById('topicSelect');
 
-                data.data.forEach(category => {
+                data.data.forEach(topic => {
                     const option = document.createElement('option');
-                    option.value = category.id;
-                    option.textContent = `${category.category_english} (${category.category_hindi})`;
-                    categorySelect.appendChild(option);
+                    option.value = topic.id;
+                    option.textContent = `${topic.topic_english} (${topic.topic_hindi})`;
+                    topicSelect.appendChild(option);
                 });
             } catch (error) {
-                console.error('Error fetching categories:', error);
+                console.error('Error fetching topics:', error);
             }
         }
 
@@ -316,7 +316,7 @@
             // Get the input values
             const authorEnglish = document.getElementById('authorEnglish').value;
             const authorHindi = document.getElementById('authorHindi').value;
-            const categoryId = document.getElementById('categorySelect').value;
+            const topicId = document.getElementById('topicSelect').value;
 
             const messageDiv = document.getElementById('message');
 
@@ -347,11 +347,11 @@
                     const data = {
                         author_english: authorEnglish,
                         author_hindi: authorHindi,
-                        category_data: parseInt(categoryId)
+                        topic_data: parseInt(topicId)
                     };
 
-                    if (!data.category_data) {
-                        delete data.category_data
+                    if (!data.topic_data) {
+                        delete data.topic_data
                     }
 
                     const addAuthorResponse = await fetch('https://pustakam.pythonanywhere.com/author/', {

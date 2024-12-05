@@ -42,8 +42,8 @@ h4, .h4{
     margin-top: $margin-base-vertical * 2;
     margin-bottom: $margin-base-vertical;
 
-    & + .category,
-    &.title + .category{
+    & + .topic,
+    &.title + .topic{
         margin-top: -10px;
     }
 }
@@ -80,7 +80,7 @@ p{
             text-decoration: none;
         }
     }
-    & + .category{
+    & + .topic{
         margin-top: -10px;
     }
 }
@@ -92,15 +92,15 @@ p{
     color: $dark-gray;
     font-weight: $font-weight-light;
 }
-.category,
-.card-category{
+.topic,
+.card-topic{
     text-transform: capitalize;
     font-weight: $font-weight-normal;
     color: $dark-gray;
     font-size: $font-size-mini;
 }
 
-.card-category{
+.card-topic{
     font-size: $font-size-h6;
 }
 
