@@ -1043,6 +1043,8 @@ console.log(id,"id")
         document.querySelector('#closeAddbtn').addEventListener('click', function () {
             errorMessageContainer.innerHTML = '';
             errorMessageContainer1.innerHTML = '';
+            var label = document.querySelector('#custom-label'); // Select the label
+            label.textContent = "Choose file";
             const message = document.querySelector('#editMessage3');
             var label = document.querySelector('.custom-file-label');
             label.value = '';  // Reset the file input
@@ -1054,6 +1056,8 @@ console.log(id,"id")
 
         // Reset form when modal is shown
         $('#addAdsModal').on('show.bs.modal', function () {
+            var label = document.querySelector('#custom-label'); // Select the label
+            label.textContent = "Choose file";
             errorMessageContainer.innerHTML = '';
             errorMessageContainer1.innerHTML = '';
             const message = document.querySelector('#editMessage3');
