@@ -467,7 +467,7 @@
                 <td>
                     <button class="btn btn-primary btn-sm" data-translate="edit" onclick='editTopic(${JSON.stringify(topic)})'>Edit</button>
                     <button class="btn btn-danger btn-sm" data-translate="delete" onclick="deleteTopic(${topic.id})">Delete</button>
-                    <button class="btn btn-info btn-sm"> <input style='width:50px' type="number" value="${topic.number}" onchange="updateTopicOrder(${topic.id}, this)"></button>
+                    <button class="btn btn-info btn-sm"> <input class='bg-info border-0 text-white' style='width:50px' type="number" value="${topic.number}" onchange="updateTopicOrder(${topic.id}, this)"></button>
                     
                 </td>
             </tr>

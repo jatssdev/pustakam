@@ -385,7 +385,7 @@
                 <td>
                     <button class="btn btn-primary btn-sm" onclick="editLanguage(${language.id})" data-translate="edit">Edit</button>
                     <button class="btn btn-danger btn-sm" onclick="deleteLanguage(${language.id})" data-translate="delete">Delete</button>
-                    <button class="btn btn-info btn-sm"> <input type="number" value="${language.number || 0}" 
+                    <button class="btn btn-info btn-sm"> <input class='bg-info border-0 text-white' type="number" value="${language.number || 0}" 
                            onchange="updateLanguagePriority(${language.id}, this)" 
                            style="width: 50px;"/></button>
                 </td>

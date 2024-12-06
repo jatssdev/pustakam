@@ -402,13 +402,14 @@
                 <td>${i + 1 + (currentPage - 1) * itemsPerPage}</td>
                 <td>${author.author_english}</td>
                 <td>${author.author_hindi}</td>
-                <td>${author?.topic_data?.topic_english}</td>
-                <td>${author?.topic_data?.topic_hindi}</td>
+           <td>${author?.topic_data?.topic_english ? author?.topic_data?.topic_english : '-'}</td>
+<td>${author?.topic_data?.topic_hindi ? author?.topic_data?.topic_hindi : '-'}</td>
+
                 <td>
                     <button class="btn btn-primary btn-sm" data-translate='edit' onclick='editAuthor(${JSON.stringify(author)})'>Edit</button>
                     <button class="btn btn-danger btn-sm" data-translate='delete' onclick="deleteAuthor(${author.id})">Delete</button>
                    <button class="btn btn-info btn-sm">
-    <input style='width:50px' type='number' value='${author.number}' onchange="updateOrder(${author.id}, this)">
+    <input class='bg-info border-0 text-white' style='width:50px' type='number' value='${author.number}' onchange="updateOrder(${author.id}, this)">
 </button>
 
                 

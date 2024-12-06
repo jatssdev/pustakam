@@ -133,7 +133,7 @@
                 <div class="col-md-12">
 
                     <div class="d-flex align-items-center justify-content-between">
-                        <a href="./add-book?.html" data-translate="add_book" class="btn btn-primary text-white">Add
+                        <a href="./add-book.html" data-translate="add_book" class="btn btn-primary text-white">Add
                             Book</a>
                         <div>
                             <div class="form-group d-flex align-items-center p-0 m-0">
@@ -747,11 +747,11 @@
                 <td>${book.book_price}</td>
                 <td>${book.book_price_discount}</td>
                 <td>
-                    <button class="btn btn-info" onclick="viewBook(${book.id})">View</button>
-                    <button class="btn btn-primary" onclick="editBook(${book.id})">Edit</button>
-                    <button class="btn btn-danger" onclick="deleteBook(${book.id})">Delete</button>
+                    <button class="btn btn-info btn-sm" onclick="viewBook(${book.id})">View</button>
+                    <button class="btn btn-primary btn-sm" onclick="editBook(${book.id})">Edit</button>
+                    <button class="btn btn-danger btn-sm" onclick="deleteBook(${book.id})">Delete</button>
                      <button class="btn btn-info btn-sm">
-                        <input style='width:50px' type="number" value="${book.number}" onchange="updateBookOrder(${book.id}, this)">
+                        <input class='bg-info border-0 text-white' style='width:50px' type="number" value="${book.number}" onchange="updateBookOrder(${book.id}, this)">
                     </button>
                 </td>
             </tr>
