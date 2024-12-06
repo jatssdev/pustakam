@@ -95,11 +95,18 @@
                         </a>
                     </li>
                     <li>
+                        <a href="./users.html">
+                            <i class="fas fa-user"></i>
+                            <p data-translate="users">Users</p>
+                        </a>
+                    </li>
+                    <li>
                         <a href="./advertise.html">
                             <i class="fas fa-ad"></i>
                             <p data-translate="advertisement">Advertisement</p>
                         </a>
                     </li>
+                    
                     <li>
                         <a onclick="Logout()">
                             <i class="fa-solid fa-right-from-bracket"></i>
@@ -243,6 +250,32 @@
                             </div>
                         </div>
                     </a>
+                    <a href="./users.html" class="text-decoration-none  col-lg-3 col-md-6 col-sm-6">
+                        <div class="card card-stats">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-5 col-md-4">
+                                        <div class="icon-big text-center icon-warning">
+                                            <i class="fa-solid fa fa-user text-danger"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col-7 col-md-8">
+                                        <div class="numbers">
+                                            <p class="card-topic" data-translate="users">users</p>
+                                            <p class="card-title" id="dashboarduserTotal">0</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <hr>
+                                <div class="stats text-center">
+
+                                    <span data-translate="checkout_details">Checkout Details</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
                     <a href="./advertise.html" class="text-decoration-none  col-lg-3 col-md-6 col-sm-6">
                         <div class="card card-stats">
                             <div class="card-body">
@@ -320,6 +353,7 @@
             "advertisement": "Advertisement",
             "logout": "Logout",
             "topics": "Topics",
+            "users" : "Users",
         };
 
         let hindiJson = {
@@ -336,6 +370,7 @@
             "logout": "लॉग आउट",
             "advertisement": "विज्ञापन",
             "topics": "श्रेणियाँ",
+            "users" : "उपयोगकर्ताओं",
         };
 
         function loadLanguage(language) {
