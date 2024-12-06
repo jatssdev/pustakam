@@ -128,7 +128,7 @@
                             <p data-translate="authors">Authors</p>
                         </a>
                     </li>
-                    <li class="active"><a href="./books.html"><i class="fa fa-book"></i>
+                    <li ><a href="./books.html"><i class="fa fa-book"></i>
                             <p data-translate="books">Books</p>
                         </a></li>
                     <li>
@@ -137,7 +137,7 @@
                             <p data-translate="languages">Languages</p>
                         </a>
                     </li>
-                    <li>
+                    <li class="active">
                         <a href="./advertise.html">
                             <i class="fas fa-ad"></i>
                             <p data-translate="advertisement">Advertisement</p>
@@ -487,7 +487,8 @@
                 "placeholder_book_keywords": "Enter book keywords",
                 "placeholder_discounted_price": "Enter discounted price",
                 "placeholder_free_demo_percentage": "Enter percentage (0-100)",
-                "placeholder_url_english": "Enter URL"
+                "placeholder_url_english": "Enter URL",
+                "advertisement": "Advertisement",
             },
             hi: {
                 logotxt: "पुस्तकम",
@@ -513,6 +514,7 @@
                 edit_ads: "विज्ञापन बदलें",
                 ads_type: "विज्ञापन वर्ग",
                 languages: "भाषाएँ",
+                advertisement: "विज्ञापन",
                 view: "देखें",
                 add_advertisement: "विज्ञापन जोड़ें",
                 upload_file: "फ़ाइलें अपलोड करें",
@@ -590,104 +592,104 @@
         });
 
 
-        let changeBooksByGivenPriority = () => {
-            let zeroPriorityBooks = [];
-            let nonZeroPriorityBooks = [];
+        // let changeBooksByGivenPriority = () => {
+        //     let zeroPriorityBooks = [];
+        //     let nonZeroPriorityBooks = [];
 
-            booksData.forEach(book => {
-                if (book.number > 0) {
-                    nonZeroPriorityBooks.push(book);
-                } else {
-                    zeroPriorityBooks.push(book);
-                }
-            });
+        //     booksData.forEach(book => {
+        //         if (book.number > 0) {
+        //             nonZeroPriorityBooks.push(book);
+        //         } else {
+        //             zeroPriorityBooks.push(book);
+        //         }
+        //     });
 
-            nonZeroPriorityBooks.sort((a, b) => a.number - b.number);
-            booksData = [...nonZeroPriorityBooks, ...zeroPriorityBooks];
-            displayBooks(booksData);  // Call to display the sorted books
-        };
-        // Update the priority for a book
-        async function updateBookOrder(bookId, element) {
-            let newPriority = parseInt(element.value);  // Ensure we're working with a number
-            const updateMessageDiv = document.getElementById('deleteMessage');
+        //     nonZeroPriorityBooks.sort((a, b) => a.number - b.number);
+        //     booksData = [...nonZeroPriorityBooks, ...zeroPriorityBooks];
+        //     // displayBooks(booksData);  // Call to display the sorted books
+        // };
+        // // Update the priority for a book
+        // async function updateBookOrder(bookId, element) {
+        //     let newPriority = parseInt(element.value);  // Ensure we're working with a number
+        //     const updateMessageDiv = document.getElementById('deleteMessage');
 
-            // Find the old book data to restore the value in case of an invalid update
-            let oldBook = booksData.find((x) => x.id === bookId);
+        //     // Find the old book data to restore the value in case of an invalid update
+        //     let oldBook = booksData.find((x) => x.id === bookId);
 
-            // Check for negative values
-            if (newPriority < 0) {
-                updateMessageDiv.innerHTML = `
-            <div class="alert alert-danger" role="alert">
-                Value can't be negative!
-            </div>`;
-                element.value = oldBook.number;  // Restore the original value
-                return;  // Stop further execution
-            }
+        //     // Check for negative values
+        //     if (newPriority < 0) {
+        //         updateMessageDiv.innerHTML = `
+        //     <div class="alert alert-danger" role="alert">
+        //         Value can't be negative!
+        //     </div>`;
+        //         element.value = oldBook.number;  // Restore the original value
+        //         return;  // Stop further execution
+        //     }
 
-            // Check if a book already exists with the same priority
-            let currentBook = booksData.find((x) => x.number === newPriority && x.id !== bookId && x.number > 0);
-            if (currentBook) {
-                updateMessageDiv.innerHTML = `
-            <div class="alert alert-danger" role="alert">
-                This number already exists!
-            </div>`;
-                element.value = oldBook.number;  // Restore the original value
-                return;  // Stop further execution
-            }
+        //     // Check if a book already exists with the same priority
+        //     let currentBook = booksData.find((x) => x.number === newPriority && x.id !== bookId && x.number > 0);
+        //     if (currentBook) {
+        //         updateMessageDiv.innerHTML = `
+        //     <div class="alert alert-danger" role="alert">
+        //         This number already exists!
+        //     </div>`;
+        //         element.value = oldBook.number;  // Restore the original value
+        //         return;  // Stop further execution
+        //     }
 
-            try {
-                const response = await fetch(`https://pustakam.pythonanywhere.com/books/${bookId}/`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ number: newPriority })
-                });
+        //     try {
+        //         const response = await fetch(`https://pustakam.pythonanywhere.com/books/${bookId}/`, {
+        //             method: 'PATCH',
+        //             headers: {
+        //                 'Content-Type': 'application/json'
+        //             },
+        //             body: JSON.stringify({ number: newPriority })
+        //         });
 
-                let result = await response.json();
+        //         let result = await response.json();
 
-                if (response.ok && result.status === 'success') {
-                    // Show success message
-                    updateMessageDiv.innerHTML = `
-                <div class="alert alert-success" role="alert">
-                    Book priority updated successfully!
-                </div>`;
+        //         if (response.ok && result.status === 'success') {
+        //             // Show success message
+        //             updateMessageDiv.innerHTML = `
+        //         <div class="alert alert-success" role="alert">
+        //             Book priority updated successfully!
+        //         </div>`;
 
-                    // Update the book's priority in the local data
-                    booksData = booksData.map((book) => {
-                        if (book.id === bookId) {
-                            book.number = newPriority;
-                        }
-                        return book;
-                    });
+        //             // Update the book's priority in the local data
+        //             booksData = booksData.map((book) => {
+        //                 if (book.id === bookId) {
+        //                     book.number = newPriority;
+        //                 }
+        //                 return book;
+        //             });
 
-                    // Reorder the books based on the updated priority
-                    changeBooksByGivenPriority();  // Reorder and display
-                } else {
-                    element.value = oldBook.number;  // Restore the original value
+        //             // Reorder the books based on the updated priority
+        //             // changeBooksByGivenPriority();  // Reorder and display
+        //         } else {
+        //             element.value = oldBook.number;  // Restore the original value
 
-                    // If the API request fails, show an error message
-                    updateMessageDiv.innerHTML = `
-                <div class="alert alert-danger" role="alert">
+        //             // If the API request fails, show an error message
+        //             updateMessageDiv.innerHTML = `
+        //         <div class="alert alert-danger" role="alert">
                     
-                ${result.status}
-                </div>`;
-                }
-            } catch (error) {
-                element.value = oldBook.number;  // Restore the original value
+        //         ${result.status}
+        //         </div>`;
+        //         }
+        //     } catch (error) {
+        //         element.value = oldBook.number;  // Restore the original value
 
-                // Show error alert for network or server errors
-                updateMessageDiv.innerHTML = `
-            <div class="alert alert-danger" role="alert">
-            ${error}
-            </div>`;
-            }
+        //         // Show error alert for network or server errors
+        //         updateMessageDiv.innerHTML = `
+        //     <div class="alert alert-danger" role="alert">
+        //     ${error}
+        //     </div>`;
+        //     }
 
-            // Automatically hide the alert after 3 seconds
-            setTimeout(() => {
-                updateMessageDiv.innerHTML = '';
-            }, 3000);
-        }
+        //     // Automatically hide the alert after 3 seconds
+        //     setTimeout(() => {
+        //         updateMessageDiv.innerHTML = '';
+        //     }, 3000);
+        // }
 
         const fetchAds = async () => {
             try {
