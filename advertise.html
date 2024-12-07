@@ -128,7 +128,7 @@
                             <p data-translate="authors">Authors</p>
                         </a>
                     </li>
-                    <li ><a href="./books.html"><i class="fa fa-book"></i>
+                    <li><a href="./books.html"><i class="fa fa-book"></i>
                             <p data-translate="books">Books</p>
                         </a></li>
                     <li>
@@ -209,6 +209,7 @@
                                         <tr>
                                             <th data-translate="id">ID</th>
                                             <th data-translate="image">Image</th>
+                                            <th data-translate="image_name">Image Name</th>
                                             <!-- <th data-translate="book_name">Book Name (English & Hindi)</th> -->
                                             <!-- <th data-translate="ads_type">Ads type</th> -->
                                             <!-- <th data-translate="book_price_discount">Discount</th> -->
@@ -495,8 +496,8 @@
                 "placeholder_free_demo_percentage": "Enter percentage (0-100)",
                 "placeholder_url_english": "Enter URL",
                 "advertisement": "Advertisement",
-                "image":"Image",
-                "users" : "Users",
+                "image": "Image",
+                "users": "Users",
             },
             hi: {
                 logotxt: "पुस्तकम",
@@ -524,7 +525,7 @@
                 languages: "भाषाएँ",
                 advertisement: "विज्ञापन",
                 view: "देखें",
-                "image":"छवि",
+                "image": "छवि",
                 add_advertisement: "विज्ञापन जोड़ें",
                 upload_file: "फ़ाइलें अपलोड करें",
                 enter_url: "वेब एड्रेस डालें",
@@ -560,7 +561,7 @@
                 "placeholder_discounted_price": "छूट मूल्य दर्ज करें",
                 "placeholder_free_demo_percentage": "प्रतिशत दर्ज करें (0-100)",
                 "placeholder_url_hindi": "वेब एड्रेस डालें",
-                "users" : "उपयोगकर्ताओं",
+                "users": "उपयोगकर्ताओं",
             }
         };
 
@@ -681,7 +682,7 @@
         //             // If the API request fails, show an error message
         //             updateMessageDiv.innerHTML = `
         //         <div class="alert alert-danger" role="alert">
-                    
+
         //         ${result.status}
         //         </div>`;
         //         }
@@ -734,6 +735,7 @@
 
                 
                  <td><img class="bookThumbnail" src="https://pustakam.pythonanywhere.com/${ads.file}" alt="Book Thumbnail"></td>
+                 <td>${ads.file.split('/')[ads.file.split('/').length - 1]}</td>
                 
                 <td>
                     <button class="btn btn-info" data-translate='view'  onclick="viewBook(${ads.id})">View</button>
@@ -771,7 +773,7 @@
             if (!isConfirmed) {
                 return; // If not confirmed, do nothing
             }
-console.log(id,"id")
+            console.log(id, "id")
             const deleteMessageDiv = document.getElementById("deleteMessage");
 
             try {
@@ -849,7 +851,7 @@ console.log(id,"id")
         }
 
         // Open book URL on button click
-      
+
         async function editBook(id) {
             try {
                 // Fetch the advertisement details
