@@ -915,7 +915,7 @@
                         console.log('Cover image URL:', bookCoverSrc);
 
                         // Set the cover image to the img tag
-                        document.getElementById('bookCover').src = bookCoverSrc;
+                        // document.getElementById('bookCover').src = bookCoverSrc;
                         convertImageToBlob(bookCoverSrc).then((blob) => {
                             bookFrontImageFromPdf = blob
                             console.log(blob);
