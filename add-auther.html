@@ -95,7 +95,7 @@
                         </a>
                     </li>
                     <li>
-                        
+
                         <a href="./advertise.html">
                             <i class="fas fa-ad"></i>
                             <p data-translate="advertisement">Advertisement</p>
@@ -211,7 +211,7 @@
             "books": "Books", "languages": "Languages", "logout": "Logout",
             "placeholder_author_english": "Enter author name in English",
             "placeholder_author_hindi": "Enter author name in Hindi",
-            "selectTopicText": "Select a topic","advertisement": "Advertisement","users" : "Users",
+            "selectTopicText": "Select a topic", "advertisement": "Advertisement", "users": "Users",
         };
 
         let hindiJson = {
@@ -220,7 +220,7 @@
             "books": "पुस्तकें", "languages": "भाषाएँ", "logout": "लॉग आउट",
             "placeholder_author_english": "अंग्रेज़ी में लेखक का नाम दर्ज करें",
             "placeholder_author_hindi": "हिंदी में लेखक का नाम दर्ज करें",
-            "selectTopicText": "श्रेणी चुनें","advertisement": "विज्ञापन","users" : "उपयोगकर्ताओं",
+            "selectTopicText": "श्रेणी चुनें", "advertisement": "विज्ञापन", "users": "उपयोगकर्ताओं",
 
         };
 
@@ -326,6 +326,12 @@
         document.getElementById('authorForm').addEventListener('submit', async function (event) {
             event.preventDefault();
 
+            // Disable the submit button to prevent multiple submissions
+            const submitButton = document.querySelector('#authorForm button[type="submit"]');
+            submitButton.disabled = true;
+            submitButton.innerHTML = 'Adding...'; // Optional: Change button text to show it's in process
+
+
             // Get the input values
             const authorEnglish = document.getElementById('authorEnglish').value;
             const authorHindi = document.getElementById('authorHindi').value;
@@ -399,6 +405,9 @@
                     messageDiv.innerHTML = '';
                 }, 3000);
             }
+            // Re-enable the submit button after request completes
+            submitButton.disabled = false;
+            submitButton.innerHTML = 'Add Author'; // Reset the button text
         });
 
 

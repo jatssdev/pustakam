@@ -4,6 +4,7 @@
   object-fit: cover;
   object-position: center;
 }
+
 .bookThumbnail1 {
   width: 50px;
   height: 50px;
@@ -4470,7 +4471,8 @@ License - nucleoapp.com/license/
 .off-canvas-sidebar .sidebar-wrapper {
   position: relative;
   height: calc(100vh - 75px);
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   width: 260px;
   z-index: 4;
   padding-bottom: 100px;
@@ -4854,7 +4856,7 @@ License - nucleoapp.com/license/
   color: #0279CA;
 }
 
-s .sidebar[data-active-color="default"] .nav li.active>a,
+.sidebar[data-active-color="default"] .nav li.active>a,
 .sidebar[data-active-color="default"] .nav li.active>a i,
 .sidebar[data-active-color="default"] .nav li.active>a[data-toggle="collapse"],
 .sidebar[data-active-color="default"] .nav li.active>a[data-toggle="collapse"] i,
@@ -6133,7 +6135,7 @@ s .sidebar[data-active-color="default"] .nav li.active>a,
     content: "";
     display: inline-block;
     position: absolute;
-    right: -17px;
+    right: -16px;
     opacity: 1;
     top: 15px;
     transition: opacity 150ms ease-in;

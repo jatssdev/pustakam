@@ -185,11 +185,9 @@
 
                     </div>
                     <div id="pagination-controls" class="d-flex align-items-center justify-content-center mt-4">
-                        <button id="prevPage" class="btn btn-secondary"
-                            onclick="changePage(currentPage - 1)">&lt;</button>
+                        <button id="prevPage" class="btn btn-secondary">&lt;</button>
                         <span id="page-info" class="mx-3"></span>
-                        <button id="nextPage" class="btn btn-secondary"
-                            onclick="changePage(currentPage + 1)">&gt;</button>
+                        <button id="nextPage" class="btn btn-secondary">&gt;</button>
                     </div>
                 </div>
 
@@ -289,9 +287,9 @@
             "edit_auther": "Edit Author",
             "save_changes": "Save Changes",
             "logout": "Logout",
-            searchPlaceholder: "search...", 
-"advertisement": "Advertisement",
-"users" : "Users",
+            searchPlaceholder: "search...",
+            "advertisement": "Advertisement",
+            "users": "Users",
         };
 
         let hindiJson = {
@@ -317,12 +315,12 @@
             "add_auther": "लेखक जोड़ें",
             "languages": "भाषाएँ",
             "books": "पुस्तकें",
-"users" : "उपयोगकर्ताओं",
+            "users": "उपयोगकर्ताओं",
             "edit_auther": "लेखक संपादित करें",
             "save_changes": "परिवर्तनों को सुरक्षित करें",
             "logout": "लॉग आउट",
             searchPlaceholder: "खोजें...",
-"advertisement": "विज्ञापन",
+            "advertisement": "विज्ञापन",
 
         };
 
@@ -350,6 +348,7 @@
             const language = localStorage.getItem('language') || 'en';
             document.getElementById('language-dropdown').value = language;
             loadLanguage(language);
+            getAuthors()
         });
 
         const getAuthors = async () => {
@@ -361,10 +360,13 @@
                 let result = await response.json();
 
                 if (result.status === "success") {
+                    authorsData = result.data;
 
-                    authorsData = result.data
-                    totalPages = Math.ceil(authorsData.length / itemsPerPage);  // Calculate total pages
-                    changeAuthorsByGivenPriority()
+                    // Calculate total pages based on the number of authors
+                    totalPages = Math.ceil(authorsData.length / itemsPerPage);
+
+                    // Reorder and display authors by priority
+                    changeAuthorsByGivenPriority();
                 } else {
                     console.error('Failed to load data:', result);
                 }
@@ -375,6 +377,8 @@
                 document.getElementById('table-container').style.display = 'block';
             }
         };
+
+
 
         let changeAuthorsByGivenPriority = () => {
             // First, divide authors into two groups: 
@@ -408,33 +412,32 @@
             let tableBody = document.getElementById('author-table-body');
             tableBody.innerHTML = '';
 
+            // Insert authors for the current page into the table
             authorsForCurrentPage.forEach((author, i) => {
                 let row = `
-            <tr id="author-${author.id}">
-                <td>${i + 1 + (currentPage - 1) * itemsPerPage}</td>
-                <td>${author.author_english}</td>
-                <td>${author.author_hindi}</td>
-           <td>${author?.topic_data?.topic_english ? author?.topic_data?.topic_english : '-'}</td>
-<td>${author?.topic_data?.topic_hindi ? author?.topic_data?.topic_hindi : '-'}</td>
-
-                <td>
-                    <button class="btn btn-primary btn-sm" data-translate='edit' onclick='editAuthor(${JSON.stringify(author)})'>Edit</button>
-                    <button class="btn btn-danger btn-sm" data-translate='delete' onclick="deleteAuthor(${author.id})">Delete</button>
-                   <button class="btn btn-info btn-sm">
-    <input class='bg-info border-0 text-white' style='width:50px' type='number' value='${author.number}' onchange="updateOrder(${author.id}, this)">
-</button>
-
-                
-                </td>
-            </tr>
+        <tr id="author-${author.id}">
+            <td>${i + 1 + (currentPage - 1) * itemsPerPage}</td>
+            <td>${author.author_english}</td>
+            <td>${author.author_hindi}</td>
+            <td>${author?.topic_data?.topic_english || '-'}</td>
+            <td>${author?.topic_data?.topic_hindi || '-'}</td>
+            <td>
+                <button class="btn btn-primary btn-sm" data-translate='edit' onclick='editAuthor(${JSON.stringify(author)})'>Edit</button>
+                <button class="btn btn-danger btn-sm" data-translate='delete' onclick="deleteAuthor(${author.id})">Delete</button>
+                <button class="btn btn-info btn-sm">
+                    <input class='bg-info border-0 text-white' style='width:50px' type='number' value='${author.number}' onchange="updateOrder(${author.id}, this)">
+                </button>
+            </td>
+        </tr>
         `;
                 tableBody.insertAdjacentHTML('beforeend', row);
             });
-            const language = localStorage.getItem('language') || 'en';
-            loadLanguage(language);
 
+            // Update pagination controls
             updatePagination();
         };
+
+
         async function updateOrder(authorId, element) {
             let newPriority = parseInt(element.value); // Ensure we're working with a number
             const updateMessageDiv = document.getElementById('deleteMessage');
@@ -517,25 +520,50 @@
 
 
 
-        // Update Pagination Info
         const updatePagination = () => {
             document.getElementById('page-info').textContent = `Page ${currentPage} of ${totalPages}`;
+
+            // Enable/Disable "Previous" button based on the current page
             document.getElementById('prevPage').disabled = currentPage === 1;
+
+            // Enable/Disable "Next" button based on the current page
             document.getElementById('nextPage').disabled = currentPage === totalPages;
         };
 
         // Change Page Function
         function changePage(page) {
-            if (page < 1 || page > totalPages) return;  // Prevent invalid page number
+            console.log(page);
+
+            // Prevent invalid page number
+            if (page < 1 || page > totalPages) return;
+
+            // Update the current page
             currentPage = page;
-            displayAuthors();  // Re-display authors based on the new page
+
+            // Display the authors based on the updated currentPage
+            displayAuthors(authorsData);  // This will re-display the authors on the current page
         }
-
         // Pagination Controls (previous/next buttons)
-        document.getElementById('prevPage').addEventListener('click', () => changePage(currentPage - 1));
-        document.getElementById('nextPage').addEventListener('click', () => changePage(currentPage + 1));
+        document.getElementById('prevPage').addEventListener('click', () => {
 
-        getAuthors();
+
+            if (currentPage > 1) {
+                changePage(currentPage - 1);  // Go to the previous page
+            }
+
+        });
+
+        document.getElementById('nextPage').addEventListener('click', () => {
+
+            if (currentPage < totalPages) {
+                changePage(currentPage + 1);  // Go to the next page
+            }
+
+        });
+
+
+
+
         function editAuthor(author) {
             document.getElementById('editAuthorId').value = author.id;
             document.getElementById('editAuthorEnglish').value = author.author_english;
@@ -570,7 +598,7 @@
                 if (response.ok) {
                     console.log(`Author with ID ${id} deleted successfully`);
                     document.getElementById(`author-${id}`).remove();  // Remove the author row from the table
-
+                    authorsData = authorsData.filter((x) => x.id !== id)
                     // Recalculate the ID numbers in the table after deletion
                     const rows = document.querySelectorAll("#author-table-body tr");
                     rows.forEach((row, index) => {
@@ -587,6 +615,7 @@
                 <div class="alert alert-success" role="alert">
                     Author deleted successfully!
                 </div>`;
+                    displayAuthors(authorsData)
                 } else {
                     console.error(`Failed to delete author with ID ${id}`);
 
