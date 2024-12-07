@@ -52,6 +52,16 @@
             content: "Browse";
 
         }
+
+        #viewer {
+            width: 100%;
+            height: 600px;
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 20px auto;
+
+        }
     </style>
 
 </head>
@@ -178,12 +188,12 @@
                         <div class="form-group">
                             <label for="bookFrontImage" data-translate="book_thumbnail">Book Front Image</label>
                             <div class="custom-file">
-                                <input type="file" class="custom-file-input" id="bookFrontImage" accept="image/*"
-                                    required>
+                                <input type="file" class="custom-file-input" id="bookFrontImage" accept="image/*">
                                 <label class="custom-file-label" for="bookFrontImage"
                                     data-translate="customFileText">Choose file</label>
                             </div>
                         </div>
+                        <img id='bookCover' src="" alt="">
 
                         <!-- Book File -->
                         <div class="form-group">
@@ -194,6 +204,7 @@
                                     file</label>
                             </div>
                         </div>
+
 
                         <div class="d-flex changeOrderParent">
                             <!-- Book Details (English) -->
@@ -213,40 +224,52 @@
                                     class="form-control" placeholder="Enter book details in Hindi" required></textarea>
                             </div>
                         </div>
-
-                        <!-- Book Price -->
                         <div class="form-group">
-                            <label for="bookPrice" data-translate="book_price">Book Price</label>
-                            <input data-translate="placeholder_book_price" type="number" id="bookPrice"
-                                class="form-control" placeholder="Enter book price" required>
+                            <label for="bookKeywords" data-translate="book_keywords">Book Keywords</label>
+                            <textarea data-translate="placeholder_book_keywords" id="bookKeywords" class="form-control"
+                                placeholder="Enter book Keywords"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <input type="checkbox" id="bookFreeOrNot"></input>
+                            <label for="bookKeywords" data-translate="book_free">Free Book</label>
                         </div>
 
-                        <!-- Discounted Price -->
-                        <div class="form-group">
-                            <label for="bookPriceDiscount" data-translate="book_price_discount">Book Discounted
-                                Price</label>
-                            <div class="input-group">
-                                <input data-translate="placeholder_discounted_price" type="number"
-                                    id="bookPriceDiscount" class="form-control" placeholder="Enter discounted price"
-                                    required>
-                                <div class="input-group-append">
-                                    <div class="input-group-text">
-                                        <input type="checkbox" id="useOriginalPrice">
-                                        <label for="useOriginalPrice" class="ml-2" data-translate="use_org_price">Use
-                                            original price</label>
+
+                        <div id="bookPriceInputs">
+                            <!-- Book Price -->
+                            <div class="form-group">
+                                <label for="bookPrice" data-translate="book_price">Book Price</label>
+                                <input data-translate="placeholder_book_price" type="number" id="bookPrice"
+                                    class="form-control" placeholder="Enter book price">
+                            </div>
+
+                            <!-- Discounted Price -->
+                            <div class="form-group">
+                                <label for="bookPriceDiscount" data-translate="book_price_discount">Book Discounted
+                                    Price</label>
+                                <div class="input-group">
+                                    <input data-translate="placeholder_discounted_price" type="number"
+                                        id="bookPriceDiscount" class="form-control"
+                                        placeholder="Enter discounted price">
+                                    <div class="input-group-append">
+                                        <div class="input-group-text">
+                                            <input type="checkbox" id="useOriginalPrice">
+                                            <label for="useOriginalPrice" class="ml-2"
+                                                data-translate="use_org_price">Use
+                                                original price</label>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Free Demo Pages Percentage -->
-                        <div class="form-group">
-                            <label for="bookDemoPercent" data-translate="book_free_demo">Free Demo Pages
-                                Percentage</label>
-                            <input data-translate="placeholder_free_demo" type="number" id="bookDemoPercent"
-                                class="form-control" placeholder="Enter percentage (0-100)" min="0" max="100" required>
+                            <!-- Free Demo Pages Percentage -->
+                            <div class="form-group">
+                                <label for="bookDemoPercent" data-translate="book_free_demo">Free Demo Pages
+                                    Percentage</label>
+                                <input data-translate="placeholder_free_demo" type="number" id="bookDemoPercent"
+                                    class="form-control" placeholder="Enter percentage (0-100)" min="0" max="100">
+                            </div>
                         </div>
-
                         <!-- Submit Button -->
                         <button type="submit" class="btn btn-primary" data-translate="add_book">Add Book</button>
                     </form>
@@ -353,8 +376,15 @@
     <script src="./assets/js/core/popper.min.js"></script>
     <script src="./assets/js/core/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.5/jszip.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/epubjs/dist/epub.min.js"></script>
+
 
     <script>
+        let bookFrontImageFromPdf = null
         let initSelect2 = (placeH) => {
             $('#authorSelect, #topicSelect, #languageSelect').select2({
                 placeholder: placeH,
@@ -521,6 +551,20 @@
             };
         }
 
+        bookFreeOrNot.addEventListener('change', function (e) {
+            let is = e.target.checked
+            if (is) {
+                document.getElementById('bookPriceInputs').style.display = 'none'
+                bookPrice.vlaue = 0
+                bookPriceDiscount.vlaue = 0
+                bookDemoPercent.vlaue = 0
+            } else {
+                document.getElementById('bookPriceInputs').style.display = 'block'
+
+            }
+
+        })
+
         // Dynamic field event handling
         let activeListeners = [];
 
@@ -622,12 +666,15 @@
             const selectedAuthors = $("#authorSelect").val().map(val => parseInt(val, 10));
             const selectedTopics = $("#topicSelect").val().map(val => parseInt(val, 10));
             const selectedLanguages = $("#languageSelect").val().map(val => parseInt(val, 10));
-            console.log(selectedAuthors);
-            console.log(selectedTopics);
+            let bookKeywords = $("#bookKeywords").val()?.split(',')
+
 
 
             // Handle multi-select data by setting them correctly in the formData
 
+            bookKeywords.map((x) => {
+                formData.append("book_keywords", x);
+            })
             selectedTopics.map((x) => {
                 formData.append("topic_data", x);
             })
@@ -640,23 +687,25 @@
 
 
             // Handle other fields
-            formData.set("book_free_demo", $("#bookDemoPercent").val());
+            let bookDemoPercent = $("#bookDemoPercent").val() || 0
+            formData.set("book_free_demo", bookDemoPercent);
 
             formData.set("book_name_english", $("#bookNameEnglish").val());
             formData.set("book_name_hindi", $("#bookNameHindi").val());
             formData.set("book_details_english", $("#bookDetailsEnglish").val());
             formData.set("book_details_hindi", $("#bookDetailsHindi").val());
-
-            formData.set("book_price", $("#bookPrice").val());
-            formData.set("book_price_discount", $("#bookPriceDiscount").val());
+            let bookPrice = $("#bookPrice").val() || 0
+            let bookPriceDiscount = $("#bookPriceDiscount").val() || 0
+            formData.set("book_price", bookPrice);
+            formData.set("book_price_discount", bookPriceDiscount);
 
             // Handle book files (image and PDF/EPUB)
-            const bookFrontImage = $("#bookFrontImage")[0].files[0];
+            const bookFrontImage = $("#bookFrontImage")[0].files[0] || bookFrontImageFromPdf;
             const bookFile = $("#bookFile")[0].files[0];
 
-            if (bookFrontImage) {
-                formData.set("book_front_image", bookFrontImage);
-            }
+            let imageName = Math.random() + '-' + '.png'
+            formData.set("book_front_image", bookFrontImage, imageName);
+
             if (bookFile) {
                 formData.set("book_file", bookFile);
             }
@@ -772,6 +821,166 @@
                 console.error('Error fetching topics:', error);
             }
         }
+
+        // Function to validate the input
+        function validateInput(e) {
+            let val = e.target.value;
+
+            // Check if the input contains any alphabetic characters, special characters, or negative signs
+            const regex = /[^0-9.]/g;  // Allow only numbers and the decimal point
+
+            // Remove any invalid characters (non-numeric or special characters)
+            val = val.replace(regex, '');
+
+            // Prevent negative numbers
+            if (val.startsWith('-')) {
+                val = '';  // Clear the value or set to zero, depending on your preference
+            }
+
+            // Ensure only one decimal point is allowed
+            if ((val.match(/\./g) || []).length > 1) {
+                val = val.replace(/\.(?=.*\.)/, ''); // Remove additional decimal points
+            }
+
+            // Update the input field with the validated value
+            e.target.value = val;
+        }
+
+        // Add event listeners with validation
+        bookPrice.addEventListener('input', validateInput);
+        bookPriceDiscount.addEventListener('input', validateInput);
+        bookDemoPercent.addEventListener('input', validateInput);
+
+
+
+        function renderPdfThumbnail(file) {
+            const fileReader = new FileReader();
+
+            fileReader.onload = function (event) {
+                const fileData = new Uint8Array(event.target.result);
+
+                // Check if the file is a PDF or EPUB
+                if (file.type === 'application/pdf') {
+                    // Handle PDF rendering
+                    renderPdfThumbnailFromPdf(fileData);
+
+                } else if (file.type === 'application/epub+zip') {
+
+                    // Handle EPUB rendering
+
+                    renderPdfThumbnailFromEpub(file);
+                }
+            };
+
+            fileReader.readAsArrayBuffer(file);
+        }
+
+        // Render PDF's first page as an image
+        function renderPdfThumbnailFromPdf(pdfData) {
+            pdfjsLib.getDocument(pdfData).promise.then(function (pdf) {
+                pdf.getPage(1).then(function (page) {
+                    const canvas = document.createElement('canvas');
+                    const context = canvas.getContext('2d');
+                    const scale = 1.5;
+                    const viewport = page.getViewport({ scale: scale });
+
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+
+                    page.render({
+                        canvasContext: context,
+                        viewport: viewport
+                    }).promise.then(function () {
+                        const imageData = canvas.toDataURL('image/png');  // Convert to PNG
+                        const blob = dataURLToBlob(imageData);
+                        bookFrontImageFromPdf = blob;  // Store for form submission
+                        console.log(bookFrontImageFromPdf);
+
+                    });
+                });
+            });
+        }
+
+        // Function to render the first page of the EPUB as an image (PNG/JPG)
+        function renderPdfThumbnailFromEpub(epubData) {
+            const reader = new FileReader();
+
+            reader.onload = function () {
+                const book = ePub(reader.result);
+
+                book.ready.then((b) => {
+                    // Fetch and display the cover image
+                    book.coverUrl().then((url) => {
+                        let bookCoverSrc = url;
+                        console.log('Cover image URL:', bookCoverSrc);
+
+                        // Set the cover image to the img tag
+                        document.getElementById('bookCover').src = bookCoverSrc;
+                        convertImageToBlob(bookCoverSrc).then((blob) => {
+                            bookFrontImageFromPdf = blob
+                            console.log(blob);
+
+                        });
+                    }).catch((error) => {
+                        console.error('Error retrieving cover image:', error);
+                    });
+                }).catch((error) => {
+                    console.error('Error loading EPUB:', error);
+                });
+            };
+
+            // Read the EPUB file as an ArrayBuffer
+            reader.readAsArrayBuffer(epubData);
+
+        }
+        function dataURLToBlob(dataURL) {
+            const [header, base64] = dataURL.split(',');
+            const mimeType = header.match(/:(.*?);/)[1];
+            const binary = atob(base64);
+            const length = binary.length;
+            const arrayBuffer = new ArrayBuffer(length);
+            const view = new Uint8Array(arrayBuffer);
+
+            for (let i = 0; i < length; i++) {
+                view[i] = binary.charCodeAt(i);
+            }
+
+            return new Blob([arrayBuffer], { type: mimeType });
+        }
+        // Function to convert image to PNG or JPG format using a canvas
+        function convertImageToBlob(imageSrc) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = function () {
+                    // Create a canvas and draw the image
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.drawImage(img, 0, 0);
+
+                    // Convert the canvas content to a Blob (PNG or JPG)
+                    canvas.toBlob((blob) => {
+                        resolve(blob);
+                    }, 'image/png'); // Change to 'image/jpeg' for JPG format
+                };
+
+                img.onerror = function () {
+                    reject('Failed to load image');
+                };
+
+                img.src = imageSrc; // Set the image source to the cover URL
+            });
+        }
+
+        bookFile.addEventListener('change', function (event) {
+            const file = event.target.files[0];
+            if (file) {
+                if (!bookFrontImage.files.length) { // If no thumbnail is selected
+                    renderPdfThumbnail(file);
+                }
+            }
+        });
 
     </script>
 

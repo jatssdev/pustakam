@@ -1,0 +1,381 @@
+<script src="./assets/js/apis/auth.js"></script>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <link rel="apple-touch-icon" sizes="76x76" href="./assets/img/finalLogo.jpeg">
+    <link rel="icon" type="image/png" href="./assets/img/finalLogo.jpeg">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <title data-translate="logotxt">Pustakam</title>
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no'
+        name='viewport' />
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,200" rel="stylesheet" />
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" rel="stylesheet">
+    <link href="./assets/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="./assets/css/paper-dashboard.css?v=2.0.1" rel="stylesheet" />
+    <link href="./assets/demo/demo.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        /* Hide sidebar by default on smaller screens */
+        @media (max-width: 991px) {
+            .sidebar {
+                display: none;
+                position: fixed;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                z-index: 1040;
+                height: 100%;
+                background-color: #fff;
+                transition: transform 0.3s ease;
+            }
+
+            /* Toggle sidebar visibility */
+            .sidebar.show {
+                display: block;
+                transform: translateX(0);
+            }
+
+            .main-panel {
+                padding-left: 0;
+            }
+
+            .navbar-toggler {
+                display: inline-block;
+            }
+        }
+    </style>
+</head>
+
+<body class="">
+    <div class="wrapper ">
+        <div class="sidebar" data-color="white" data-active-color="danger">
+            <div class="logo">
+                <a href="/" class="simple-text logo-mini">
+                    <div class="logo-image-small">
+                        <img src="./assets/img/finalLogo.jpeg">
+                    </div>
+                </a>
+                <a href="/" class="simple-text logo-normal" data-translate="logotxt">
+                    Pustakam
+                </a>
+            </div>
+            <div class="sidebar-wrapper">
+                <ul class="nav">
+                    <li class="active">
+                        <a href="/">
+                            <i class="nc-icon nc-bank"></i>
+                            <p data-translate="dashboard">Dashboard</p>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="./categories.html">
+                            <i class="fa fa-folder"></i>
+                            <p data-translate="categories">Categories</p>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="./authers.html">
+                            <i class="fa-solid fa-users"></i>
+                            <p data-translate="authors">Authors</p>
+                        </a>
+                    </li>
+
+                    <li><a href="./books.html"><i class="fa fa-book"></i>
+                            <p data-translate="books">Books</p>
+                        </a></li>
+                    <li>
+                        <a href="./languages.html">
+                            <i class="fa fa-language"></i>
+                            <p data-translate="languages">Languages</p>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="./advertise.html">
+                            <i class="fas fa-ad"></i>
+                            <p data-translate="advertisement">Advertisement</p>
+                        </a>
+                    </li>
+                    <li>
+                        <a onclick="Logout()">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                            <p data-translate="logout">Logout</p>
+                        </a>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+        <div class="main-panel">
+            <!-- Navbar -->
+            <nav class="navbar navbar-expand-lg navbar-absolute fixed-top navbar-transparent">
+                <div class="container-fluid">
+                    <!-- Language Dropdown on the Left -->
+                    <select id="language-dropdown" class="form-control"
+                        style="width: auto; display: inline-block; margin-right: 15px;">
+                        <option value="en" data-translate="optionenglish">English</option>
+                        <option value="hi" data-translate="optionhindi">Hindi</option>
+                    </select>
+
+                    <div class="navbar-wrapper">
+                        <a class="navbar-brand" href="javascript:;" data-translate="dashboard">Dashboard</a>
+                    </div>
+
+                    <div class="navbar-toggle">
+                        <button class="navbar-toggler" type="button" onclick="toggleSidebar()">
+                            <span class="navbar-toggler-bar bar1"></span>
+                            <span class="navbar-toggler-bar bar2"></span>
+                            <span class="navbar-toggler-bar bar3"></span>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+
+            <!-- End Navbar -->
+            <div class="content" style="min-height: 75vh;">
+                <div class="row">
+                    <a href="./categories.html" class=" text-decoration-none  col-lg-3 col-md-6 col-sm-6">
+                        <div class="card card-stats">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-5 col-md-4">
+                                        <div class="icon-big text-center icon-warning">
+                                            <i class="fa fa-folder text-success"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col-7 col-md-8">
+                                        <div class="numbers">
+                                            <p class="card-category" data-translate="categories">Categories</p>
+                                            <p class="card-title" id="dashboardCategoriesTotal">0</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <hr>
+                                <div class="stats text-center">
+
+                                    <span data-translate="checkout_details">Checkout Details</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="./authers.html" class="text-decoration-none  col-lg-3 col-md-6 col-sm-6">
+                        <div class="card card-stats">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-5 col-md-4">
+                                        <div class="icon-big text-center icon-warning">
+                                            <i class="fa-solid fa-users text-warning"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col-7 col-md-8">
+                                        <div class="numbers">
+                                            <p class="card-category" data-translate="authors">Authors</p>
+                                            <p class="card-title" id="dashboardAuthersTotal">0</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <hr>
+                                <div class="stats text-center">
+
+                                    <span data-translate="checkout_details">Checkout Details</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="./books.html" class="text-decoration-none  col-lg-3 col-md-6 col-sm-6">
+                        <div class="card card-stats">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-5 col-md-4">
+                                        <div class="icon-big text-center icon-warning">
+                                            <i class="fa-solid fa-book text-info"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col-7 col-md-8">
+                                        <div class="numbers">
+                                            <p class="card-category" data-translate="books">Books</p>
+                                            <p class="card-title" id="dashboardBooksTotal">0</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <hr>
+                                <div class="stats text-center">
+
+                                    <span data-translate="checkout_details">Checkout Details</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="./languages.html" class="text-decoration-none  col-lg-3 col-md-6 col-sm-6">
+                        <div class="card card-stats">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-5 col-md-4">
+                                        <div class="icon-big text-center icon-warning">
+                                            <i class="fa-solid fa-language text-danger"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col-7 col-md-8">
+                                        <div class="numbers">
+                                            <p class="card-category" data-translate="languages">Languages</p>
+                                            <p class="card-title" id="dashboardlanguagesTotal">0</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <hr>
+                                <div class="stats text-center">
+
+                                    <span data-translate="checkout_details">Checkout Details</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="./advertise.html" class="text-decoration-none  col-lg-3 col-md-6 col-sm-6">
+                        <div class="card card-stats">
+                            <div class="card-body">
+                                <div class="row">
+
+                                </div>
+                                <div class="row">
+                                    <div class="col-5 col-md-4">
+                                        <div class="icon-big text-center icon-warning">
+                                            <i class="fas fa-ad" style="color: #E91E63;"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col-7 col-md-8">
+                                        <div class="numbers">
+                                            <p class="card-category text-truncate" data-translate="advertisement">
+                                                advertisement</p>
+                                            <p class="card-title" id="dashboardadvertiseTotal">0</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <hr>
+                                <div class="stats text-center">
+
+                                    <span data-translate="checkout_details">Checkout Details</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+
+                </div>
+            </div>
+            <footer class="footer footer-black footer-white">
+                <div class="container-fluid">
+                    <hr>
+                    <div class="row">
+                        <div class="credits mx-auto">
+                            <span class="copyright">
+                                ©
+                                <script>document.write(new Date().getFullYear())</script> ,
+                                <span data-translate="copyright">All copyright reserved by pustakam</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Core JS Files -->
+    <script src="./assets/js/core/jquery.min.js"></script>
+    <script src="./assets/js/core/popper.min.js"></script>
+    <script src="./assets/js/core/bootstrap.min.js"></script>
+    <script src="./assets/js/plugins/perfect-scrollbar.jquery.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_HERE"></script>
+    <script src="./assets/js/plugins/chartjs.min.js"></script>
+    <script src="./assets/js/plugins/bootstrap-notify.js"></script>
+    <script src="./assets/js/paper-dashboard.min.js?v=2.0.1" type="text/javascript"></script>
+    <script src="./assets/demo/demo.js"></script>
+    <script src="./assets/js/apis/dashboard.js"></script>
+    <script>
+        function Logout() {
+            localStorage.removeItem('loggedadmin')
+            location.href = '/login.html'
+        }
+        let englishJson = {
+            "optionenglish": "English",
+            "optionhindi": "Hindi",
+            "logotxt": "Pustakam",
+            "dashboard": "Dashboard",
+            "authors": "Authors",
+            "categories": "Categories",
+            "checkout_details": "Checkout Details",
+            "copyright": "All copyright reserved by pustakam",
+            "books": "Books",
+            "languages": "Languages",
+            "advertisement": "Advertisement",
+            "logout": "Logout",
+        };
+
+        let hindiJson = {
+            "optionenglish": "अंग्रेजी",
+            "optionhindi": "हिंदी",
+            "logotxt": "पुस्तकम",
+            "dashboard": "डैशबोर्ड",
+            "authors": "लेखक",
+            "categories": "श्रेणियाँ",
+            "checkout_details": "विवरण देखें",
+            "copyright": "सभी कॉपीराइट पुस्तकम द्वारा सुरक्षित",
+            "books": "पुस्तकें",
+            "languages": "भाषाएँ",
+            "logout": "लॉग आउट",
+            "advertisement": "विज्ञापन",
+        };
+
+        function loadLanguage(language) {
+            let translations = language === 'hi' ? hindiJson : englishJson;
+            document.querySelectorAll('[data-translate]').forEach(element => {
+                const key = element.getAttribute('data-translate');
+                element.textContent = translations[key] || key;
+            });
+        }
+
+        document.getElementById('language-dropdown').addEventListener('change', function () {
+            const selectedLanguage = this.value;
+            localStorage.setItem('language', selectedLanguage);
+            loadLanguage(selectedLanguage);
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const language = localStorage.getItem('language') || 'en';
+            document.getElementById('language-dropdown').value = language;
+            loadLanguage(language);
+        });
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('show');
+        }
+
+        // Close the sidebar when clicking outside of it (for mobile screens)
+        document.addEventListener('click', function (e) {
+            const sidebar = document.querySelector('.sidebar');
+            const target = e.target;
+            const isSidebarClicked = sidebar.contains(target);
+            const isNavbarTogglerClicked = target.closest('.navbar-toggler');
+
+            if (!isSidebarClicked && !isNavbarTogglerClicked && window.innerWidth <= 991) {
+                sidebar.classList.remove('show');
+            }
+        });
+
+    </script>
+</body>
+
+</html>

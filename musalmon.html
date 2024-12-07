@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EPUB Cover Image Upload</title>
+</head>
+
+<body>
+    <h1>EPUB Cover Image</h1>
+    <img id="bookCover" src="" alt="Book Cover" width="300">
+    <input type="file" id="fileInput" />
+    <button id="uploadButton">Upload Image</button>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.5/jszip.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/epubjs/dist/epub.min.js"></script>
+    <script>
+        document.getElementById('fileInput').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+
+                reader.onload = function () {
+                    const book = ePub(reader.result);
+
+                    book.ready.then((b) => {
+                        // Fetch and display the cover image
+                        book.coverUrl().then((url) => {
+                            let bookCoverSrc = url;
+                            console.log('Cover image URL:', bookCoverSrc);
+
+                            // Set the cover image to the img tag
+                            document.getElementById('bookCover').src = bookCoverSrc;
+
+                            // Convert the image to PNG or JPG format
+                            convertImageToBlob(bookCoverSrc).then((blob) => {
+                                // Store the blob in a variable to send to backend
+                                let formData = new FormData();
+                                formData.append('cover_image', blob, 'cover_image.png');  // You can change the file name or extension
+                                console.log(blob);
+
+                                // Example of sending the formData to backend (AJAX request)
+                                sendImageToBackend(formData);
+                            });
+                        }).catch((error) => {
+                            console.error('Error retrieving cover image:', error);
+                        });
+                    }).catch((error) => {
+                        console.error('Error loading EPUB:', error);
+                    });
+                };
+
+                // Read the EPUB file as an ArrayBuffer
+                reader.readAsArrayBuffer(file);
+            }
+        });
+
+        // Function to convert image to PNG or JPG format using a canvas
+        function convertImageToBlob(imageSrc) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = function () {
+                    // Create a canvas and draw the image
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.drawImage(img, 0, 0);
+
+                    // Convert the canvas content to a Blob (PNG or JPG)
+                    canvas.toBlob((blob) => {
+                        resolve(blob);
+                    }, 'image/png'); // Change to 'image/jpeg' for JPG format
+                };
+
+                img.onerror = function () {
+                    reject('Failed to load image');
+                };
+
+                img.src = imageSrc; // Set the image source to the cover URL
+            });
+        }
+
+        // Example function to send the image to the backend using AJAX
+        function sendImageToBackend(formData) {
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Upload success:', data);
+                })
+                .catch(error => {
+                    console.error('Error uploading image:', error);
+                });
+        }
+    </script>
+</body>
+
+</html>
