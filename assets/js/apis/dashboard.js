@@ -52,3 +52,33 @@ const getLanguages = async () => {
 
 // Call the function to fetch topics
 getLanguages();
+const getAds= async () => {
+    try {
+        let response = await fetch('https://pustakam.pythonanywhere.com/advertisement/');
+        let data = await response.json();
+        let lengthOfTopics = data.data.length;
+
+        // Assuming you have an element with ID `dashboardTopicsTotal` to display the count
+        document.getElementById('dashboardadvertiseTotal').innerHTML = lengthOfTopics;
+    } catch (error) {
+        console.error('Error fetching topics:', error);
+    }
+}
+
+// Call the function to fetch topics
+getAds();
+const getUsers= async () => {
+    try {
+        let response = await fetch('https://pustakam.pythonanywhere.com/user_data/');
+        let data = await response.json();
+        let lengthOfTopics = data.data.length;
+
+        // Assuming you have an element with ID `dashboardTopicsTotal` to display the count
+        document.getElementById('dashboarduserTotal').innerHTML = lengthOfTopics;
+    } catch (error) {
+        console.error('Error fetching topics:', error);
+    }
+}
+
+// Call the function to fetch topics
+getUsers();

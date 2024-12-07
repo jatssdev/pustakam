@@ -84,7 +84,7 @@
                             <p data-translate="authors">Authors</p>
                         </a>
                     </li>
-                    <li class="active"><a href="./books.html"><i class="fa fa-book"></i>
+                    <li ><a href="./books.html"><i class="fa fa-book"></i>
                             <p data-translate="books">Books</p>
                         </a></li>
                     <li>
@@ -93,7 +93,7 @@
                             <p data-translate="languages">Languages</p>
                         </a>
                     </li>
-                    <li>
+                    <li class="active">
                         <a href="./users.html">
                             <i class="fas fa-user"></i>
                             <p data-translate="users">Users</p>
@@ -145,8 +145,7 @@
                 <div class="col-md-12">
 
                     <div class="d-flex align-items-center justify-content-between">
-                        <a href="./add-book.html" data-translate="add_book" class="btn btn-primary text-white">Add
-                            Book</a>
+                        <a href="#" data-translate="" class=""></a>
                         <div>
                             <div class="form-group d-flex align-items-center p-0 m-0">
                                 <input data-translate="searchPlaceholder" placeholder="search..."
@@ -164,10 +163,11 @@
                                     <thead class="text-primary">
                                         <tr>
                                             <th data-translate="id">ID</th>
-                                            <th>Image</th>
-                                            <th data-translate="book_name">Book Name (English & Hindi)</th>
-                                            <th data-translate="book_price">Price</th>
-                                            <th data-translate="book_price_discount">Discount</th>
+                                            <th data-translate="image">Image</th>
+                                            <th data-translate="user_id">User ID</th>
+                                            <th data-translate="username">User Name</th>
+                                            <th data-translate="date">Date</th>
+                                               
                                             <th data-translate="actions">Actions</th>
                                         </tr>
                                     </thead>
@@ -501,7 +501,14 @@
                 "placeholder_free_demo_percentage": "Enter percentage (0-100)",
                 "advertisement": "Advertisement",
                 "users" : "Users",
+                "user_id": "User ID",
+                "username": "User Name",
+                "date": "Date",
+                "image":"Image",
+                view: "View",
+                delete: "Delete",
             },
+            
             hi: {
                 logotxt: "पुस्तकम",
                 dashboard: "डैशबोर्ड",
@@ -552,6 +559,10 @@
                 "placeholder_free_demo_percentage": "प्रतिशत दर्ज करें (0-100)",
                 "advertisement": "विज्ञापन",
                 "users" : "उपयोगकर्ताओं",
+                "user_id": "उपयोगकर्ता पहचान",
+                "username": "उपयोगकर्ता नाम",
+                "date": "दिनांक",
+                "image":"छवि",
             }
         };
 
@@ -578,11 +589,11 @@
             const language = localStorage.getItem("language") || "en";
             document.getElementById("language-dropdown").value = language;
             loadLanguage(language);
-            fetchBooks();
+            fetchUsers();
         });
 
         // Fetch and display books
-        // async function fetchBooks() {
+        // async function fetchUsers() {
         //     const bookTableBody = document.getElementById("book-table-body");
         //     const loading = document.getElementById("loading");
 
@@ -731,9 +742,9 @@
             }, 3000);
         }
 
-        const fetchBooks = async () => {
+        const fetchUsers = async () => {
             try {
-                const response = await fetch('https://pustakam.pythonanywhere.com/books/');
+                const response = await fetch('https://pustakam.pythonanywhere.com/user_data/');
                 const result = await response.json();
 
                 if (result.status === "success") {
@@ -754,21 +765,21 @@
             const bookTableBody = document.getElementById("book-table-body");
             bookTableBody.innerHTML = "";
 
-            booksForCurrentPage.forEach((book, i) => {
+            booksForCurrentPage.forEach((user, i) => {
+                const formattedDate = formatTimestamp(user.timestamp);
+                console.log(formattedDate,"formated")
                 const row = `
-            <tr id="book-${book.id}">
+            <tr id="book-${user.id}">
                 <td>${i + 1 + (currentPage - 1) * itemsPerPage}</td>
-                <td><img class="bookThumbnail" src="https://pustakam.pythonanywhere.com/${book.book_front_image}" alt="Book Thumbnail"></td>
-                <td>${book.book_name_english}</td>
-                <td>${book.book_price}</td>
-                <td>${book.book_price_discount}</td>
+                <td><img class="bookThumbnail bookThumbnail1" src="https://pustakam.pythonanywhere.com/${user.image}" alt="Book Thumbnail"></td>
+                <td>${user.user_id}</td>
+                <td>${user.name}</td>
+                <td>${formattedDate}</td>
                 <td>
-                    <button class="btn btn-info btn-sm" onclick="viewBook(${book.id})">View</button>
-                    <button class="btn btn-primary btn-sm" onclick="editBook(${book.id})">Edit</button>
-                    <button class="btn btn-danger btn-sm" onclick="deleteBook(${book.id})">Delete</button>
-                     <button class="btn btn-info btn-sm">
-                        <input class='bg-info border-0 text-white' style='width:50px' type="number" value="${book.number}" onchange="updateBookOrder(${book.id}, this)">
-                    </button>
+                    <button class="btn btn-info btn-sm" data-translate="view" onclick="viewBook(${user.id})">View</button>
+                   
+                    <button class="btn btn-danger btn-sm" data-translate="delete" onclick="deleteBook('${user.user_id}')">Delete</button>
+                     
                 </td>
             </tr>
         `;
@@ -776,11 +787,27 @@
             });
             updatePagination();
         };
+        
         const updatePagination = () => {
             document.getElementById("page-info").textContent = `Page ${currentPage} of ${totalPages}`;
             document.getElementById("prevPage").disabled = currentPage === 1;
             document.getElementById("nextPage").disabled = currentPage === totalPages;
         };
+        const formatTimestamp = (timestamp) => {
+    const date = new Date(timestamp);
+
+    // Extract day, month, year, hours, minutes, and seconds
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+    const year = date.getFullYear();
+
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+
+    // Construct the formatted date and time
+    return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
+};
 
         const changePage = (page) => {
             if (page < 1 || page > totalPages) return;
@@ -790,53 +817,57 @@
 
         document.getElementById("prevPage").addEventListener("click", () => changePage(currentPage - 1));
         document.getElementById("nextPage").addEventListener("click", () => changePage(currentPage + 1));
-        fetchBooks()
+        fetchUsers()
 
 
         // Delete book
-        async function deleteBook(id) {
-            // Ask for confirmation before deleting
-            const isConfirmed = window.confirm("Are you sure you want to delete this book?");
-            if (!isConfirmed) {
-                return; // If not confirmed, do nothing
-            }
+        async function deleteBook(user_id) {
+    // Ask for confirmation before deleting
+    const isConfirmed = window.confirm("Are you sure you want to delete this book?");
+    if (!isConfirmed) {
+        return; // If not confirmed, do nothing
+    }
 
-            const deleteMessageDiv = document.getElementById("deleteMessage");
+    console.log("Deleting user with user_id:", user_id);
 
-            try {
-                const response = await fetch(`https://pustakam.pythonanywhere.com/books/${id}/`, {
-                    method: "DELETE",
-                    headers: { "Content-Type": "application/json" },
-                });
+    const deleteMessageDiv = document.getElementById("deleteMessage");
 
-                if (response.ok) {
-                    // Remove the book row from the table
-                    const row = document.getElementById(`book-${id}`);
-                    row.remove();
+    try {
+        const response = await fetch(`https://pustakam.pythonanywhere.com/user_data/${user_id}/`, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+        });
 
-                    // Reorder the remaining rows' ID numbers
-                    const rows = document.querySelectorAll("#book-table-body tr");
-                    rows.forEach((row, index) => {
-                        const idCell = row.querySelector("td:first-child"); // Assuming ID is in the first cell
-                        if (idCell) {
-                            idCell.textContent = index + 1; // Reassign the ID to reflect the new order
-                        }
-                    });
+        if (response.ok) {
+            // Remove the book row from the table
+            fetchUsers()
+            const row = document.querySelector(`[data-user-id="${user_id}"]`);
+            if (row) row.remove();
 
-                    deleteMessageDiv.innerHTML = `<div class="alert alert-success">Book deleted successfully!</div>`;
-                } else {
-                    deleteMessageDiv.innerHTML = `<div class="alert alert-danger">Failed to delete book. Please try again.</div>`;
+            // Reorder the remaining rows' ID numbers
+            const rows = document.querySelectorAll("#book-table-body tr");
+            rows.forEach((row, index) => {
+                const idCell = row.querySelector("td:first-child"); // Assuming ID is in the first cell
+                if (idCell) {
+                    idCell.textContent = index + 1; // Reassign the ID to reflect the new order
                 }
-            } catch (error) {
-                console.error("Error deleting book:", error);
-                deleteMessageDiv.innerHTML = `<div class="alert alert-danger">An error occurred. Please try again.</div>`;
-            }
+            });
 
-            setTimeout(() => {
-                deleteMessageDiv.innerHTML = "";
-            }, 3000);
+            deleteMessageDiv.innerHTML = `<div class="alert alert-success">Book deleted successfully!</div>`;
+        } else {
+            const errorMessage = await response.text();
+            console.error("Failed to delete user:", errorMessage);
+            deleteMessageDiv.innerHTML = `<div class="alert alert-danger">Failed to delete user. Please try again.</div>`;
         }
+    } catch (error) {
+        console.error("Error deleting user:", error);
+        deleteMessageDiv.innerHTML = `<div class="alert alert-danger">An error occurred. Please try again.</div>`;
+    }
 
+    setTimeout(() => {
+        deleteMessageDiv.innerHTML = "";
+    }, 3000);
+}
 
         async function viewBook(id) {
             try {
@@ -917,150 +948,150 @@
         });
 
 
-        async function editBook(bookId) {
-            try {
-                const response = await fetch(`https://pustakam.pythonanywhere.com/books/${bookId}/`);
-                const result = await response.json();
+        // async function editBook(bookId) {
+        //     try {
+        //         const response = await fetch(`https://pustakam.pythonanywhere.com/books/${bookId}/`);
+        //         const result = await response.json();
 
-                if (result.status === 'success') {
-                    const book = result.data;
+        //         if (result.status === 'success') {
+        //             const book = result.data;
 
-                    // Populate the modal with current book details
-                    document.getElementById('editBookNameEnglish').value = book?.book_name_english;
-                    document.getElementById('editBookNameHindi').value = book?.book_name_hindi;
-                    document.getElementById('editBookPrice').value = book?.book_price;
-                    document.getElementById('editBookDiscountedPrice').value = book?.book_price_discount;
-                    document.getElementById('editBookDetailsEnglish').value = book?.book_details_english;
-                    document.getElementById('editBookDetailsHindi').value = book?.book_details_hindi;
-                    document.getElementById('editBookKeywords').value = book?.book_keywords.join(', ') || '';
-                    document.getElementById('editBookDemoPercent').value = book?.book_free_demo
+        //             // Populate the modal with current book details
+        //             document.getElementById('editBookNameEnglish').value = book?.book_name_english;
+        //             document.getElementById('editBookNameHindi').value = book?.book_name_hindi;
+        //             document.getElementById('editBookPrice').value = book?.book_price;
+        //             document.getElementById('editBookDiscountedPrice').value = book?.book_price_discount;
+        //             document.getElementById('editBookDetailsEnglish').value = book?.book_details_english;
+        //             document.getElementById('editBookDetailsHindi').value = book?.book_details_hindi;
+        //             document.getElementById('editBookKeywords').value = book?.book_keywords.join(', ') || '';
+        //             document.getElementById('editBookDemoPercent').value = book?.book_free_demo
 
-                    let bookFIleName = book?.book_file?.split('/')
-                    let bookImgName = book?.book_front_image?.split('/')
-                    $('#editBookFile').next("label").text(bookFIleName ? bookFIleName[bookFIleName?.length - 1] : '');
-                    $('#editBookFrontImage').next("label").text(bookImgName ? bookImgName[bookImgName?.length - 1] : '');
+        //             let bookFIleName = book?.book_file?.split('/')
+        //             let bookImgName = book?.book_front_image?.split('/')
+        //             $('#editBookFile').next("label").text(bookFIleName ? bookFIleName[bookFIleName?.length - 1] : '');
+        //             $('#editBookFrontImage').next("label").text(bookImgName ? bookImgName[bookImgName?.length - 1] : '');
 
-                    const thumbnail = book?.book_front_image
-                        ? `https://pustakam.pythonanywhere.com${book?.book_front_image}`
-                        : "./assets/img/default-thumbnail.png";
-                    document.getElementById('editBookFrontImagePreview').src = thumbnail;
+        //             const thumbnail = book?.book_front_image
+        //                 ? `https://pustakam.pythonanywhere.com${book?.book_front_image}`
+        //                 : "./assets/img/default-thumbnail.png";
+        //             document.getElementById('editBookFrontImagePreview').src = thumbnail;
 
-                    // Pre-fill select options for Authors, Topics, and Languages
-                    const authorsSelect = document.getElementById('editAuthorSelect');
-                    authorsSelect.innerHTML = ''; // Clear previous selections
-                    book?.author_data.forEach(author => {
-                        const option = document.createElement('option');
-                        option.value = author.id;
-                        option.textContent = `${author.author_english} (${author.author_hindi})`;
-                        authorsSelect.appendChild(option);
-                    });
+        //             // Pre-fill select options for Authors, Topics, and Languages
+        //             const authorsSelect = document.getElementById('editAuthorSelect');
+        //             authorsSelect.innerHTML = ''; // Clear previous selections
+        //             book?.author_data.forEach(author => {
+        //                 const option = document.createElement('option');
+        //                 option.value = author.id;
+        //                 option.textContent = `${author.author_english} (${author.author_hindi})`;
+        //                 authorsSelect.appendChild(option);
+        //             });
 
-                    const topicsSelect = document.getElementById('editTopicSelect');
-                    topicsSelect.innerHTML = ''; // Clear previous selections
-                    book?.topic_data?.forEach(topic => {
-                        const option = document.createElement('option');
-                        option.value = topic.id;
-                        option.textContent = `${topic.topic_english} (${topic.topic_hindi})`;
-                        topicsSelect.appendChild(option);
-                    });
+        //             const topicsSelect = document.getElementById('editTopicSelect');
+        //             topicsSelect.innerHTML = ''; // Clear previous selections
+        //             book?.topic_data?.forEach(topic => {
+        //                 const option = document.createElement('option');
+        //                 option.value = topic.id;
+        //                 option.textContent = `${topic.topic_english} (${topic.topic_hindi})`;
+        //                 topicsSelect.appendChild(option);
+        //             });
 
-                    const languagesSelect = document.getElementById('editLanguageSelect');
-                    languagesSelect.innerHTML = ''; // Clear previous selections
-                    book?.language_data.forEach(language => {
-                        const option = document.createElement('option');
-                        option.value = language?.id;
-                        option.textContent = language?.languages;
-                        languagesSelect.appendChild(option);
-                    });
+        //             const languagesSelect = document.getElementById('editLanguageSelect');
+        //             languagesSelect.innerHTML = ''; // Clear previous selections
+        //             book?.language_data.forEach(language => {
+        //                 const option = document.createElement('option');
+        //                 option.value = language?.id;
+        //                 option.textContent = language?.languages;
+        //                 languagesSelect.appendChild(option);
+        //             });
 
-                    // Open the modal
-                    $('#editBookModal').modal('show');
-                    fetchAuthorsAndTopics(book);
-                    const currLanguage = localStorage.getItem('language') || 'en';
+        //             // Open the modal
+        //             $('#editBookModal').modal('show');
+        //             fetchAuthorsAndTopics(book);
+        //             const currLanguage = localStorage.getItem('language') || 'en';
 
-                    let placeH = currLanguage === 'en' ? selectMenuPlaceHolder.en : selectMenuPlaceHolder.hi
-                    initSelect2(placeH)
+        //             let placeH = currLanguage === 'en' ? selectMenuPlaceHolder.en : selectMenuPlaceHolder.hi
+        //             initSelect2(placeH)
 
 
-                    // Handle form submission for editing
-                    document.getElementById('editBookForm').onsubmit = async function (event) {
-                        event.preventDefault();
+        //             // Handle form submission for editing
+        //             document.getElementById('editBookForm').onsubmit = async function (event) {
+        //                 event.preventDefault();
 
-                        // Create a FormData object to capture the form data
-                        const formData = new FormData();
+        //                 // Create a FormData object to capture the form data
+        //                 const formData = new FormData();
 
-                        // Append text fields
-                        formData.append('book_name_english', document.getElementById('editBookNameEnglish').value);
-                        formData.append('book_name_hindi', document.getElementById('editBookNameHindi').value);
-                        formData.append('book_price', document.getElementById('editBookPrice').value);
-                        formData.append('book_price_discount', document.getElementById('editBookDiscountedPrice').value);
-                        formData.append('book_details_english', document.getElementById('editBookDetailsEnglish').value);
-                        formData.append('book_details_hindi', document.getElementById('editBookDetailsHindi').value);
+        //                 // Append text fields
+        //                 formData.append('book_name_english', document.getElementById('editBookNameEnglish').value);
+        //                 formData.append('book_name_hindi', document.getElementById('editBookNameHindi').value);
+        //                 formData.append('book_price', document.getElementById('editBookPrice').value);
+        //                 formData.append('book_price_discount', document.getElementById('editBookDiscountedPrice').value);
+        //                 formData.append('book_details_english', document.getElementById('editBookDetailsEnglish').value);
+        //                 formData.append('book_details_hindi', document.getElementById('editBookDetailsHindi').value);
 
-                        // Append keywords as a single JSON string
-                        const keywords = document.getElementById('editBookKeywords').value?.split(',').map(k => k.trim());
+        //                 // Append keywords as a single JSON string
+        //                 const keywords = document.getElementById('editBookKeywords').value?.split(',').map(k => k.trim());
 
-                        keywords.forEach((k) => {
-                            formData.append("book_keywords", k);
-                        });
+        //                 keywords.forEach((k) => {
+        //                     formData.append("book_keywords", k);
+        //                 });
 
-                        // Append selected topics, authors, and languages individually
-                        const selectedTopics = Array.from(document.getElementById('editTopicSelect').selectedOptions).map(option => option.value);
-                        selectedTopics.forEach((topic) => {
-                            formData.append("topic_data", topic);
-                        });
+        //                 // Append selected topics, authors, and languages individually
+        //                 const selectedTopics = Array.from(document.getElementById('editTopicSelect').selectedOptions).map(option => option.value);
+        //                 selectedTopics.forEach((topic) => {
+        //                     formData.append("topic_data", topic);
+        //                 });
 
-                        const selectedAuthors = Array.from(document.getElementById('editAuthorSelect').selectedOptions).map(option => option.value);
-                        selectedAuthors.forEach((author) => {
-                            formData.append("author_data", author);
-                        });
+        //                 const selectedAuthors = Array.from(document.getElementById('editAuthorSelect').selectedOptions).map(option => option.value);
+        //                 selectedAuthors.forEach((author) => {
+        //                     formData.append("author_data", author);
+        //                 });
 
-                        const selectedLanguages = Array.from(document.getElementById('editLanguageSelect').selectedOptions).map(option => option.value);
-                        selectedLanguages.forEach((language) => {
-                            formData.append("language_data", language);
-                        });
+        //                 const selectedLanguages = Array.from(document.getElementById('editLanguageSelect').selectedOptions).map(option => option.value);
+        //                 selectedLanguages.forEach((language) => {
+        //                     formData.append("language_data", language);
+        //                 });
 
-                        // Append optional file fields
-                        const frontImage = document.getElementById('editBookFrontImage').files[0];
-                        if (frontImage) {
-                            formData.append('book_front_image', frontImage);
-                        }
+        //                 // Append optional file fields
+        //                 const frontImage = document.getElementById('editBookFrontImage').files[0];
+        //                 if (frontImage) {
+        //                     formData.append('book_front_image', frontImage);
+        //                 }
 
-                        const bookFile = document.getElementById('editBookFile').files[0];
-                        if (bookFile) {
-                            formData.append('book_file', bookFile);
-                        }
+        //                 const bookFile = document.getElementById('editBookFile').files[0];
+        //                 if (bookFile) {
+        //                     formData.append('book_file', bookFile);
+        //                 }
 
-                        try {
-                            const updateResponse = await fetch(`https://pustakam.pythonanywhere.com/books/${bookId}/`, {
-                                method: 'PATCH',
-                                body: formData, // Send the FormData object
-                            });
+        //                 try {
+        //                     const updateResponse = await fetch(`https://pustakam.pythonanywhere.com/books/${bookId}/`, {
+        //                         method: 'PATCH',
+        //                         body: formData, // Send the FormData object
+        //                     });
 
-                            let result = await updateResponse.json()
-                            if (result.status === 'success') {
-                                alert('Book updated successfully!');
-                                $('#editBookModal').modal('hide'); // Close the modal
-                                fetchBooks(); // Refresh the book list
-                            } else {
+        //                     let result = await updateResponse.json()
+        //                     if (result.status === 'success') {
+        //                         alert('Book updated successfully!');
+        //                         $('#editBookModal').modal('hide'); // Close the modal
+        //                         fetchUsers(); // Refresh the book list
+        //                     } else {
 
-                                console.error('Error details:', result);
-                                alert('Error updating book!');
-                            }
-                        } catch (error) {
-                            console.error('Error updating book:', error);
-                            alert('An error occurred while updating the book?. Please try again.');
-                        }
-                    };
+        //                         console.error('Error details:', result);
+        //                         alert('Error updating book!');
+        //                     }
+        //                 } catch (error) {
+        //                     console.error('Error updating book:', error);
+        //                     alert('An error occurred while updating the book?. Please try again.');
+        //                 }
+        //             };
 
-                } else {
-                    alert('Failed to fetch book details.');
-                }
-            } catch (error) {
-                console.error('Error fetching book details:', error);
-                alert('An error occurred while fetching book details.');
-            }
-        }
+        //         } else {
+        //             alert('Failed to fetch book details.');
+        //         }
+        //     } catch (error) {
+        //         console.error('Error fetching book details:', error);
+        //         alert('An error occurred while fetching book details.');
+        //     }
+        // }
 
 
         async function fetchAuthorsAndTopics(book) {
@@ -1220,7 +1251,7 @@
         function SearchHandler(e) {
             e.preventDefault()
             let value = document.getElementById('searchInput').value
-            let searchedData = booksData.filter((x) => x.book_name_english.toLowerCase().includes(value.toLowerCase()) || x.book_name_hindi.toLowerCase().includes(value.toLowerCase()))
+            let searchedData = booksData.filter((x) => x.user_id.toLowerCase().includes(value.toLowerCase()) || x.name.toLowerCase().includes(value.toLowerCase()))
             displayBooks(searchedData);
         }
 
