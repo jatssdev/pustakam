@@ -4,99 +4,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EPUB Viewer with Pagination</title>
+    <title>EPUB Viewer</title>
     <style>
-        * {
-            padding: 0;
-            margin: 0;
-            box-sizing: border-box;
+        :root {
+            --primary-color: #0279CA;
+            --secondary-color: #f9f9f9;
+            --text-color: #333;
+            --button-hover-color: #075284;
+            --loader-color: #0279CA;
         }
 
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--secondary-color);
+            color: var(--text-color);
         }
 
-        h1 {
+        header {
+            background-color: var(--primary-color);
+            color: #fff;
             text-align: center;
-            color: #333;
+            padding: 20px 10px;
+            font-size: 24px;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         #area {
             width: 100%;
             height: 600px;
-            border: 2px solid #007bff;
+            border: 1px solid var(--primary-color);
             border-radius: 8px;
             overflow: hidden;
-            margin: 20px auto;
-
+            position: relative;
+            margin-bottom: 20px;
         }
 
-        #controls {
-            text-align: center;
-            margin-top: 20px;
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
         }
 
-        button {
-            padding: 10px 20px;
-            margin: 0 10px;
+        .pagination button {
+            background-color: var(--primary-color);
+            color: #fff;
             border: none;
+            padding: 10px 20px;
             border-radius: 5px;
-            background-color: #007bff;
-            color: white;
             cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s ease;
+            font-size: 14px;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease, transform 0.2s ease;
         }
 
-        button:hover {
-            background-color: #0056b3;
-        }
-
-        button:disabled {
+        .pagination button:disabled {
             background-color: #ccc;
             cursor: not-allowed;
+            box-shadow: none;
         }
 
-        #pageInfo {
-            margin-top: 10px;
-            font-size: 18px;
-            color: #333;
+        .pagination button:hover:not(:disabled) {
+            background-color: var(--button-hover-color);
+            transform: translateY(-2px);
         }
 
-        #fileInput {
-            display: block;
-            margin: 10px auto;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+        .pagination span {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--text-color);
         }
 
-        /* HTML: <div class="loader"></div> */
-        .loader {
-            width: 60px;
-            aspect-ratio: 4;
-            background: radial-gradient(circle closest-side, #000 90%, #0000) 0/calc(100%/3) 100% space;
-            clip-path: inset(0 100% 0 0);
-            animation: l1 1s steps(4) infinite;
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #888;
+            font-size: 12px;
         }
 
-        @keyframes l1 {
-            to {
-                clip-path: inset(0 -34% 0 0)
-            }
+        footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: bold;
         }
 
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Loader Design */
         .preloader {
             height: 100vh;
             width: 100%;
             background-color: rgba(0, 0, 0, 0.156);
             display: flex;
             align-items: center;
+            justify-content: center;
             position: fixed;
             top: 0;
             left: 0;
-            justify-content: center;
+            z-index: 1000;
+        }
+
+        .loader {
+            width: 60px;
+            height: 60px;
+            border: 5px solid var(--loader-color);
+            border-top: 5px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
     </style>
 </head>
@@ -105,16 +148,19 @@
     <div class="preloader" id="loader">
         <div class="loader"></div>
     </div>
-    <h1 id="bookName">View EPUB</h1>
 
-    <div id="area">
+    <header id="bookName">EPUB Viewer</header>
 
-    </div>
-    <div id="controls">
-        <button id="prev" disabled>Previous</button>
-        <button id="next" disabled>Next</button>
-        <div id="pageInfo">Page: -- / --</div>
-    </div>
+    <main>
+        <div id="area"></div>
+
+        <div class="pagination">
+            <button id="prev" disabled>Previous</button>
+            <span id="pageInfo">Page: -- / --</span>
+            <button id="next" disabled>Next</button>
+        </div>
+    </main>
+
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.5/jszip.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/epubjs/dist/epub.min.js"></script>
@@ -139,7 +185,7 @@
             const urlParts = bookUrl.split('/');
             const fileName = urlParts[urlParts.length - 1]; // Get the last part of the URL
 
-            bookName.innerHTML = fileName; // Display only the file name
+            bookName.textContent = fileName; // Display only the file name
             loadBook(bookUrl);
         }
 
@@ -156,7 +202,6 @@
 
             // Display the first chapter
             rendition.display().then(() => {
-
                 loader.style.display = "none"; // Hide the loader once rendering starts
             });
 
@@ -199,7 +244,6 @@
                 pageInfo.textContent = `Page: ${currentPage || 1} / ${totalPages}`;
             }
         }
-
     </script>
 </body>
 
