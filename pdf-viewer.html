@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Two-Page PDF Viewer</title>
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #f9f9f9;
+            --text-color: #333;
+            --button-hover-color: #45a049;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: #fff;
+            text-align: center;
+            padding: 20px 10px;
+            font-size: 24px;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .pdf-viewer {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        canvas {
+            border: 1px solid var(--primary-color);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            flex: 1;
+        }
+
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .pagination button {
+            background-color: var(--primary-color);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .pagination button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .pagination button:hover:not(:disabled) {
+            background-color: var(--button-hover-color);
+            transform: translateY(-2px);
+        }
+
+        .pagination span {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #888;
+            font-size: 12px;
+        }
+
+        footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <main>
+        <h1 id="bookName"></h1>
+        <div class="pdf-viewer">
+            <canvas id="pdf-canvas-1"></canvas>
+            <canvas id="pdf-canvas-2"></canvas>
+        </div>
+
+        <div class="pagination">
+            <button id="prevPage" disabled>Previous</button>
+            <span id="page-info">Page 1-2</span>
+            <button id="nextPage" disabled>Next</button>
+        </div>
+    </main>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+
+    <script>
+        const canvas1 = document.getElementById('pdf-canvas-1');
+        const ctx1 = canvas1.getContext('2d');
+        const canvas2 = document.getElementById('pdf-canvas-2');
+        const ctx2 = canvas2.getContext('2d');
+        const prevPageButton = document.getElementById('prevPage');
+        const nextPageButton = document.getElementById('nextPage');
+        const pageInfo = document.getElementById('page-info');
+        const params = new URLSearchParams(window.location.search);
+        const bookUrl = params.get("bookurl");
+
+        let pdfDoc = null;
+        let currentPage = 1;
+        let totalPages = 0;
+
+        prevPageButton.addEventListener('click', () => changePage(currentPage - 2));
+        nextPageButton.addEventListener('click', () => changePage(currentPage + 2));
+
+        if (bookUrl) {
+            // Extract the file name from the URL
+            const urlParts = bookUrl.split('/');
+            const fileName = urlParts[urlParts.length - 1]; // Get the last part of the URL
+
+            bookName.innerHTML = fileName; // Display only the file name
+            pdfjsLib.getDocument(bookUrl).promise.then(function (pdf) {
+                pdfDoc = pdf;
+                totalPages = pdf.numPages;
+                currentPage = 1;
+                renderPages(currentPage);
+                updatePagination();
+            }).catch(function (error) {
+                console.error('Error loading PDF:', error);
+                alert('Failed to load PDF. Please check the URL.');
+            });
+        } else {
+            alert('No book URL provided!');
+        }
+
+        function renderPages(pageNum) {
+            renderPage(canvas1, ctx1, pageNum);
+
+            if (pageNum + 1 <= totalPages) {
+                renderPage(canvas2, ctx2, pageNum + 1);
+            } else {
+                clearCanvas(canvas2);
+            }
+        }
+
+        function renderPage(canvas, ctx, pageNum) {
+            pdfDoc.getPage(pageNum).then(function (page) {
+                const viewport = page.getViewport({ scale: 1.2 });
+
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                const renderContext = {
+                    canvasContext: ctx,
+                    viewport: viewport
+                };
+
+                page.render(renderContext).promise.then(function () {
+                    console.log(`Page ${pageNum} rendered`);
+                });
+            }).catch(function (error) {
+                console.error(`Error rendering page ${pageNum}:`, error);
+                clearCanvas(canvas);
+            });
+        }
+
+        function clearCanvas(canvas) {
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            canvas.height = 0;
+            canvas.width = 0;
+        }
+
+        function changePage(page) {
+            if (page < 1 || page > totalPages) return;
+
+            currentPage = page;
+            renderPages(currentPage);
+            updatePagination();
+        }
+
+        function updatePagination() {
+            const secondPage = currentPage + 1 > totalPages ? totalPages : currentPage + 1;
+            pageInfo.textContent = `Page ${currentPage}-${secondPage} of ${totalPages}`;
+            prevPageButton.disabled = currentPage === 1;
+            nextPageButton.disabled = currentPage + 1 > totalPages;
+        }
+
+    </script>
+</body>
+
+</html>

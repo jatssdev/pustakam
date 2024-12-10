@@ -327,7 +327,8 @@
                             <label for="editBookFile" data-translate="book_file">Book File (PDF or EPUB)</label>
                             <div class="custom-file">
                                 <input type="file" class="custom-file-input" id="editBookFile" accept=".pdf,.epub">
-                                <label class="custom-file-label" for="editBookFile" data-translate="choose_file">Choose
+                                <label class="custom-file-label" id="fileLabelEpub" for="editBookFile"
+                                    data-translate="choose_file">Choose
                                     file</label>
                             </div>
                         </div>
@@ -500,7 +501,7 @@
                 "placeholder_discounted_price": "Enter discounted price",
                 "placeholder_free_demo_percentage": "Enter percentage (0-100)",
                 "advertisement": "Advertisement",
-                "users" : "Users",
+                "users": "Users",
             },
             hi: {
                 logotxt: "पुस्तकम",
@@ -551,7 +552,7 @@
                 "placeholder_discounted_price": "छूट मूल्य दर्ज करें",
                 "placeholder_free_demo_percentage": "प्रतिशत दर्ज करें (0-100)",
                 "advertisement": "विज्ञापन",
-                "users" : "उपयोगकर्ताओं",
+                "users": "उपयोगकर्ताओं",
             }
         };
 
@@ -913,8 +914,20 @@
 
         document.getElementById("viewBookContentsButton").addEventListener("click", function () {
             const bookurl = this.dataset.bookurl; // Get the value of the 'data-bookurl' attribute
-            window.open(`epub-viewer.html?bookurl=${encodeURIComponent(bookurl)}`, "_blank"); // Pass the book URL as a query parameter
+
+            // Extract the file extension
+            const fileExtension = bookurl.split('.').pop().toLowerCase();
+
+            // Check the file type and redirect to the appropriate viewer
+            if (fileExtension === "epub") {
+                window.open(`epub-viewer.html?bookurl=${encodeURIComponent(bookurl)}`, "_blank"); // Redirect to EPUB viewer
+            } else if (fileExtension === "pdf") {
+                window.open(`pdf-viewer.html?bookurl=${encodeURIComponent(bookurl)}`, "_blank"); // Redirect to PDF viewer
+            } else {
+                alert("Unsupported file format!"); // Handle other file formats
+            }
         });
+
 
 
         async function editBook(bookId) {
@@ -998,11 +1011,22 @@
                         formData.append('book_details_hindi', document.getElementById('editBookDetailsHindi').value);
 
                         // Append keywords as a single JSON string
-                        const keywords = document.getElementById('editBookKeywords').value?.split(',').map(k => k.trim());
+                        const keywords = document.getElementById('editBookKeywords').value
+                            ?.split(',')
+                            .map(k => k.trim())  // Remove leading and trailing spaces
+                            .filter(k => k !== "");  // Remove any empty strings
 
-                        keywords.forEach((k) => {
-                            formData.append("book_keywords", k);
-                        });
+                        console.log(keywords, 'jatin');
+
+                        // Check if keywords array is not empty
+                        if (keywords && keywords.length > 0) {
+                            keywords.forEach((k) => {
+                                formData.append("book_keywords", k);
+                            });
+                        } else {
+                            console.log("No keywords provided");
+                        }
+
 
                         // Append selected topics, authors, and languages individually
                         const selectedTopics = Array.from(document.getElementById('editTopicSelect').selectedOptions).map(option => option.value);
@@ -1223,7 +1247,76 @@
             let searchedData = booksData.filter((x) => x.book_name_english.toLowerCase().includes(value.toLowerCase()) || x.book_name_hindi.toLowerCase().includes(value.toLowerCase()))
             displayBooks(searchedData);
         }
+        // Regular expression to allow only alphabetic characters and spaces
+        const validNamePattern = /^[A-Za-z\s]*$/;
 
+        // Function to handle validation immediately when the user types
+        function validateBookNameInput(event) {
+            const inputField = event.target;
+            let inputValue = inputField.value;
+
+            // Check for invalid characters (non-alphabetic and non-space)
+            if (!validNamePattern.test(inputValue)) {
+                // Show the tooltip with a message
+                inputField.setCustomValidity('Book name should only contain letters and spaces.');
+                inputField.reportValidity(); // Display the error message
+
+                // Remove invalid characters (anything that is not a letter or space)
+                inputValue = inputValue.replace(/[^A-Za-z\s]/g, ''); // Remove special characters and numbers
+                inputField.value = inputValue; // Update the input value without invalid characters
+            } else {
+                // Clear the error if the input is valid
+                inputField.setCustomValidity('');
+            }
+        }
+
+        // Attach event listeners to both book name fields
+        document.getElementById('editBookNameEnglish').addEventListener('input', validateBookNameInput);
+        document.getElementById('editBookNameHindi').addEventListener('input', validateBookNameInput);
+
+
+        // Get the file input and the image preview elements
+        const editBookFrontImageInput = document.getElementById('editBookFrontImage');
+        const editBookFrontImagePreview = document.getElementById('editBookFrontImagePreview');
+
+        // Event listener for when the user selects a file
+        editBookFrontImageInput.addEventListener('change', function (event) {
+            const file = event.target.files[0]; // Get the selected file
+
+            if (file) {
+                const reader = new FileReader();
+
+                // Set the function that is called when the file is read
+                reader.onload = function (e) {
+                    // Set the src of the image preview to the file data URL
+                    editBookFrontImagePreview.src = e.target.result;
+                    editBookFrontImagePreview.style.display = 'block'; // Show the image preview
+                };
+
+                // Read the selected file as a data URL (base64 encoded)
+                reader.readAsDataURL(file);
+            } else {
+                editBookFrontImagePreview.style.display = 'none'; // Hide the preview if no file is selected
+            }
+        });
+
+        // Get the file input and label elements
+        const fileInput = document.getElementById('editBookFile');
+        const fileLabel = document.getElementById('fileLabelEpub');
+
+        // Add an event listener to the file input to update the label with the file name
+        fileInput.addEventListener('change', function (event) {
+            console.log(fileLabel);
+
+            const fileName = event.target.files[0]?.name; // Get the name of the selected file
+            if (fileName) {
+                // Update the label text with the selected file name
+                fileLabel.textContent = fileName;
+            } else {
+                // Reset the label if no file is selected
+                fileLabel.textContent = 'Choose file';
+            }
+        });
 
 
     </script>
