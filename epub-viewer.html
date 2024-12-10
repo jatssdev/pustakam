@@ -156,7 +156,7 @@
 
         <div class="pagination">
             <button id="prev" disabled>Previous</button>
-            <span id="pageInfo">Page: -- / --</span>
+            <span id="pageInfo">Page: -- / loading...</span>
             <button id="next" disabled>Next</button>
         </div>
     </main>
@@ -174,7 +174,7 @@
 
         let rendition = null; // Holds the EPUB.js rendition instance
         let book = null; // Holds the EPUB.js book instance
-        let totalPages = "--"; // Total number of pages
+        let totalPages = 0; // Total number of pages
 
         // Get the book URL from the query parameter
         const params = new URLSearchParams(window.location.search);
@@ -206,9 +206,28 @@
             });
 
             // Generate locations to calculate total pages
-            book.locations.generate().then(() => {
-                totalPages = book.locations.length();
-                updatePageInfo(); // Update page info with total pages
+            book.ready.then(() => {
+                book.locations.generate(1024) // Custom characters per location
+                    .then(() => {
+                        totalPages = book.locations.length(); // Get total pages
+                        console.log("Generated Total Pages:", totalPages);
+
+                        if (totalPages === 0) {
+                            console.warn("Locations generated but total pages is 0. Using fallback...");
+                            // Fallback to spine length
+                            book.loaded.spine.then((spine) => {
+                                totalPages = spine.items.length;
+                                console.log("Fallback Total Pages (Spine Length):", totalPages);
+                                updatePageInfo(1);
+                            });
+                        } else {
+                            updatePageInfo(1);
+                        }
+                    })
+                    .catch((err) => {
+                        console.error("Error generating locations:", err);
+                        fallbackTotalPages(); // Use fallback if generation fails
+                    });
             });
 
             // Enable buttons after loading the file
@@ -217,7 +236,7 @@
 
             // Update current page on relocation
             rendition.on("relocated", (location) => {
-                const currentPage = book.locations.locationFromCfi(location.start.cfi);
+                const currentPage = book.locations.locationFromCfi(location.start.cfi) || 1;
                 updatePageInfo(currentPage);
             });
         }
@@ -238,12 +257,22 @@
 
         // Update the current page and total pages
         function updatePageInfo(currentPage = "--") {
-            if (totalPages === "--") {
-                pageInfo.textContent = `Page: ${currentPage} / --`;
+            if (totalPages === 0 || totalPages === "loading...") {
+                pageInfo.textContent = `Page: ${currentPage} / loading...`;
             } else {
                 pageInfo.textContent = `Page: ${currentPage || 1} / ${totalPages}`;
             }
         }
+
+        // Fallback function for total pages
+        function fallbackTotalPages() {
+            book.loaded.spine.then((spine) => {
+                totalPages = spine.items.length;
+                console.log("Fallback Total Pages (Spine Length):", totalPages);
+                updatePageInfo(1);
+            });
+        }
+
     </script>
 </body>
 
