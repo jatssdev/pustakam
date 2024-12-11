@@ -253,7 +253,7 @@
                             <!-- Book Price -->
                             <div class="form-group">
                                 <label for="bookPrice" data-translate="book_price">Book Price</label>
-                                <input data-translate="placeholder_book_price" type="number" id="bookPrice"
+                                <input data-translate="placeholder_book_price" type="text" id="bookPrice"
                                     class="form-control" placeholder="Enter book price">
                             </div>
 
@@ -262,7 +262,7 @@
                                 <label for="bookPriceDiscount" data-translate="book_price_discount">Book Discounted
                                     Price</label>
                                 <div class="input-group">
-                                    <input data-translate="placeholder_discounted_price" type="number"
+                                    <input data-translate="placeholder_discounted_price" type="text"
                                         id="bookPriceDiscount" class="form-control"
                                         placeholder="Enter discounted price">
                                     <div class="input-group-append">
@@ -280,7 +280,7 @@
                             <div class="form-group">
                                 <label for="bookDemoPercent" data-translate="book_free_demo">Free Demo Pages
                                     Percentage</label>
-                                <input data-translate="placeholder_free_demo" type="number" id="bookDemoPercent"
+                                <input data-translate="placeholder_free_demo" type="text" id="bookDemoPercent"
                                     class="form-control" placeholder="Enter percentage (0-100)" min="0" max="100">
                             </div>
                         </div>
@@ -922,11 +922,34 @@
             // Update the input field with the validated value
             e.target.value = val;
         }
+        function validateInputNumber(event) {
+
+            const inputField = event.target;
+            let inputValue = inputField.value;
+
+            
+
+
+            // Remove invalid characters (anything that is not a number)
+            const newInputValue = inputValue.replace(/[^0-9]/g, '');
+
+            if (inputValue !== newInputValue) {
+                // Update the input field with only valid numbers
+                inputField.value = newInputValue;
+
+                // Show the tooltip with a message
+                inputField.setCustomValidity('Please enter only numbers.');
+                inputField.reportValidity(); // Display the error message
+            } else {
+                // Clear the error if the input is valid
+                inputField.setCustomValidity('');
+            }
+        }
 
         // Add event listeners with validation
-        bookPrice.addEventListener('input', validateInput);
-        bookPriceDiscount.addEventListener('input', validateInput);
-        bookDemoPercent.addEventListener('input', validateInput);
+        bookPrice.addEventListener('input', validateInputNumber);
+        bookPriceDiscount.addEventListener('input', validateInputNumber);
+        bookDemoPercent.addEventListener('input', validateInputNumber);
 
 
 
@@ -1080,6 +1103,7 @@
                 inputField.setCustomValidity('');
             }
         }
+
 
         // Attach event listeners to each field for the validation
         document.getElementById('addTopicEnglish').addEventListener('input', validateInput);
